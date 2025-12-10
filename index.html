@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>銀鑫工業五金 | 機械五金百貨 | 電控箱配件 | 鉸鏈(丁雙)・滑桿・螺絲供應商 - 彰化/中部</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="shortcut icon" href="logo.png">
+
+    <meta name="description" content="銀鑫有限公司專營工業五金、機械五金百貨與自動化零件。現貨供應：電控箱配件、電控板零件、各式平面把手、工業鉸鏈(丁雙)、精密鑄造件、工業滑桿(滑軌)、擋片、各式螺絲螺母、調整腳座及鎖具。彰化伸港在地庫存，規格齊全，歡迎工廠與系統整合商採購。">
+
+    <meta name="keywords" content="銀鑫, 銀鑫有限公司, 工業五金, 機械五金, 五金百貨, 電控箱配件, 電控板零件, 配電盤五金, 鑄造, 精密鑄造, 脫蠟鑄造, 滑桿, 滑軌, 導軌, 螺絲, 螺母, 螺栓, 丁雙, 鉸鏈, 活頁, 後紐, 擋片, 封印條, 防水膠條, 平面把手, 門鎖, 迫緊式搭扣, 調整腳座, 避震腳, 拉手, 取手, 把手, 自動化設備零件, 鈑金箱體, 機櫃五金, 彰化五金, 台中五金, 批發零售, A-150, B-1078">
+
+    <meta property="og:title" content="銀鑫工業五金 - 機械與電控箱配件專家">
+    <meta property="og:description" content="供應：滑桿、鑄造件、螺絲、丁雙、把手、電控箱配件。規格齊全，快速出貨。">
+    <meta property="og:image" content="https://yinxincompany.com/l1.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WholesaleStore",
+      "name": "銀鑫有限公司",
+      "image": "https://yinxincompany.com/logo.png",
+      "description": "專業供應工業五金、電控箱配件、滑桿、鑄造件、螺絲與丁雙。",
+      "telephone": "04-8521867",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "定興村124號",
+        "addressLocality": "伸港鄉",
+        "addressRegion": "彰化縣",
+        "addressCountry": "TW"
+      }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. 全域變數與基礎設定區
+           ========================================================================== */
+        :root {
+            --primary-color: #3a6dc2;
+            --primary-dark: #2a5296;
+            --bg-dark: #0f1c2e;
+            --bg-dark-gradient: linear-gradient(135deg, #0f1c2e 0%, #1e3a5f 100%);
+            --bg-light: #ffffff;
+            --text-on-light: #2a3b4c;
+            --text-dim-on-light: #50657b;
+            --hover-glow-light: 0 15px 35px rgba(58, 109, 194, 0.25);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { 
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+        }
+        
+        body { 
+            font-family: 'Noto Sans TC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-on-light); 
+            background-color: var(--bg-light);
+            background-image: 
+                linear-gradient(45deg, transparent 49%, rgba(58, 109, 194, 0.08) 49%, rgba(58, 109, 194, 0.08) 51%, transparent 51%),
+                linear-gradient(-45deg, transparent 49%, rgba(58, 109, 194, 0.08) 49%, rgba(58, 109, 194, 0.08) 51%, transparent 51%);
+            background-size: 100px 100px;
+            background-attachment: fixed;
+            font-weight: 500;
+        }
+        
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2; }
+
+        /* ==========================================================================
+           2. Header 頂部導覽列
+           ========================================================================== */
+        header {
+            background: rgba(15, 28, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; height: 90px; }
+        
+        /* Logo 無背景色 */
+        .logo { 
+            display: flex; align-items: center; text-decoration: none; 
+            padding: 5px 0; 
+        }
+
+        .logo img { max-height: 60px; width: auto; margin-right: 15px; }
+        .logo span { font-weight: 900; font-size: 28px; color: #ffffff; white-space: nowrap; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+        .nav-menu { display: flex; gap: 30px; align-items: center; }
+        
+        /* 導覽列字體放大到 18px */
+        .nav-menu a { 
+            font-weight: 700;
+            color: #ffffff; 
+            position: relative; 
+            font-size: 18px; 
+            letter-spacing: 1px; 
+        }
+        .nav-menu a:hover { color: var(--primary-color); }
+        .nav-menu a::after { content: ''; display: block; width: 0; height: 2px; background: var(--primary-color); transition: width .3s; }
+        .nav-menu a:hover::after { width: 100%; }
+
+        /* LINE 按鈕放大 */
+        .cta-btn {
+            background: var(--primary-color); 
+            color: white !important; 
+            padding: 10px 28px; 
+            border-radius: 50px; 
+            font-weight: 900;
+            font-size: 16px; 
+            box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4); border: none;
+        }
+        .cta-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        /* ==========================================================================
+           3. Hero 主視覺區塊
+           ========================================================================== */
+        .hero {
+            background: linear-gradient(to bottom, rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('l1.png');
+            background-size: cover; background-position: center; 
+            padding: 170px 0 150px; text-align: center; color: var(--text-on-dark);
+            position: relative; overflow: hidden;
+        }
+        .hero h1 { 
+            color: #ffffff;
+            font-size: 56px; margin-bottom: 25px; font-weight: 900; letter-spacing: 2px; 
+            text-shadow: 0 2px 15px rgba(0,0,0,0.7);
+        }
+        .hero p { 
+            font-size: 24px; margin-bottom: 50px; color: #fff; max-width: 800px; 
+            margin-left: auto; margin-right: auto; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            font-weight: 700;
+        }
+        
+        .hero-btn { 
+            background-color: var(--primary-color); color: #ffffff; 
+            padding: 16px 55px; font-size: 19px; border-radius: 6px; font-weight: 900; 
+            border: none; box-shadow: 0 10px 25px rgba(58, 109, 194, 0.4); display: inline-block;
+        }
+        .hero-btn:hover { 
+            background-color: var(--primary-dark); box-shadow: 0 15px 35px rgba(58, 109, 194, 0.6); 
+            transform: translateY(-3px);
+        }
+
+        .section-title { text-align: center; margin-bottom: 80px; position: relative; }
+        .section-title h2 { 
+            font-size: 42px; color: var(--text-on-light); margin-bottom: 20px; font-weight: 900; letter-spacing: 1px;
+            text-transform: uppercase; display: inline-block; position: relative;
+        }
+        .section-title h2::after {
+            content: ''; display: block; width: 60px; height: 4px; background: var(--primary-color);
+            margin: 15px auto 0; border-radius: 2px;
+        }
+        .section-title p { color: var(--text-dim-on-light); font-size: 18px; letter-spacing: 1px; font-weight: 700;}
+
+        /* ==========================================================================
+           4. Features 特色區塊
+           ========================================================================== */
+        .features { padding: 100px 0; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; }
+        .feature-item { 
+            padding: 50px 30px; border-radius: 12px; background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(58, 109, 194, 0.15); transition: all 0.4s; text-align: center; 
+            box-shadow: 0 10px 30px -10px rgba(58, 109, 194, 0.1);
+        }
+        .feature-item:hover { border-color: var(--primary-color); transform: translateY(-10px); }
+        .feature-icon { font-size: 60px; margin-bottom: 30px; display: block; }
+        .feature-item h4 { margin-bottom: 20px; font-size: 24px; font-weight: 900; }
+        .feature-item p { color: var(--text-dim-on-light); line-height: 1.8; font-weight: 500; }
+
+        /* ==========================================================================
+           5. Products 產品區塊
+           ========================================================================== */
+        .products-section { padding: 80px 0 120px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; } 
+        
+        .product-card {
+            background: #fff; border-radius: 10px; overflow: hidden;
+            border: 1px solid #e1e8f0; transition: all 0.4s ease; cursor: pointer; position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .product-card::before, .product-card::after {
+            content: ''; position: absolute; width: 20px; height: 20px;
+            border-color: var(--primary-color); transition: 0.4s; opacity: 0.3;
+        }
+        .product-card::before { top: 0; left: 0; border-top: 3px solid; border-left: 3px solid; }
+        .product-card::after { bottom: 0; right: 0; border-bottom: 3px solid; border-right: 3px solid; }
+        
+        .product-card:hover::before, .product-card:hover::after { width: 100%; height: 100%; opacity: 1; border-width: 1px; z-index: 10;}
+        .product-card:hover { transform: translateY(-10px); box-shadow: var(--hover-glow-light); border-color: transparent;}
+        
+        .card-img { height: 260px; background: #fff; padding: 30px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f0f0f0; }
+        .card-img img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s; }
+        .product-card:hover .card-img img { transform: scale(1.1); }
+
+        .card-content { padding: 25px; text-align: center; }
+        .card-content h3 { font-size: 22px; margin-bottom: 10px; font-weight: 900; color: #222; }
+        .card-link { color: var(--primary-color); font-weight: 900; font-size: 15px; }
+
+        /* ==========================================================================
+           6. Detail Items
+           ========================================================================== */
+        .detail-section { padding: 80px 0; border-top: 1px dashed rgba(58, 109, 194, 0.3); }
+        .detail-header { margin-bottom: 40px; border-left: 6px solid var(--primary-color); padding-left: 20px; }
+        .detail-header h3 { font-size: 30px; font-weight: 900; color: var(--text-on-light); }
+        
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
+        .item-card { 
+            background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 20px; 
+            text-align: center; transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .item-card:hover { transform: translateY(-5px); box-shadow: var(--hover-glow-light); border-color: transparent; }
+        .item-card img { height: 160px; width: 100%; margin-bottom: 15px; object-fit: contain; }
+        .item-desc { font-size: 14px; color: var(--text-dim-on-light); background: #f8fbff; padding: 8px; border-radius: 4px; font-weight: 700; }
+
+        /* ==========================================================================
+           7. Footer (頁尾)
+           ========================================================================== */
+        footer { background: var(--bg-dark-gradient); color: #a0b3c6; padding: 100px 0 40px; font-size: 18px; margin-top: 60px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 60px; margin-bottom: 60px; }
+        
+        /* Footer Logo 無背景色 */
+        .footer-brand {
+            display: inline-flex; align-items: center; gap: 15px;                  
+            margin-bottom: 30px; padding-bottom: 15px;       
+            border-bottom: 2px solid var(--primary-color); 
+            padding: 10px 0; 
+        }
+
+        .footer-brand img { height: 60px; width: auto; }
+        .footer-brand h3 { color: #ffffff; font-size: 32px; font-weight: 900; margin: 0; }
+
+        .footer-col h3.simple-title {
+            color: #fff; margin-bottom: 30px; font-size: 24px; font-weight: 900; 
+            border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 10px;
+        }
+
+        .contact-info li { margin-bottom: 15px; }
+        .contact-info span { margin-right: 15px; color: var(--primary-color); font-size: 22px; }
+        .footer-links a { color: #a0b3c6; transition: 0.3s; display: block; margin-bottom: 12px; font-weight: 500; font-size: 18px;}
+        .footer-links a:hover { color: var(--primary-color); transform: translateX(5px); }
+        .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; font-size: 15px; }
+
+        /* ==========================================================================
+           8. 右側懸浮介面 (🔥 放大 + 位置上移防重疊)
+           ========================================================================== */
+        
+        .side-nav {
+            position: fixed;
+            right: 20px;
+            
+            /* 保持固定在上方，不重疊 */
+            top: 210px; 
+            transform: none; 
+            
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            
+            /* 🔥 [瘦身 1] 間距改小 (原本 8px -> 改 4px) */
+            /* 這樣高度會大幅縮減 */
+            gap: 4px; 
+            
+            background: rgba(255, 255, 255, 0.95);
+            
+            /* 🔥 [瘦身 2] 容器留白改小 (原本 15px 10px -> 改 8px 5px) */
+            /* 第一個數字是上下，第二個是左右，這樣寬度和高度都會縮小 */
+            padding: 8px 5px;
+            
+            border-radius: 20px; /* 圓角改小一點配合 */
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+
+            opacity: 0; visibility: hidden; transition: all 0.5s ease;
+            transform: translateX(20px); 
+        }
+        /* 顯示時的狀態也要改 */
+        .show-floating-ui .side-nav {
+            opacity: 1; visibility: visible;
+            transform: translateX(0); /* 這裡也不要 translateY 了 */
+        }        .side-nav a {
+            display: block;
+            
+            /* 🔥 [瘦身 3] 按鈕變薄變窄 (原本 8px 15px -> 改 4px 8px) */
+            padding: 4px 8px; 
+            
+            /* 🔥 [瘦身 4] 字體改回秀氣的大小 (原本 16px -> 改 13px) */
+            font-size: 13px; 
+            
+            color: #50657b;
+            font-weight: 900; 
+            text-align: center; 
+            border-radius: 15px; /* 圓角配合變小 */
+            transition: 0.3s; 
+            white-space: nowrap;
+        }
+
+        .side-nav a:hover { background-color: var(--primary-color); color: #fff; transform: translateX(-5px); }
+
+       .floating-contact-bar {
+            position: fixed;
+            right: 20px;
+            
+            /* 保持在底部，給它一點安全距離 */
+            bottom: 20px; 
+            
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+
+            opacity: 0; visibility: hidden; transition: all 0.5s ease;
+            transform: translateX(20px); 
+        }
+
+        .show-floating-ui .side-nav,
+        .show-floating-ui .floating-contact-bar {
+            opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); 
+        }
+        
+        .show-floating-ui .floating-contact-bar { transform: translateX(0); }
+
+        .float-btn {
+            display: flex; justify-content: center; align-items: center;
+            width: 60px; height: 60px; border-radius: 50%; color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; text-decoration: none;
+        }
+
+        .float-btn svg { width: 30px; height: 30px; fill: white; transition: transform 0.3s ease; }
+        .float-btn:hover { transform: scale(1.15) translateX(-5px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35); }
+        .float-btn:hover svg { transform: rotate(-10deg); }
+
+        .float-btn::before {
+            content: attr(data-text); position: absolute; right: 75px;
+            top: 50%; transform: translateY(-50%) translateX(10px); 
+            background-color: rgba(0, 0, 0, 0.85); color: #fff; padding: 6px 12px; border-radius: 6px;
+            font-size: 15px; font-weight: 700; white-space: nowrap; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.3s ease;      
+        }
+        .float-btn:hover::before { opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); }
+        .float-btn::after {
+            content: ''; position: absolute; right: 70px; top: 50%; transform: translateY(-50%) translateX(10px);
+            border-width: 6px; border-style: solid; border-color: transparent transparent transparent rgba(0, 0, 0, 0.85); 
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; pointer-events: none;
+        }
+        .float-btn:hover::after { opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); }
+
+        .btn-phone { background: linear-gradient(135deg, #3a6dc2, #2a5296); }
+        .btn-mail { background: linear-gradient(135deg, #ea4335, #c5221f); }
+        .btn-line { background: linear-gradient(135deg, #06C755, #00b900); }
+
+        /* ==========================================================================
+           9. 手機版專用調整
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .header-inner { 
+                flex-direction: column; 
+                height: auto; 
+                padding: 10px 0; 
+            }
+
+            .logo img { max-height: 45px; }
+            .logo span { font-size: 22px; }
+
+            .nav-menu { 
+                flex-direction: row; 
+                flex-wrap: wrap;           
+                justify-content: center;  
+                width: 100%; 
+                margin-top: 10px;         
+                gap: 15px;                
+            }
+
+            .nav-menu a { 
+                text-align: center; 
+                padding: 5px; 
+                font-size: 15px; 
+            }
+            .nav-menu a::after { display: none; }
+
+            .cta-btn {
+                margin-top: 5px;
+                width: 80%;       
+                text-align: center;
+                padding: 8px 0;   
+                font-size: 16px;
+            }
+
+            .features-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 32px; } 
+            .hero p { font-size: 18px; }
+
+            .side-nav { display: none; } 
+
+            .floating-contact-bar {
+                flex-direction: row; 
+                right: 0; 
+                left: 0; 
+                bottom: 0; 
+                justify-content: center;
+                background: rgba(255,255,255,0.98); 
+                padding: 10px; 
+                gap: 40px; 
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+                opacity: 1 !important; 
+                visibility: visible !important; 
+                transform: none !important;
+                border-top: 1px solid #eee;
+            }
+            
+            .float-btn { width: 50px; height: 50px; box-shadow: none; }
+            .float-btn svg { width: 24px; height: 24px; }
+            .float-btn::before, .float-btn::after { display: none; } 
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <a href="#" class="logo">
+                <img src="logo.png" alt="銀鑫工業五金 Logo">
+                <span>銀鑫有限公司</span>
+            </a>
+            <nav class="nav-menu">
+                <a href="#">首頁</a>
+                <a href="#products">產品介紹</a>
+                <a href="https://yinxinhardwareco-oss.github.io/yinxin-catalog/catalog/index.html" target="_blank">電子型錄 (互動版)</a>
+                <a href="#contact">聯絡我們</a>
+                <a href="https://lin.ee/kPi0UuF" target="_blank" class="cta-btn">LINE 洽詢</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>工業箱體五金的堅實後盾</h1>
+            <p>專業供應：平面把手、工業鉸鏈、鎖具、腳座 <br> 系統整合商與重工廠的最佳合作夥伴</p>
+            <a href="#products" class="hero-btn">瀏覽產品目錄</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>為什麼選擇銀鑫?</h2>
+                <p>SPEED · QUALITY · SERVICE</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <span class="feature-icon">📦</span>
+                    <h4>海量庫存，即時供應</h4>
+                    <p>中部地區最快當日送達，常規品項庫存充足，杜絕停工待料風險。</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🛠️</span>
+                    <h4>專業技術支援</h4>
+                    <p>提供材質建議與規格選型服務，協助您解決設計階段的五金難題。</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🛡️</span>
+                    <h4>嚴格品質把關</h4>
+                    <p>數十年經驗嚴選，專注於高品質不鏽鋼與鋅合金五金，耐用度經得起考驗。</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💎</span>
+                    <h4>獨特優勢・人無我有</h4>
+                    <p>工業五金百百種，我們追求獨特化。常規品項齊全，稀缺規格皆有。能高度配合您的特殊需求。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="products" class="products-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>產品總覽 PRODUCTS</h2>
+                <p>請點擊下方分類查看詳細規格</p>
+            </div>
+            <div id="category-grid" class="product-grid"></div>
+        </div>
+    </section>
+
+    <div id="detail-container" class="container"></div>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <img src="logo.png" alt="銀鑫 Logo">
+                        <h3>銀鑫有限公司</h3>
+                    </div>
+                    <p>我們專注於工業五金供應，為中部地區重工產業提供最可靠的後勤支援。歡迎索取實體型錄。</p>
+                </div>
+                <div class="footer-col">
+                    <h3 class="simple-title">聯絡資訊</h3>
+                    <ul class="contact-info">
+                        <li><span>📍</span> 彰化縣伸港鄉定興村124號</li>
+                        <li><span>📞</span> 04-8521867</li>
+                        <li><span>📠</span> 04-8521945</li>
+                        <li><span>✉️</span> yinxinhardware.co@gmail.com</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="simple-title">快速連結</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://drive.google.com/file/d/1dEMnpQVUOS_pazhUEqY9zWGPXcWIqKYH/view?usp=sharing" target="_blank">下載 PDF 電子型錄</a></li>
+                        <li><a href="https://lin.ee/kPi0UuF" target="_blank">LINE 官方帳號</a></li>
+                        <li><a href="#products">產品分類</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 銀鑫有限公司 Yin Xin Company Limited. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <nav id="side-nav" class="side-nav">
+        </nav>
+
+    <div class="floating-contact-bar">
+        <a href="tel:04-8521867" class="float-btn btn-phone" data-text="(電話)" title="撥打電話">
+            <svg viewBox="0 0 24 24">
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1.01A11.36 11.36 0 0 1 8.59 3.99C8.59 3.44 8.14 3 7.59 3H4.03C3.48 3 3 3.45 3 4.01 3 13.39 10.61 21 20 21c.55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/>
+            </svg>
+        </a>
+
+        <a href="mailto:yinxinhardware.co@gmail.com" class="float-btn btn-mail" data-text="(E-MAIL)" title="寄送郵件">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+        </a>
+
+        <a href="https://lin.ee/kPi0UuF" target="_blank" class="float-btn btn-line" data-text="(LINE好友)" title="加 LINE 好友">
+            <svg viewBox="0 0 100 100" style="width: 38px; height: 38px;">
+                <path fill="#ffffff" d="M10,35 v30 h20 v-8 h-12 v-22 z M35,35 v30 h8 v-30 z M48,35 v30 h8 v-18 l12,18 h8 v-30 h-8 v18 l-12,-18 z M80,35 v30 h20 v-8 h-12 v-4 h10 v-7 h-10 v-4 h12 v-7 z" />
+            </svg>
+        </a>
+    </div>
+    
+    <script>
+        const categories = [
+            { id: 'a', name: '平面把手', count: 32 },
+            { id: 'b', name: '白鐵把手', count: 17 },
+            { id: 'c', name: '五金配件', count: 23 },
+            { id: 'd', name: '冷凍把手', count: 3 },
+            { id: 'e', name: '取手', count: 19 },
+            { id: 'f', name: '鉸鍊', count: 32 },
+            { id: 'g', name: '圓頭鎖', count: 18 },
+            { id: 'h', name: '搭扣', count: 9 },
+            { id: 'i', name: '腳座', count: 10 },
+            { id: 'j', name: '檔片', count: 18 },
+            { id: 'k', name: '槍形把手', count: 7 }
+        ];
+
+        const ext = ".png"; 
+
+        const customDescriptions = {
+            'a1': 'A-150-A-K', 
+            'a2': 'A-350-A 黑\\銀\\砂銀',
+            'a3': 'A-281-1(S)總長150mm寬度39mm',
+            'a4': 'A-281-4(B)總長92mm寬度34mm',
+            'a5': 'A-281-1-K(S)總長150mm寬度39m', 
+            'a6': 'A-281-1(B)總長150mm寬度39mm', 
+            'a7': 'A-281-2(S)總長132mm寬度33m', 
+            'a8': 'A-281-2-K(S)總長132mm寬度33mm', 
+            'a9': 'A-281-2(B)總長132mm寬度33mm', 
+            'a10': 'A-281-3(S)總長110mm寬度34mm', 
+            'a11': 'A-281-3(B)總長110mm寬度34mm', 
+            'a12': 'A-281-4(S)總長92mm寬度34mm', 
+            'a13': 'A-1154', 
+            'a14': 'A-505-3-B-(SS)', 
+            'a15': 'A-505-3-A-(SS)', 
+            'a16': 'A-505-2-B-(SS)', 
+            'a17': 'A-505-2-A-(SS)', 
+            'a18': 'A-360-4-A-(G)外觀尺寸82mm 寬度28mm IP54', 
+            'a19': 'A-360-4-A-(S)外觀尺寸82mm 寬度28mm IP54', 
+            'a20': 'A-360-4-B-(SS)外觀尺寸82mm 寬度28mm IP54', 
+            'a21': 'A-360-3-A-(SS)外觀尺寸110mm 寬度28mm IP54', 
+            'a22': 'A-360-3-A-(G)外觀尺寸 110mm IP54', 
+            'a23': 'A-241-3-B-1-(G)', 
+            'a24': 'A-241-3-A-1-(G)', 
+            'a25': 'A-240-3-B-(S)總長84mm寬度29mm', 
+            'a26': 'A-240-3-A-(P)總長84mm寬度28mm', 
+            'a27': 'A-240-3-B-(P)總長84mm寬度29mm', 
+            'a28': 'A-240-3-A-(S)總長84mm寬度28mm', 
+            'a29': 'A-240-2-B-(S)總長112mm寬度mm', 
+            'a30': 'A-240-2-B-(P)總長112mm寬度28mm', 
+            'a31': 'A-240-2-A-(P)總長112mm寬度28mm', 
+            'a32': 'A-240-2-A-(S)總長112mm寬度28mm', 
+            'b1': 'A-1140-3-A-(S)', 
+            'b2': 'A-1140-2-A-(S)',
+            'b3': 'A-1140-1-A-(S)', 
+            'b4': 'BL-2118', 
+            'b5': 'FA-1110-3', 
+            'b6': 'A-1068-1-2-3', 
+            'b7': 'A-1080-1-2-3-4', 
+            'b8': 'CAS-1406-D', 
+            'b9': 'A-1019-B', 
+            'b10': 'A-1019-A', 
+            'b11': 'A-1172-1 大圓頭', 
+            'b12': 'A-1180-3', 
+            'b13': 'A-1180-3-K', 
+            'b14': 'A-1180-2', 
+            'b15': 'A-1180-2-K', 
+            'b16': 'A-1180-1-K', 
+            'b17': 'A-1180-1', 
+            'c1': '封印條', 
+            'c2': '長排鉸鏈   39mm1.2t 1200mm 50mm   2.0t 1200mm',
+            'c3': '白鐵磁石\\塑膠磁石',
+            'c4': '可調式把手',
+            'c5': '方形透視窗 附透明壓克力板 <span style="color: #d9534f; font-weight: bold;">(可加購玻璃)</span>',
+            'c6': '天地線拉桿接頭  直徑8.0mm直徑9.5mm塑膠輪 鋅合金輪',
+            'c7': '天地線拉桿直徑8mm 600L 900L 1200L直徑10mm 1200L可依客戶需求卯接各式檔片',
+            'c8': '天地線(ㄇ片)',
+            'c9': '天地線(包黑T)',
+            'c10': '大頭螺絲',
+            'c11': '丸型螺絲',
+            'c12': '滑軌 200mm~1000mm',
+            'c13': 'PP檔',
+            'c14': 'M5-M6底板帽',
+            'c15': 'K-7602',
+            'c16': 'C-90銅雙珠',
+            'c17': 'B-83-36(L.R)分左右邊',
+            'c18': 'B-83-30(L.R)分左右邊',
+            'c19': 'A-172-H-柄',
+            'c20': '圓形透視窗 附透明壓克力板 <span style="color: #d9534f; font-weight: bold;">(可加購玻璃)</span>',
+            'c21': '焊接植丁',
+            'c22': '浮動螺帽',
+            'c23': '後紐管',
+            'd1': 'AH-1450 \\ AH-1460 \\ AH-1470',
+            'd2': 'AH-1332門鉸鏈 ',
+            'd3': 'AH-713門把手',
+            'e1': '42-C',
+            'e2': 'P-746 塑膠崁入取手適用板厚1.2t-1.6t-2t-3t',
+            'e3': 'A-122 ',
+            'e4': '1200-26 斜口平口把手',
+            'e5': 'A-1153',
+            'e6': 'A-1152',
+            'e7': 'A-303-(S) 鋅合金',
+            'e8': 'AL-20',
+            'e9': 'AL100-AL77 (鋁)大量化可客製長度',
+            'e10': 'A-1042-C 直徑8-10-12間距100-160 內牙\\外牙\\鐵\\白鐵',
+            'e11': 'A-42-F-2 鐵\\白鐵',
+            'e12': 'A-1006-4 鐵\\白鐵3英吋 4英吋',
+            'e13': 'A-6-4-R',
+            'e14': 'A-42-A-R',
+            'e15': 'A-42-A 摺疊把手(黑鐵\\白鐵)',
+            'e16': 'HP-120塑膠取手',
+            'e17': 'HP-90塑膠取手',
+            'e18': 'E-69材質為鋁管可客製長度',
+            'e19': 'HY-357材質為白鐵管可客製長度',
+            'f1': 'B-1078二孔\\三孔長度40~75mm',
+            'f2': 'B-1064',
+            'f3': 'B-1025',
+            'f4': 'B-95',
+            'f5': '1100#',
+            'f6': '1065#',
+            'f7': '1065-5-P',
+            'f8': '60#(黑鐵)1060#(白鐵) ',
+            'f9': '1052#',
+            'f10': '1046-40~75',
+            'f11': '1029',
+            'f12': '702#',
+            'f13': '82# 彈簧丁雙(黑鐵) 1082# 彈簧丁雙(白鐵)',
+            'f14': '70#-1-2-3 (黑鐵\\白鐵)',
+            'f15': '62# 彈簧丁雙(黑鐵) 1062# 彈簧丁雙(白鐵)',
+            'f16': 'BL-70-55-B',
+            'f17': 'BL-70-1 ',
+            'f18': '30X30鋅活葉 銀&黑烤漆',
+            'f19': 'CL-202',
+            'f20': 'CL-201-(SS) (砂銀\\黑)',
+            'f21': 'HPL(B)',
+            'f22': 'HPL-80',
+            'f23': 'BL-2059',
+            'f24': 'BL-2059-1',
+            'f25': 'BL-25-P',
+            'f26': 'B四鉸鏈(L形)',
+            'f27': 'B四鉸鏈(ㄇ形)',
+            'f28': 'B4.5mm-32 (黑鐵\\白鐵)',
+            'f29': 'B-1234',
+            'f30': 'B-1229',
+            'f31': 'B-90#(黑鐵)B-1090#(白鐵)  ',
+            'f32': 'B-1078無孔',
+            'g1': 'NL406',
+            'g2': 'PP406',
+            'g3': '406-DH2-(S)',
+            'g4': '406 長鑰匙',
+            'g5': '402-M5',
+            'g6': 'C-403-5L',
+            'g7': 'CE-436-E 壓縮式鎖頭',
+            'g8': 'CPA-406-E',
+            'g9': 'CI-406-G',
+            'g10': 'CI-406-E',
+            'g11': 'CB-406-E',
+            'g12': 'CD-406-B',
+            'g13': 'CD-406-E',
+            'g14': 'CK-406-D',
+            'g15': 'CD-406-D',
+            'g16': 'A-172-2  中圓頭',
+            'g17': 'A-172-1 大圓頭',
+            'g18': 'CAS-1406-D',
+            'h1': 'C-1221',
+            'h2': 'C-1221 CP',
+            'h3': 'C-1007-41',
+            'h4': 'C-1012-A-A 白鐵搭扣有鎖',
+            'h5': 'C-1012-D-B 白鐵搭扣無鎖',
+            'h6': 'C-1012-D-A 白鐵搭扣有鎖',
+            'h7': 'C-1007-1',
+            'h8': 'C-1007-2',
+            'h9': 'C-1007-3',
+            'i1': '輕型腳座 M8X100 M10X100',
+            'i2': '萬向底盤腳座',
+            'i3': 'BN60腳座(黑鐵.白鐵)M12-M16 長度50-150mm',
+            'i4': 'BN60腳座(黑鐵)M12-M16 長度50-150mm',
+            'i5': 'BS60腳座(白鐵\\黑鐵)M12-M16長度50-150mm',
+            'i6': 'S70腳座(白鐵) M16-M20長度50-200mm',
+            'i7': 'S60腳座(白鐵) M12-M20長度50-200mm',
+            'i8': 'R70 M16-M20長度50-200mm(橡膠底盤)',
+            'i9': 'KMS腳座(白鐵底盤)M16-M30 長度50-200mm',
+            'i10': 'KAS90腳座 鋁合金鍍鉻底盤M12-M24 長度50-200mm',
+            'j1': 'CK-78 90長片',
+            'j2': 'CK-51(22長片)',
+            'j3': 'CK-34 折彎片',
+            'j4': '小耳T片-鐵',
+            'j5': '小耳T片-白鐵',
+            'j6': '860平片(白鐵)',
+            'j7': '240 天地拉桿檔片',
+            'j8': '7號片',
+            'j9': '5號左',
+            'j10': '1號片',
+            'j11': '8號片',
+            'j12': 'D416',
+            'j13': 'T片內四角4MM 折彎35MM',
+            'j14': 'T片-包黑',
+            'j15': 'T片-包紅',
+            'j16': 'N型檔片',
+            'j17': 'CK-505',
+            'j18': 'CK-89 T片',
+            'k1': 'A-45-A-(S)-有鎖-無鎖',
+            'k2': 'A-19-B-(S)',
+            'k3': 'A-19-A-(S)',
+            'k4': 'A-142-1-2-3-A-(B)',
+            'k5': 'A-140-3-A-(S)',
+            'k6': 'A-140-2-A-(S)',
+            'k7': 'A-140-1-A(S)',            
+        };
+        
+        const categoryGrid = document.getElementById('category-grid');
+        const detailContainer = document.getElementById('detail-container');
+        const sideNav = document.getElementById('side-nav'); 
+
+        categories.forEach(cat => {
+            
+            let coverImageNum = (cat.id === 'g') ? 'g7' : `${cat.id}1`;
+            const coverImage = `${cat.id}/${coverImageNum}${ext}`; 
+            
+            categoryGrid.innerHTML += `
+                <a href="#section-${cat.id}" class="product-card">
+                    <div class="card-img">
+                        <img src="${coverImage}" loading="lazy" alt="${cat.name}">
+                    </div>
+                    <div class="card-content">
+                        <h3>${cat.name}</h3>
+                        <span class="card-link">查看系列產品 (${cat.count}款)</span>
+                    </div>
+                </a>
+            `;
+
+            sideNav.innerHTML += `<a href="#section-${cat.id}">${cat.name}</a>`;
+
+            let itemsHtml = '';
+            for (let i = 1; i <= cat.count; i++) {
+                
+                if (cat.id === 'a' && i === 13) {
+                    itemsHtml += `
+                        <div style="grid-column: 1 / -1; background: #fff5f5; border: 1px dashed #d9534f; color: #c9302c; padding: 15px; margin: 20px 0; border-radius: 8px; text-align: center; font-weight: bold; font-size: 16px;">
+                            📢 說明：以下型號平面把手若大量訂購，皆可客製化 LOGO
+                        </div>
+                    `;
+                }
+
+                const imgName = `${cat.id}${i}`;
+                const imgPath = `${cat.id}/${imgName}${ext}`;
+                let displayText = customDescriptions[imgName] || `${imgName} (商品說明)`;
+
+                itemsHtml += `
+                    <div class="item-card">
+                        <img src="${imgPath}" alt="${cat.name}-${imgName}">
+                        <div class="item-desc">${displayText}</div>
+                    </div>
+                `;
+            }
+
+            detailContainer.innerHTML += `
+                <div id="section-${cat.id}" class="detail-section">
+                    <div class="detail-header">
+                        <h3>${cat.name}</h3>
+                    </div>
+                    <div class="items-grid">
+                        ${itemsHtml}
+                    </div>
+                </div>
+            `;
+        });
+
+        // 監聽網頁捲動事件 (Scroll Reveal)
+        window.addEventListener('scroll', () => {
+            const heroSection = document.querySelector('.hero');
+            const triggerHeight = heroSection.offsetHeight - 100;
+
+            if (window.scrollY > triggerHeight) {
+                document.body.classList.add('show-floating-ui');
+            } else {
+                document.body.classList.remove('show-floating-ui');
+            }
+        });
+
+    </script>
+</body>
+</html>
