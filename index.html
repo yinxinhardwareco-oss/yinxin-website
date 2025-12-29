@@ -10,7 +10,6 @@
     <link rel="shortcut icon" href="logo.png">
 
     <meta name="description" content="銀鑫有限公司專營工業五金、機械五金百貨與自動化零件。現貨供應：電控箱配件、電控板零件、各式平面把手、工業鉸鏈(丁雙)、精密鑄造件、工業滑桿(滑軌)、擋片、各式螺絲螺母、調整腳座及鎖具。彰化伸港在地庫存，規格齊全，歡迎工廠與系統整合商採購。">
-
     <meta name="keywords" content="銀鑫, 銀鑫有限公司, 工業五金, 機械五金, 五金百貨, 電控箱配件, 電控板零件, 配電盤五金, 鑄造, 精密鑄造, 脫蠟鑄造, 滑桿, 滑軌, 導軌, 螺絲, 螺母, 螺栓, 丁雙, 鉸鏈, 活頁, 後紐, 擋片, 封印條, 防水膠條, 平面把手, 門鎖, 迫緊式搭扣, 調整腳座, 避震腳, 拉手, 取手, 把手, 自動化設備零件, 鈑金箱體, 機櫃五金, 彰化五金, 台中五金, 批發零售, A-150, B-1078">
 
     <meta property="og:title" content="銀鑫工業五金 - 機械與電控箱配件專家">
@@ -217,13 +216,25 @@
         .detail-header h3 { font-size: 30px; font-weight: 900; color: var(--text-on-light); }
         
         .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
+        
+        /* 🔥 手指游標 (新增) */
         .item-card { 
             background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 20px; 
             text-align: center; transition: 0.3s; position: relative; overflow: hidden;
+            cursor: pointer;
         }
         .item-card:hover { transform: translateY(-5px); box-shadow: var(--hover-glow-light); border-color: transparent; }
         .item-card img { height: 160px; width: 100%; margin-bottom: 15px; object-fit: contain; }
         .item-desc { font-size: 14px; color: var(--text-dim-on-light); background: #f8fbff; padding: 8px; border-radius: 4px; font-weight: 700; }
+
+        /* 🔥 圖片提示效果 (新增) */
+        .item-card::after {
+            content: '🔍 點擊查看尺寸';
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7); color: #fff; padding: 8px 15px; border-radius: 20px;
+            opacity: 0; transition: 0.3s; pointer-events: none; font-weight: bold; font-size: 14px;
+        }
+        .item-card:hover::after { opacity: 1; }
 
         /* ==========================================================================
            7. Footer (頁尾)
@@ -254,84 +265,57 @@
         .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; font-size: 15px; }
 
         /* ==========================================================================
-           8. 右側懸浮介面 (🔥 放大 + 位置上移防重疊)
+           8. 右側懸浮介面 (🔥 嚴格固定位置 top: 120px)
            ========================================================================== */
         
         .side-nav {
-            position: fixed;
-            right: 20px;
-            
-            /* 保持固定在上方，不重疊 */
-            top: 210px; 
-            transform: none; 
-            
+            position: fixed; right: 20px; 
+            /* 🔥 [嚴格位置] 絕對固定在 120px */
+            top: 120px !important; 
+            transform: none !important; 
             z-index: 9000;
-            display: flex;
-            flex-direction: column;
-            
-            /* 🔥 [瘦身 1] 間距改小 (原本 8px -> 改 4px) */
-            /* 這樣高度會大幅縮減 */
+            display: flex; flex-direction: column; 
             gap: 4px; 
-            
-            background: rgba(255, 255, 255, 0.95);
-            
-            /* 🔥 [瘦身 2] 容器留白改小 (原本 15px 10px -> 改 8px 5px) */
-            /* 第一個數字是上下，第二個是左右，這樣寬度和高度都會縮小 */
-            padding: 8px 5px;
-            
-            border-radius: 20px; /* 圓角改小一點配合 */
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            backdrop-filter: blur(5px);
-
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 8px 5px; 
+            border-radius: 20px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); backdrop-filter: blur(5px);
             opacity: 0; visibility: hidden; transition: all 0.5s ease;
             transform: translateX(20px); 
         }
-        /* 顯示時的狀態也要改 */
+
+        /* 顯示時，絕對不准上下跑 */
         .show-floating-ui .side-nav {
             opacity: 1; visibility: visible;
-            transform: translateX(0); /* 這裡也不要 translateY 了 */
-        }        .side-nav a {
-            display: block;
-            
-            /* 🔥 [瘦身 3] 按鈕變薄變窄 (原本 8px 15px -> 改 4px 8px) */
+            transform: translateX(0) !important;
+        }
+
+        .side-nav a {
+            display: block; 
             padding: 4px 8px; 
-            
-            /* 🔥 [瘦身 4] 字體改回秀氣的大小 (原本 16px -> 改 13px) */
             font-size: 13px; 
-            
             color: #50657b;
-            font-weight: 900; 
-            text-align: center; 
-            border-radius: 15px; /* 圓角配合變小 */
-            transition: 0.3s; 
-            white-space: nowrap;
+            font-weight: 900; text-align: center; border-radius: 15px;
+            transition: 0.3s; white-space: nowrap;
         }
 
         .side-nav a:hover { background-color: var(--primary-color); color: #fff; transform: translateX(-5px); }
 
-       .floating-contact-bar {
-            position: fixed;
-            right: 20px;
-            
-            /* 保持在底部，給它一點安全距離 */
-            bottom: 20px; 
-            
+        .floating-contact-bar {
+            position: fixed; right: 20px; 
+            /* 🔥 [嚴格位置] 絕對固定在底部 20px */
+            bottom: 20px !important; 
+            top: auto !important; /* 防止干擾 */
             z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-
-            opacity: 0; visibility: hidden; transition: all 0.5s ease;
-            transform: translateX(20px); 
+            display: flex; flex-direction: column; gap: 15px; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.5s ease; transform: translateX(20px); 
         }
 
-        .show-floating-ui .side-nav,
-        .show-floating-ui .floating-contact-bar {
-            opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); 
+        /* 顯示時，絕對不准上下跑 */
+        .show-floating-ui .floating-contact-bar { 
+            opacity: 1; visibility: visible; 
+            transform: translateX(0) !important; 
         }
-        
-        .show-floating-ui .floating-contact-bar { transform: translateX(0); }
 
         .float-btn {
             display: flex; justify-content: center; align-items: center;
@@ -364,6 +348,52 @@
         .btn-line { background: linear-gradient(135deg, #06C755, #00b900); }
 
         /* ==========================================================================
+           🔥 10. 新增：彈跳視窗 (Modal) 樣式
+           ========================================================================== */
+        .modal {
+            display: none; /* 預設隱藏 */
+            position: fixed; 
+            z-index: 10000; /* 最上層，蓋過所有東西 */
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.85); /* 半透明黑色背景 */
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal.show { display: flex; opacity: 1; }
+        
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh; /* 確保不超過螢幕高度 */
+            object-fit: contain;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -40px; right: 0;
+            color: #fff; font-size: 35px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        .close-btn:hover { color: var(--primary-color); }
+        
+        .modal-title {
+            position: absolute; bottom: -40px; left: 0; width: 100%; text-align: center;
+            color: #fff; font-size: 18px; font-weight: 700;
+        }
+
+        /* ==========================================================================
            9. 手機版專用調整
            ========================================================================== */
         @media (max-width: 768px) {
@@ -378,7 +408,7 @@
 
             .nav-menu { 
                 flex-direction: row; 
-                flex-wrap: wrap;           
+                flex-wrap: wrap;          
                 justify-content: center;  
                 width: 100%; 
                 margin-top: 10px;         
@@ -490,7 +520,7 @@
         <div class="container">
             <div class="section-title">
                 <h2>產品總覽 PRODUCTS</h2>
-                <p>請點擊下方分類查看詳細規格</p>
+                <p>請點擊下方分類查看詳細產品圖及尺寸規格</p>
             </div>
             <div id="category-grid" class="product-grid"></div>
         </div>
@@ -506,12 +536,12 @@
                         <img src="logo.png" alt="銀鑫 Logo">
                         <h3>銀鑫有限公司</h3>
                     </div>
-                    <p>我們專注於工業五金供應，為中部地區重工產業提供最可靠的後勤支援。歡迎索取實體型錄。</p>
+                    <p>我們專注於工業五金供應，為中部地區重工產業提供最可靠的後勤支援。尺寸圖在商品圖片內，歡迎索取實體型錄。</p>
                 </div>
                 <div class="footer-col">
                     <h3 class="simple-title">聯絡資訊</h3>
                     <ul class="contact-info">
-                        <li><span>📍</span> 彰化縣伸港鄉定興村124號</li>
+                        <li><span>📍</span> 彰化縣伸港鄉定興路124號</li>
                         <li><span>📞</span> 04-8521867</li>
                         <li><span>📠</span> 04-8521945</li>
                         <li><span>✉️</span> yinxinhardware.co@gmail.com</li>
@@ -520,7 +550,7 @@
                 <div class="footer-col">
                     <h3 class="simple-title">快速連結</h3>
                     <ul class="footer-links">
-                        <li><a href="https://drive.google.com/file/d/1dEMnpQVUOS_pazhUEqY9zWGPXcWIqKYH/view?usp=sharing" target="_blank">下載 PDF 電子型錄</a></li>
+                        <li><a href="https://yinxinhardwareco-oss.github.io/yinxin-catalog/catalog/index.html" target="_blank">電子型錄 (互動版)</a></li>
                         <li><a href="https://lin.ee/kPi0UuF" target="_blank">LINE 官方帳號</a></li>
                         <li><a href="#products">產品分類</a></li>
                     </ul>
@@ -537,36 +567,36 @@
 
     <div class="floating-contact-bar">
         <a href="tel:04-8521867" class="float-btn btn-phone" data-text="(電話)" title="撥打電話">
-            <svg viewBox="0 0 24 24">
-                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1.01A11.36 11.36 0 0 1 8.59 3.99C8.59 3.44 8.14 3 7.59 3H4.03C3.48 3 3 3.45 3 4.01 3 13.39 10.61 21 20 21c.55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1.01A11.36 11.36 0 0 1 8.59 3.99C8.59 3.44 8.14 3 7.59 3H4.03C3.48 3 3 3.45 3 4.01 3 13.39 10.61 21 20 21c.55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
         </a>
-
         <a href="mailto:yinxinhardware.co@gmail.com" class="float-btn btn-mail" data-text="(E-MAIL)" title="寄送郵件">
-            <svg viewBox="0 0 24 24">
-                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
         </a>
-
         <a href="https://lin.ee/kPi0UuF" target="_blank" class="float-btn btn-line" data-text="(LINE好友)" title="加 LINE 好友">
-            <svg viewBox="0 0 100 100" style="width: 38px; height: 38px;">
-                <path fill="#ffffff" d="M10,35 v30 h20 v-8 h-12 v-22 z M35,35 v30 h8 v-30 z M48,35 v30 h8 v-18 l12,18 h8 v-30 h-8 v18 l-12,-18 z M80,35 v30 h20 v-8 h-12 v-4 h10 v-7 h-10 v-4 h12 v-7 z" />
-            </svg>
+            <svg viewBox="0 0 100 100" style="width: 38px; height: 38px;"><path fill="#ffffff" d="M10,35 v30 h20 v-8 h-12 v-22 z M35,35 v30 h8 v-30 z M48,35 v30 h8 v-18 l12,18 h8 v-30 h-8 v18 l-12,-18 z M80,35 v30 h20 v-8 h-12 v-4 h10 v-7 h-10 v-4 h12 v-7 z" /></svg>
         </a>
+    </div>
+
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img id="modalImg" src="" alt="尺寸圖">
+            <div id="modalTitle" class="modal-title"></div>
+        </div>
     </div>
     
     <script>
         const categories = [
             { id: 'a', name: '平面把手', count: 32 },
-            { id: 'b', name: '白鐵把手', count: 17 },
-            { id: 'c', name: '五金配件', count: 23 },
+            { id: 'b', name: '白鐵把手', count: 18 },
+            { id: 'c', name: '五金配件', count: 40 },
             { id: 'd', name: '冷凍把手', count: 3 },
-            { id: 'e', name: '取手', count: 19 },
+            { id: 'e', name: '取手', count: 20 },
             { id: 'f', name: '鉸鍊', count: 32 },
-            { id: 'g', name: '圓頭鎖', count: 18 },
-            { id: 'h', name: '搭扣', count: 9 },
-            { id: 'i', name: '腳座', count: 10 },
-            { id: 'j', name: '檔片', count: 18 },
+            { id: 'g', name: '圓頭鎖', count: 26 },
+            { id: 'h', name: '搭扣', count: 11 },
+            { id: 'i', name: '腳座', count: 14 },
+            { id: 'j', name: '檔片', count: 20 },
             { id: 'k', name: '槍形把手', count: 7 }
         ];
 
@@ -605,6 +635,7 @@
             'a30': 'A-240-2-B-(P)總長112mm寬度28mm', 
             'a31': 'A-240-2-A-(P)總長112mm寬度28mm', 
             'a32': 'A-240-2-A-(S)總長112mm寬度28mm', 
+
             'b1': 'A-1140-3-A-(S)', 
             'b2': 'A-1140-2-A-(S)',
             'b3': 'A-1140-1-A-(S)', 
@@ -620,8 +651,9 @@
             'b13': 'A-1180-3-K', 
             'b14': 'A-1180-2', 
             'b15': 'A-1180-2-K', 
-            'b16': 'A-1180-1-K', 
-            'b17': 'A-1180-1', 
+            'b16': 'A-1180-1', 
+            'b17': 'A-1180-1-K', 
+ 'b18': 'BL-2190', 
             'c1': '封印條', 
             'c2': '長排鉸鏈   39mm1.2t 1200mm 50mm   2.0t 1200mm',
             'c3': '白鐵磁石\\塑膠磁石',
@@ -645,11 +677,28 @@
             'c21': '焊接植丁',
             'c22': '浮動螺帽',
             'c23': '後紐管',
-            'd1': 'AH-1450 \\ AH-1460 \\ AH-1470',
+ 'c24': 'M10-12-16-20 螺帽 白鐵',
+ 'c25': 'M12-16 螺帽 五彩',
+ 'c26': 'M10-12-16-20 螺帽 鍍鋅',
+ 'c27': '吊環M10/12/16',
+ 'c28': '1702用芯/塞頭',
+ 'c29': '  黑鐵 62#CR-2mm/3mm  白鐵 1062#CR-2mm/3mm',
+ 'c30': '1082#用鉚頭',
+ 'c31': '套墊 ø8/ø10',
+ 'c32': '吊桿',
+ 'c33': '氣壓棒 8kg/10kg',
+ 'c34': '未知',
+ 'c35': '9013開閉器',
+ 'c36': 'C-90-60長',
+ 'c37': '塑膠磁石-咖啡色',
+ 'c38': '皮線套/橡膠',
+ 'c39': '抽屜鎖-888號key',
+ 'c40': '鋁擠行隱藏接頭',
+           'd1': 'AH-1450 \\ AH-1460 \\ AH-1470',
             'd2': 'AH-1332門鉸鏈 ',
             'd3': 'AH-713門把手',
-            'e1': '42-C',
-            'e2': 'P-746 塑膠崁入取手適用板厚1.2t-1.6t-2t-3t',
+            'e1': 'A-42-C',
+            'e2': 'HP-746 塑膠崁入取手適用板厚1.2t-1.6t-2t-3t',
             'e3': 'A-122 ',
             'e4': '1200-26 斜口平口把手',
             'e5': 'A-1153',
@@ -667,6 +716,7 @@
             'e17': 'HP-90塑膠取手',
             'e18': 'E-69材質為鋁管可客製長度',
             'e19': 'HY-357材質為白鐵管可客製長度',
+ 	    'e20': 'A-333-96/128/224',
             'f1': 'B-1078二孔\\三孔長度40~75mm',
             'f2': 'B-1064',
             'f3': 'B-1025',
@@ -697,8 +747,10 @@
             'f28': 'B4.5mm-32 (黑鐵\\白鐵)',
             'f29': 'B-1234',
             'f30': 'B-1229',
-            'f31': 'B-90#(黑鐵)B-1090#(白鐵)  ',
+            'f31': '90#(黑鐵)1090#(白鐵)  ',
             'f32': 'B-1078無孔',
+  'f33': '未知',
+
             'g1': 'NL406',
             'g2': 'PP406',
             'g3': '406-DH2-(S)',
@@ -717,6 +769,14 @@
             'g16': 'A-172-2  中圓頭',
             'g17': 'A-172-1 大圓頭',
             'g18': 'CAS-1406-D',
+'g19': 'C610s',
+'g20': 'CD-426-D',
+'g21': 'CHN-406-B',
+'g22': 'CHM-406-B',
+'g23': '鑽石鎖頭key 10002/10030',
+'g24': 'CPA-406-18-11',
+'g25': 'CPA-406-18-1',
+'g26': 'KL1932',
             'h1': 'C-1221',
             'h2': 'C-1221 CP',
             'h3': 'C-1007-41',
@@ -726,6 +786,8 @@
             'h7': 'C-1007-1',
             'h8': 'C-1007-2',
             'h9': 'C-1007-3',
+ 'h10': 'C-340',
+ 'h11': 'C-1121- 1/2/3 無外掛 C-1221- 1/2/3 有外掛',
             'i1': '輕型腳座 M8X100 M10X100',
             'i2': '萬向底盤腳座',
             'i3': 'BN60腳座(黑鐵.白鐵)M12-M16 長度50-150mm',
@@ -736,6 +798,12 @@
             'i8': 'R70 M16-M20長度50-200mm(橡膠底盤)',
             'i9': 'KMS腳座(白鐵底盤)M16-M30 長度50-200mm',
             'i10': 'KAS90腳座 鋁合金鍍鉻底盤M12-M24 長度50-200mm',
+    'i11': 'BS4012050/100',
+    'i12': 'BS4010050/100',
+    'i13': 'D9016100  黑鐵/白鐵',
+    'i14': 'D9020100 /150 黑鐵/白鐵',
+    'i15': 'R70',
+
             'j1': 'CK-78 90長片',
             'j2': 'CK-51(22長片)',
             'j3': 'CK-34 折彎片',
@@ -754,18 +822,48 @@
             'j16': 'N型檔片',
             'j17': 'CK-505',
             'j18': 'CK-89 T片',
+ 'j19': '505 小S',
+ 'j20': '505 大S',
             'k1': 'A-45-A-(S)-有鎖-無鎖',
             'k2': 'A-19-B-(S)',
             'k3': 'A-19-A-(S)',
-            'k4': 'A-142-1-2-3-A-(B)',
+            'k4': 'A-140-1-2-3-A-(B)',
             'k5': 'A-140-3-A-(S)',
             'k6': 'A-140-2-A-(S)',
-            'k7': 'A-140-1-A(S)',            
+            'k7': 'A-140-1-A(S)',             
         };
         
         const categoryGrid = document.getElementById('category-grid');
         const detailContainer = document.getElementById('detail-container');
         const sideNav = document.getElementById('side-nav'); 
+
+        // 🔥 新增：彈跳視窗功能 (JS Logic)
+        function openModal(imagePath, title) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            // 檔名規則： .png -> -size.png
+            const sizeImagePath = imagePath.replace('.png', '-size.png');
+
+            modalImg.src = sizeImagePath; 
+            modalTitle.innerHTML = title + ' <span style="font-size:0.8em; color:#ddd">(尺寸圖)</span>';
+            
+            // 錯誤處理：找不到尺寸圖就顯示原圖
+            modalImg.onerror = function() {
+                this.src = imagePath; 
+                modalTitle.innerHTML = title + ' <span style="font-size:0.8em; color:#ff6b6b">(尚未上傳尺寸圖)</span>';
+            };
+
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('show'); }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
 
         categories.forEach(cat => {
             
@@ -801,8 +899,9 @@
                 const imgPath = `${cat.id}/${imgName}${ext}`;
                 let displayText = customDescriptions[imgName] || `${imgName} (商品說明)`;
 
+                // 🔥 修改：加入 onclick 點擊事件
                 itemsHtml += `
-                    <div class="item-card">
+                    <div class="item-card" onclick="openModal('${imgPath}', '${displayText.replace(/'/g, "\\'")}')">
                         <img src="${imgPath}" alt="${cat.name}-${imgName}">
                         <div class="item-desc">${displayText}</div>
                     </div>
