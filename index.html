@@ -126,12 +126,53 @@
     animation: fadeIn 2s ease-in; /* 1.5秒淡入，感覺更平滑 */
 }
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .home-btn-group { margin-top: 40px; }
-            .side-nav { display: none; }
-            .floating-contact-bar { flex-direction: row; bottom: 0; right: 0; left: 0; background: #fff; padding: 10px; justify-content: center; gap: 40px; width: 100%; }
-        }
+        /* 修正後的專用手機版樣式 (包含標頭修復與底部按鈕保留) */
+@media (max-width: 768px) {
+    /* 1. 標頭與導覽列：改為上下排列，高度自動 */
+    .header-inner {
+        flex-direction: column !important;
+        height: auto !important;
+        padding: 15px 0;
+        gap: 10px;
+    }
+
+    /* 2. 標誌與字體：縮小避免重疊 */
+    .logo img {
+        max-height: 40px !important;
+        margin-right: 10px !important;
+    }
+    .logo span {
+        font-size: 20px !important;
+    }
+
+    /* 3. 選單按鈕：平均分佈，不擠在一起 */
+    .nav-menu {
+        gap: 10px !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+    .nav-menu a {
+        font-size: 15px !important;
+        padding: 5px 8px;
+    }
+    .cta-btn {
+        padding: 8px 15px !important;
+        font-size: 15px !important;
+    }
+
+    /* 4. 保留你原本設定的內容 */
+    .hero h1 { font-size: 32px; }
+    .home-btn-group { margin-top: 40px; }
+    .side-nav { display: none; }
+    .floating-contact-bar { 
+        display: flex !important; /* 確保它會出現 */
+        flex-direction: row; 
+        bottom: 0; right: 0; left: 0; 
+        background: #fff; padding: 10px; 
+        justify-content: center; gap: 40px; width: 100%; 
+    }
+}
     </style>
 </head>
 
