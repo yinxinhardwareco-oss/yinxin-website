@@ -110,12 +110,44 @@
         .modal-content { position: relative; background: #fff; padding: 10px; border-radius: 8px; max-width: 90%; max-height: 90%; }
         .close-btn { position: absolute; top: -40px; right: 0; color: #fff; font-size: 35px; cursor: pointer; }
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .home-btn-group { margin-top: 40px; }
-            .side-nav { display: none; }
-            .floating-contact-bar { flex-direction: row; bottom: 0; right: 0; left: 0; background: #fff; padding: 10px; justify-content: center; gap: 40px; width: 100%; }
-        }
+        /* 修正後的專用手機版樣式 */
+@media (max-width: 768px) {
+    /* 1. 讓整條導覽列高度自動，改為上下排列 */
+    .header-inner {
+        flex-direction: column !important;
+        height: auto !important;
+        padding: 15px 0;
+        gap: 10px;
+    }
+
+    /* 2. 縮小 Logo 圖片與文字大小，避免互撞 */
+    .logo img {
+        max-height: 40px !important;
+        margin-right: 10px !important;
+    }
+    .logo span {
+        font-size: 20px !important; /* 縮小「銀鑫有限公司」字體 */
+    }
+
+    /* 3. 讓選單按鈕平均分佈，不會擠成一團 */
+    .nav-menu {
+        gap: 15px !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .nav-menu a {
+        font-size: 16px !important;
+        padding: 5px 10px;
+    }
+
+    /* 4. 隱藏太佔空間的按鈕(選配)，或讓它變小 */
+    .cta-btn {
+        padding: 8px 20px !important;
+        font-size: 16px !important;
+    }
+}
     </style>
 </head>
 
@@ -697,6 +729,7 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
 </body>
 
 </html>
+
 
 
 
