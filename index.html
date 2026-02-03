@@ -110,6 +110,16 @@
         .modal-content { position: relative; background: #fff; padding: 10px; border-radius: 8px; max-width: 90%; max-height: 90%; }
         .close-btn { position: absolute; top: -40px; right: 0; color: #fff; font-size: 35px; cursor: pointer; }
 
+        /* 1. 定義動畫：從透明到完全顯示 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 2. 套用到你的 .hero 區塊 */
+.hero {
+    animation: fadeIn 1.5s ease-in; /* 1.5秒淡入，感覺更平滑 */
+}
         /* 修正後的專用手機版樣式 */
 @media (max-width: 768px) {
     /* 1. 讓整條導覽列高度自動，改為上下排列 */
@@ -729,6 +739,7 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
 </body>
 
 </html>
+
 
 
 
