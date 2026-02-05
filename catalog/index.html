@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>銀鑫產品型錄</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="shortcut icon" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #333;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #4a4a4a 0%, #2b2b2b 100%);
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent body scroll */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            transition: opacity 0.5s ease;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        /* Container for the book */
+        .book-wrapper {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* The actual book element */
+        .book-stage {
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Individual Pages */
+        .my-page {
+            background-color: #fdfdfd;
+            background-size: 100% 100%; /* Stretch image to fit page */
+            background-repeat: no-repeat;
+            background-position: center;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Hard covers */
+        .my-page.--hard {
+            background-color: #f2f2f2;
+            border: 1px solid #999;
+        }
+
+        /* Page Content (Images) */
+        .page-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .page-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill; /* Use fill to match the catalog ratio exactly */
+            pointer-events: none; /* Let clicks pass through to the page handler */
+            user-select: none;
+        }
+
+        /* Controls Bar */
+        .controls {
+            height: 60px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 10px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .btn {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.8);
+            transform: scale(1.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .page-info {
+            color: white;
+            font-family: monospace;
+            font-size: 1rem;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* Instruction overlay */
+        .instruction {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            animation: fadeInOut 4s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls {
+                bottom: 10px;
+                padding: 5px 15px;
+                height: 50px;
+            }
+            .btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading Catalog...</div>
+    </div>
+
+    <div class="instruction">
+        <i class="fas fa-hand-pointer"></i> 拖曳頁面角落或點擊翻頁
+    </div>
+
+    <div class="book-wrapper">
+        <div id="book" class="book-stage">
+            <div class="my-page" data-density="hard">
+                <div class="page-content">
+                    <img src="1.png" alt="Cover">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="2.png" alt="Page 2">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="3.png" alt="Page 3">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="4.png" alt="Page 4">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="5.png" alt="Page 5">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="6.png" alt="Page 6">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="7.png" alt="Page 7">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="8.png" alt="Page 8">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="9.png" alt="Page 9">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="10.png" alt="Page 10">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="11.png" alt="Page 11">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="12.png" alt="Page 12">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="13.png" alt="Page 13">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="14.png" alt="Page 14">
+                </div>
+            </div>
+            <div class="my-page">
+                <div class="page-content">
+                    <img src="15.png" alt="Page 15">
+                </div>
+            </div>
+            <div class="my-page" data-density="hard">
+                <div class="page-content">
+                    <img src="16.png" alt="Back Cover">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="btnPrev" title="Previous Page">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <span class="page-info">
+            <span id="pageCurrent">1</span> / <span id="pageTotal">16</span>
+        </span>
+        <button class="btn" id="btnNext" title="Next Page">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration for the book aspect ratio
+            const bookConfig = {
+                width: 450, // Base width of one page
+                height: 636, // Base height of one page (~1.414 ratio)
+                size: 'stretch',
+                minWidth: 300,
+                maxWidth: 600,
+                minHeight: 400,
+                maxHeight: 800,
+                maxShadowOpacity: 0.5,
+                showCover: true,
+                mobileScrollSupport: false,
+                usePortrait: true, // Auto detect single page mode for mobile
+                startPage: 0
+            };
+
+            const pageFlip = new St.PageFlip(document.getElementById('book'), bookConfig);
+
+            // Load pages from DOM
+            pageFlip.loadFromHTML(document.querySelectorAll('.my-page'));
+
+            // UI Elements
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const pageCurrent = document.getElementById('pageCurrent');
+            const pageTotal = document.getElementById('pageTotal');
+            const loader = document.getElementById('loader');
+
+            // Update UI State
+            const updateUI = () => {
+                const total = pageCountFromDOM(); // Use a helper function to get actual count
+                let current = pageFlip.getCurrentPageIndex() + 1;
+                
+                pageCurrent.textContent = current;
+                pageTotal.textContent = total;
+
+                btnPrev.disabled = current === 1;
+                btnNext.disabled = current === total;
+            };
+
+            // Helper function to dynamically get the total number of pages
+            const pageCountFromDOM = () => {
+                return document.querySelectorAll('.my-page').length;
+            };
+
+            // Initialize total pages display
+            pageTotal.textContent = pageCountFromDOM();
+
+            // Event Listeners
+            pageFlip.on('flip', (e) => {
+                updateUI();
+            });
+
+            pageFlip.on('init', (e) => {
+                // Hide loader when ready
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 500);
+                }, 500);
+                updateUI();
+            });
+
+            // Button Actions
+            btnPrev.addEventListener('click', () => {
+                pageFlip.flipPrev();
+            });
+
+            btnNext.addEventListener('click', () => {
+                pageFlip.flipNext();
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    pageFlip.flipPrev();
+                } else if (e.key === 'ArrowRight') {
+                    pageFlip.flipNext();
+                }
+            });
+
+            // Trigger initial UI update
+            // Note: The 'init' event above handles the initial load
+        });
+    </script>
+</body>
+</html>
