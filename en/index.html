@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yin Xin Co., Ltd. | Industrial Hardware & Control Switches - Taiwan Supplier</title>
+
+    <meta name="description" content="Yin Xin Co., Ltd. located in Shengang, Changhua, specializes in high-quality industrial hardware and electrical control accessories. Products: Flush Handles, Industrial Hinges, Waterproof Toggle Switches, Forklift Parts, and Precision Casting. Reliable partner for automation and heavy industry.">
+
+    <meta name="keywords" content="Yin Xin Co Ltd, Industrial Hardware, Flush Handle, Stainless Steel Handle, Toggle Switch, Waterproof Switch, Forklift Parts, Work Light, Headlight Switch, Heavy Duty Switch, Hinge, Latch, Leveling Foot, Taiwan Hardware Supplier">
+
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link rel="shortcut icon" href="../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. 核心樣式 (保持原樣，僅修改圖片路徑)
+           ========================================================================== */
+        :root {
+            --primary-color: #3a6dc2;
+            --primary-dark: #2a5296;
+            --bg-dark: #0f1c2e;
+            --bg-dark-gradient: linear-gradient(135deg, #0f1c2e 0%, #1e3a5f 100%);
+            --bg-light: #ffffff;
+            --text-on-light: #2a3b4c;
+            --text-dim-on-light: #50657b;
+            --hover-glow-light: 0 15px 35px rgba(58, 109, 194, 0.25);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif; /* 英文優先字體 */
+            line-height: 1.6; color: var(--text-on-light); background-color: var(--bg-light);
+            background-image: linear-gradient(45deg, transparent 49%, rgba(58, 109, 194, 0.08) 49%, rgba(58, 109, 194, 0.08) 51%, transparent 51%),
+                              linear-gradient(-45deg, transparent 49%, rgba(58, 109, 194, 0.08) 49%, rgba(58, 109, 194, 0.08) 51%, transparent 51%);
+            background-size: 100px 100px; background-attachment: fixed; font-weight: 500;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2; }
+
+        header { background: rgba(15, 28, 46, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; height: 90px; }
+        .logo { display: flex; align-items: center; text-decoration: none; }
+        .logo img { max-height: 60px; margin-right: 15px; }
+        .logo span { font-weight: 900; font-size: 24px; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); letter-spacing: 1px; }
+        .nav-menu { display: flex; gap: 20px; align-items: center; }
+        .nav-menu a { font-weight: 700; color: #ffffff; font-size: 16px; cursor: pointer; text-decoration: none; }
+        .nav-menu a:hover, .nav-menu a.active { color: var(--primary-color); }
+        .cta-btn { background: var(--primary-color); color: white !important; padding: 10px 20px; border-radius: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4); border: none; }
+        
+        /* 語言切換按鈕樣式 */
+        .lang-btn { border: 1px solid rgba(255,255,255,0.3); padding: 5px 15px !important; border-radius: 4px; font-size: 14px !important; }
+
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+
+        .hero { padding: 170px 0 150px; text-align: center; color: #fff; background-size: cover; background-position: center; animation: fadeIn 2s ease-in; }
+        .hero h1 { font-size: 56px; font-weight: 900; text-shadow: 0 2px 15px rgba(0,0,0,0.7); margin-bottom: 25px; }
+        .hero p { font-size: 24px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+
+        .home-btn-group { margin-top: 150px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .hero-btn { background-color: var(--primary-color); color: #ffffff; padding: 18px 55px; font-size: 20px; border-radius: 6px; font-weight: 900; cursor: pointer; border: none; box-shadow: 0 10px 25px rgba(58, 109, 194, 0.4); transition: 0.3s; }
+        .hero-btn:hover { background-color: var(--primary-dark); transform: translateY(-3px); }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 40px; }
+        .product-card { background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #e1e8f0; transition: 0.4s; cursor: pointer; position: relative; }
+        .product-card::before, .product-card::after { content: ''; position: absolute; width: 20px; height: 20px; border-color: var(--primary-color); transition: 0.4s; opacity: 0.3; }
+        .product-card::before { top: 0; left: 0; border-top: 3px solid; border-left: 3px solid; }
+        .product-card::after { bottom: 0; right: 0; border-bottom: 3px solid; border-right: 3px solid; }
+        .product-card:hover::before, .product-card:hover::after { width: 100%; height: 100%; opacity: 1; border-width: 1px; z-index: 10; }
+        .product-card:hover { transform: translateY(-10px); box-shadow: var(--hover-glow-light); }
+        .card-img { height: 260px; padding: 30px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f0f0f0; background: #fff; }
+        .card-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .card-content { padding: 25px; text-align: center; }
+        .card-content h3 { font-size: 22px; font-weight: 900; color: #222; }
+
+        .detail-section { padding: 80px 0; border-top: 1px dashed rgba(58, 109, 194, 0.3); }
+        .detail-header { margin-bottom: 40px; border-left: 6px solid var(--primary-color); padding-left: 20px; }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
+        .item-card { background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 20px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+        .item-card img { height: 160px; width: 100%; object-fit: contain; margin-bottom: 15px; }
+        .item-desc { font-size: 14px; color: var(--text-dim-on-light); background: #f8fbff; padding: 8px; border-radius: 4px; font-weight: 700; }
+        /* 英文版的查看提示 */
+        .item-card::after { content: '🔍 View Details'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: #fff; padding: 8px 15px; border-radius: 20px; opacity: 0; transition: 0.3s; pointer-events: none; font-weight: bold; font-size: 14px; }
+        .item-card:hover::after { opacity: 1; }
+
+        .side-nav { position: fixed; right: 20px; top: 120px !important; z-index: 9000; display: flex; flex-direction: column; gap: 4px; background: rgba(255, 255, 255, 0.95); padding: 8px 5px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transition: 0.5s; }
+        .side-nav a { display: block; padding: 5px 10px; font-size: 13px; color: #50657b; font-weight: 900; text-align: center; border-radius: 15px; white-space: nowrap; text-decoration: none; }
+        .side-nav a:hover { background-color: var(--primary-color); color: #fff; transform: translateX(-5px); }
+
+        .floating-contact-bar { position: fixed; right: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; align-items: center; opacity: 0; visibility: hidden; transition: 0.5s; transform: translateX(20px); }
+        .show-floating-ui .side-nav, .show-floating-ui .floating-contact-bar { opacity: 1; visibility: visible; transform: translateX(0); }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.25); transition: 0.3s; position: relative; text-decoration: none; }
+        .float-btn svg { width: 30px; height: 30px; fill: white; }
+        .btn-phone { background: linear-gradient(135deg, #3a6dc2, #2a5296); }
+        .btn-mail { background: linear-gradient(135deg, #ea4335, #c5221f); }
+        .btn-line { background: linear-gradient(135deg, #06C755, #00b900); }
+
+        footer { background: var(--bg-dark-gradient); color: #a0b3c6; padding: 100px 0 40px; font-size: 16px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 60px; }
+        .footer-brand { display: inline-flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+        .footer-brand img { height: 60px; }
+        .footer-brand h3 { color: #ffffff; font-size: 28px; font-weight: 900; margin: 0; }
+        .footer-col h3.simple-title { color: #fff; margin-bottom: 25px; font-size: 20px; font-weight: 900; border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 5px; }
+        .contact-info li { margin-bottom: 15px; list-style: none; display: flex; align-items: center; gap: 12px; }
+        .footer-links a { display: block; margin-bottom: 12px; color: #a0b3c6; text-decoration: none; transition: 0.3s; }
+        .footer-links a:hover { color: var(--primary-color); padding-left: 5px; }
+        .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; margin-top: 60px; font-size: 14px; }
+
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
+        .modal.show { display: flex; opacity: 1; }
+        .modal-content { position: relative; background: #fff; padding: 10px; border-radius: 8px; max-width: 90%; max-height: 90%; }
+        .close-btn { position: absolute; top: -40px; right: 0; color: #fff; font-size: 35px; cursor: pointer; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .header-inner { flex-direction: column !important; height: auto !important; padding: 15px 0; gap: 10px; }
+            .logo img { max-height: 40px !important; margin-right: 10px !important; }
+            .logo span { font-size: 20px !important; }
+            .nav-menu { gap: 10px !important; flex-wrap: wrap; justify-content: center; width: 100%; }
+            .nav-menu a { font-size: 14px !important; padding: 5px 5px; }
+/* 手機版英文按鈕微調 */
+        .nav-menu .lang-btn {
+            display: block;      /* 讓它自成一行 */
+            margin: 10px auto;   /* 上下留間距，左右置中 */
+            width: 80%;          /* 寬度不要太滿，好看一點 */
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.5); /* 框框線條亮一點 */
+        }
+            .cta-btn { padding: 8px 15px !important; font-size: 15px !important; }
+            .hero h1 { font-size: 32px; }
+            .home-btn-group { margin-top: 40px; }
+            .side-nav { display: none; }
+            .floating-contact-bar { display: flex !important; flex-direction: row; bottom: 0; right: 0; left: 0; background: #fff; padding: 10px; justify-content: center; gap: 40px; width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <a href="#" class="logo" onclick="switchPage('home')">
+                <img src="../logo.png" alt="Yin Xin Co., Ltd.">
+                <span>Yin Xin Co., Ltd.</span>
+            </a>
+            <nav class="nav-menu">
+                <a onclick="switchPage('home')" id="nav-home" class="active">Home</a>
+                <a onclick="switchPage('mech')" id="nav-mech">Mechanical</a>
+                <a onclick="switchPage('elec')" id="nav-elec">Electrical</a>
+                <a href="../index.html" class="lang-btn">中文</a> <a href="https://lin.ee/kPi0UuF" target="_blank" class="cta-btn">Contact Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="page-home" class="page-content active">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.4), rgba(15, 28, 46, 0.4)), url('../l2.png');">
+            <div class="container">
+                <h1>Industrial Parts Expert</h1>
+                <p>Professional Supplier of Mechanical Hardware & Control Switches<br>Reliable Support for Heavy Industries Worldwide</p>
+                <div class="home-btn-group">
+                    <button onclick="switchPage('mech')" class="hero-btn">Mechanical Hardware</button>
+                    <button onclick="switchPage('elec')" class="hero-btn">Control Switches</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main id="page-mech" class="page-content">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('../l1.png');">
+            <div class="container">
+                <h1>Solid Backing for Enclosures</h1>
+                <p>Flush Handles, Industrial Hinges, Locks, and Leveling Feet</p>
+            </div>
+        </section>
+        <div class="container"><div id="mech-grid" class="product-grid"></div></div>
+        <div id="mech-detail" class="container"></div>
+    </main>
+
+    <main id="page-elec" class="page-content">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('../elec-hero.png');">
+            <div class="container">
+                <h1>Core of Power Control</h1>
+                <p>Toggle Switches, Waterproof Switches, Forklift Parts, and Home Appliances</p>
+            </div>
+        </section>
+        <div class="container"><div id="elec-grid" class="product-grid"></div></div>
+        <div id="elec-detail" class="container"></div>
+    </main>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand"><img src="../logo.png" alt="Yin Xin"><h3>Yin Xin Co., Ltd.</h3></div>
+                    <p>Your Trusted Partner in Industrial Hardware & Electrical Components. Serving the global market with high-quality parts.</p>
+                </div>
+                <div class="footer-col">
+                    <h3 class="simple-title">Contact Info</h3>
+                    <ul class="contact-info">
+                        <li><span>📍</span> No. 124, Dingxing Rd., Shengang Township, Changhua County, Taiwan</li>
+                        <li><span>📞</span> +886-4-8521867</li>
+                        <li><span>📠</span> +886-4-8521945</li>
+                        <li><span>✉️</span> yinxinhardware.co@gmail.com</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="simple-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">E-Catalog</a></li>
+                        <li><a href="https://lin.ee/kPi0UuF">LINE Official Account</a></li>
+                        <li><a href="#">Product Categories</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright"><p>© 2026 Yin Xin Co., Ltd. All Rights Reserved.</p></div>
+        </div>
+    </footer>
+
+    <nav id="side-menu" class="side-nav"></nav>
+
+    <div class="floating-contact-bar">
+        <a href="tel:+88648521867" class="float-btn btn-phone">
+            <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1.01A11.36 11.36 0 0 1 8.59 3.99C8.59 3.44 8.14 3 7.59 3H4.03C3.48 3 3 3.45 3 4.01 3 13.39 10.61 21 20 21c.55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
+        </a>
+        <a href="mailto:yinxinhardware.co@gmail.com" class="float-btn btn-mail">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </a>
+        <a href="https://lin.ee/kPi0UuF" target="_blank" class="float-btn btn-line">
+            <svg viewBox="0 0 100 100" style="width: 38px; height: 38px;"><path fill="#ffffff" d="M10,35 v30 h20 v-8 h-12 v-22 z M35,35 v30 h8 v-30 z M48,35 v30 h8 v-18 l12,18 h8 v-30 h-8 v18 l-12,-18 z M80,35 v30 h20 v-8 h-12 v-4 h10 v-7 h-10 v-4 h12 v-7 z" /></svg>
+        </a>
+    </div>
+
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img id="modalImg" src="" style="max-width: 100%; max-height: 80vh; object-fit: contain;">
+            <div id="modalTitle" style="text-align: center; padding: 10px; font-weight: 900; color: #333;"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. DATA SECTION (資料區) - English
+        // ==========================================
+
+        // --- Mechanical Categories (機械分類) ---
+        const mechCats = [
+            { id: 'a', name: 'Flush Handles', count: 32 },
+            { id: 'b', name: 'Stainless Steel Handles', count: 18 },
+            { id: 'c', name: 'Hardware Accessories', count: 40 },
+            { id: 'd', name: 'Freezer Handles', count: 3 },
+            { id: 'e', name: 'Pull Handles', count: 20 },
+            { id: 'f', name: 'Hinges', count: 32 },
+            { id: 'g', name: 'Cam Locks', count: 26 },
+            { id: 'h', name: 'Draw Latches', count: 11 },
+            { id: 'i', name: 'Leveling Feet', count: 15 },
+            { id: 'j', name: 'Stoppers / Plates', count: 20 },
+            { id: 'k', name: 'L-Handles', count: 7 },
+            { id: 'l', name: 'Stainless Steel Hinges', count: 11 },
+            { id: 'm', name: 'Aluminum Profile Parts', count: 3 },
+        ];
+
+        // --- Mechanical Descriptions (機械描述 - 全翻譯) ---
+        const mechDescriptions = {
+            'a1': 'A-150-A-K', 
+            'a2': 'A-350-A Black / Silver / Satin Silver',
+            'a3': 'A-281-1(S) Length 150mm Width 39mm',
+            'a4': 'A-281-4(B) Length 92mm Width 34mm',
+            'a5': 'A-281-1-K(S) Length 150mm Width 39mm',
+            'a6': 'A-281-1(B) Length 150mm Width 39mm',
+            'a7': 'A-281-2(S) Length 132mm Width 33mm',
+            'a8': 'A-281-2-K(S) Length 132mm Width 33mm',
+            'a9': 'A-281-2(B) Length 132mm Width 33mm',
+            'a10': 'A-281-3(S) Length 110mm Width 34mm',
+            'a11': 'A-281-3(B) Length 110mm Width 34mm',
+            'a12': 'A-281-4(S) Length 92mm Width 34mm',
+            'a13': 'A-1154',
+            'a14': 'A-505-3-B-(SS)',
+            'a15': 'A-505-3-A-(SS)',
+            'a16': 'A-505-2-B-(SS)',
+            'a17': 'A-505-2-A-(SS)',
+            'a18': 'A-360-4-A-(G) Size 82mm Width 28mm IP54',
+            'a19': 'A-360-4-A-(S) Size 82mm Width 28mm IP54',
+            'a20': 'A-360-4-B-(SS) Size 82mm Width 28mm IP54',
+            'a21': 'A-360-3-A-(SS) Size 110mm Width 28mm IP54',
+            'a22': 'A-360-3-A-(G) Size 110mm IP54',
+            'a23': 'A-241-3-B-1-(G)',
+            'a24': 'A-241-3-A-1-(G)',
+            'a25': 'A-240-3-B-(S) Length 84mm Width 29mm',
+            'a26': 'A-240-3-A-(P) Length 84mm Width 28mm',
+            'a27': 'A-240-3-B-(P) Length 84mm Width 29mm',
+            'a28': 'A-240-3-A-(S) Length 84mm Width 28mm',
+            'a29': 'A-240-2-B-(S) Length 112mm Width 28mm',
+            'a30': 'A-240-2-B-(P) Length 112mm Width 28mm',
+            'a31': 'A-240-2-A-(P) Length 112mm Width 28mm',
+            'a32': 'A-240-2-A-(S) Length 112mm Width 28mm',
+            'b1': 'A-1140-3-A-(S)',
+            'b2': 'A-1140-2-A-(S)',
+            'b3': 'A-1140-1-A-(S)',
+            'b4': 'BL-2118',
+            'b5': 'FA-1110-3',
+            'b6': 'A-1068-1-2-3',
+            'b7': 'A-1080-1-2-3-4',
+            'b8': 'CAS-1406-D',
+            'b9': 'A-1019-B',
+            'b10': 'A-1019-A',
+            'b11': 'A-1172-1 Large Round Head',
+            'b12': 'A-1180-3',
+            'b13': 'A-1180-3-K',
+            'b14': 'A-1180-2',
+            'b15': 'A-1180-2-K',
+            'b16': 'A-1180-1',
+            'b17': 'A-1180-1-K',
+            'b18': 'BL-2190',
+            'c1': 'Seal Strip',
+            'c2': 'Continuous Hinge: 39mm 1.2t 1200mm / 50mm 2.0t 1200mm',
+            'c3': 'Stainless Magnetic Catch / Plastic Magnetic Catch',
+            'c4': 'Adjustable Handle',
+            'c5': 'Square Viewport w/ Acrylic Plate <span style="color: #d9534f; font-weight: bold;">(Glass Optional)</span>',
+            'c6': 'Rod Adapter: Dia 8.0mm / 9.5mm (Plastic/Zinc Wheel)',
+            'c7': 'Latch Rods: Dia 8mm (600/900/1200L) / Dia 10mm (1200L)',
+            'c8': 'Latch Rod (U-Plate End)',
+            'c9': 'Latch Rod (Black T-End)',
+            'c10': 'Large Head Screw',
+            'c11': 'Round Head Screw',
+            'c12': 'Slide Rail 200mm~1000mm',
+            'c13': 'PP Stopper',
+            'c14': 'M5-M6 Base Plate Cap',
+            'c15': 'K-7602',
+            'c16': 'C-90 Brass Double Ball Catch',
+            'c17': 'B-83-36 (L/R) Left/Right',
+            'c18': 'B-83-30 (L/R) Left/Right',
+            'c19': 'A-172-H Handle',
+            'c20': 'Round Viewport w/ Acrylic Plate <span style="color: #d9534f; font-weight: bold;">(Glass Optional)</span>',
+            'c21': 'Welding Stud',
+            'c22': 'Floating Nut',
+            'c23': 'Hinge Tube',
+            'c24': 'M10-12-16-20 Nut (Stainless Steel)',
+            'c25': 'M12-16 Nut (Yellow Zinc Plated)',
+            'c26': 'M10-12-16-20 Nut (Zinc Plated)',
+            'c27': 'Eye Bolt M10/12/16',
+            'c28': 'Core / Plug for 1702',
+            'c29': 'Steel 62#CR-2mm/3mm / SS 1062#CR-2mm/3mm',
+            'c30': 'Rivet Head for 1082#',
+            'c31': 'Spacer Washer ø8/ø10',
+            'c32': 'Hanging Rod',
+            'c33': 'Gas Spring 8kg/10kg',
+            'c34': 'Long Door Holder (Check)',
+            'c35': '9013 Door Holder',
+            'c36': 'C-90-60 Long',
+            'c37': 'Plastic Magnet - Brown',
+            'c38': 'Wire Sleeve / Rubber Grommet',
+            'c39': 'Drawer Lock - Key 888',
+            'c40': 'Hidden Joint for Aluminum Profile',
+            'd1': 'AH-1450 / AH-1460 / AH-1470',
+            'd2': 'AH-1332 Door Hinge',
+            'd3': 'AH-713 Door Handle',
+            'e1': 'A-42-C',
+            'e2': 'HP-746 Plastic Embedded Handle',
+            'e3': 'A-122',
+            'e4': '1200-26 Beveled / Flat Handle',
+            'e5': 'A-1153',
+            'e6': 'A-1152',
+            'e7': 'A-303-(S) Zinc Alloy',
+            'e8': 'AL-20',
+            'e9': 'AL100-AL77 (Aluminum)',
+            'e10': 'A-1042-C Dia 8-10-12 Pitch 100-160',
+            'e11': 'A-42-F-2 Steel / Stainless Steel',
+            'e12': 'A-1006-4 Steel / Stainless Steel (3" / 4")',
+            'e13': 'A-6-4-R',
+            'e14': 'A-42-A-R',
+            'e15': 'A-42-A Folding Handle (Black Steel / Stainless)',
+            'e16': 'HP-120 Plastic Handle',
+            'e17': 'HP-90 Plastic Handle',
+            'e18': 'E-69 Aluminum Tube',
+            'e19': 'HY-357 Stainless Tube',
+            'e20': 'A-333-96/128/224',
+            'f1': 'B-1078 2-Hole / 3-Hole',
+            'f2': 'B-1064',
+            'f3': 'B-1025',
+            'f4': 'B-95',
+            'f5': '1100#',
+            'f6': '1065#',
+            'f7': '1065-5-P',
+            'f8': '60# (Steel) / 1060# (Stainless)',
+            'f9': '1052#',
+            'f10': '1046-40~75',
+            'f11': '1029',
+            'f12': '702#',
+            'f13': '82# Spring Hinge (Steel) / 1082# (Stainless)',
+            'f14': '70#-1-2-3 (Steel / Stainless)',
+            'f15': '62# Spring Hinge (Steel) / 1062# (Stainless)',
+            'f16': 'BL-70-55-B',
+            'f17': 'BL-70-1',
+            'f18': '30X30 Zinc Hinge (Silver / Black Painted)',
+            'f19': 'CL-202',
+            'f20': 'CL-201-(SS) (Satin Silver / Black)',
+            'f21': 'HPL(B)',
+            'f22': 'HPL-80',
+            'f23': 'BL-2059',
+            'f24': 'BL-2059-1',
+            'f25': 'BL-25-P',
+            'f26': 'B-Series L-Shaped Hinge',
+            'f27': 'B-Series U-Shaped Hinge',
+            'f28': 'B4.5mm-32 (Steel / Stainless)',
+            'f29': 'B-1234',
+            'f30': 'B-1229',
+            'f31': '90# (Steel) / 1090# (Stainless)',
+            'f32': 'B-1078 No Hole',
+            'g1': 'NL406',
+            'g2': 'PP406',
+            'g3': '406-DH2-(S)',
+            'g4': '406 Long Key',
+            'g5': '402-M5',
+            'g6': 'C-403-5L',
+            'g7': 'CE-436-E Compression Latch',
+            'g8': 'CPA-406-E',
+            'g9': 'CI-406-G',
+            'g10': 'CI-406-E',
+            'g11': 'CB-406-E',
+            'g12': 'CD-406-B',
+            'g13': 'CD-406-E',
+            'g14': 'CK-406-D',
+            'g15': 'CD-406-D',
+            'g16': 'A-172-2 Medium Round Head',
+            'g17': 'A-172-1 Large Round Head',
+            'g18': 'CAS-1406-D',
+            'g19': 'C610s',
+            'g20': 'CD-426-D',
+            'g21': 'CHN-406-B',
+            'g22': 'CHM-406-B',
+            'g23': 'Diamond Lock Key 10002/10030',
+            'g24': 'CPA-406-18-11',
+            'g25': 'CPA-406-18-1',
+            'g26': 'KL1932',
+            'h1': 'C-1221',
+            'h2': 'C-1221 CP',
+            'h3': 'C-1007-41',
+            'h4': 'C-1012-A-A SS Latch (With Lock)',
+            'h5': 'C-1012-D-B SS Latch (Without Lock)',
+            'h6': 'C-1012-D-A SS Latch (With Lock)',
+            'h7': 'C-1007-1',
+            'h8': 'C-1007-2',
+            'h9': 'C-1007-3',
+            'h10': 'C-340',
+            'h11': 'C-1121-1/2/3 (No Hasp)',
+            'i1': 'Light Duty Foot M8X100 / M10X100',
+            'i2': 'Swivel Base Foot',
+            'i3': 'BN60 Foot (Steel/SS) M12-M16',
+            'i4': 'BN60 Foot (Steel) M12-M16',
+            'i5': 'BS60 Foot (SS/Steel) M12-M16',
+            'i6': 'S70 Foot (SS) M16-M20',
+            'i7': 'S60 Foot (SS) M12-M20',
+            'i8': 'R70 M16-M20 (Rubber Base)',
+            'i9': 'KMS Foot (SS Base) M16-M30',
+            'i10': 'KAS90 Foot M12-M24',
+            'i11': 'BS4012050/100',
+            'i12': 'BS4010050/100',
+            'i13': 'D9016100 Steel / Stainless',
+            'i14': 'D9020100 /150 Steel / Stainless',
+            'i15': 'Rigid Foot (Fixed)',
+            'i16': 'R70',
+            'j1': 'CK-78 90 Long Plate',
+            'j2': 'CK-51 (22 Long Plate)',
+            'j3': 'CK-34 Bent Plate',
+            'j4': 'Small Ear T-Plate (Steel)',
+            'j5': 'Small Ear T-Plate (Stainless)',
+            'j6': '860 Flat Plate (Stainless)',
+            'j7': '240 Rod Stopper Plate',
+            'j8': 'No.7 Plate',
+            'j9': 'No.5 Left',
+            'j10': 'No.1 Plate',
+            'j11': 'No.8 Plate',
+            'j12': 'D416',
+            'j13': 'T-Plate (Int. Square 4mm)',
+            'j14': 'T-Plate (Black Coated)',
+            'j15': 'T-Plate (Red Coated)',
+            'j16': 'N-Type Stopper',
+            'j17': 'CK-505',
+            'j18': 'CK-89 T-Plate',
+            'j19': '505 Small-S',
+            'j20': '505 Large-S',
+            'k1': 'A-45-A-(S) With Lock / Without Lock',
+            'k2': 'A-19-B-(S)',
+            'k3': 'A-19-A-(S)',
+            'k4': 'A-140-1-2-3-A-(B)',
+            'k5': 'A-140-3-A-(S)',
+            'k6': 'A-140-2-A-(S)',
+            'k7': 'A-140-1-A(S)',
+            'l1': 'SS Flag Hinge',
+            'l2': 'SS Crown Head Bearing Hinge',
+            'l3': 'SS Bearing Hinge (2 Bearings)',
+            'l4': 'SS Lift-off Bearing Hinge (2 Bearings)',
+            'l5': 'SS Nylon Ring / SS Ring Hinge',
+            'l6': 'SS Extra Thick Angle Hinge',
+            'l7': 'SS Door Bolt: (A)101 / (B)102',
+            'l8': 'SS Large Door Bolt: (A)104 / (B)103',
+            'l9': 'SS Angle Bar',
+            'l10': 'SS Bottom: Straight / Angle / Tee Joint',
+            'l11': 'SS Top: Straight / Angle / Tee Joint',
+            'm1': 'Hidden Joint for Alum. Profile',
+            'm2': 'Connection Base for Alum. Profile',
+            'm3': 'Rigid Foot (Fixed)',
+        };
+
+        // --- Electrical Categories (電控分類) ---
+        const elecCats = [
+            { id: 'sw-a', name: 'Headlight Switches', count: 12 },
+            { id: 'sw-b', name: 'Work Lights', count: 12 },
+            { id: 'sw-c', name: 'Waterproof Switches', count: 17 },
+            { id: 'sw-d', name: 'Heavy Duty Switches', count: 1 },
+            { id: 'sw-e', name: 'Starter Switches', count: 15 },
+            { id: 'sw-f', name: 'Forklift Parts', count: 27 },
+            { id: 'sw-g', name: 'Push-Pull Switches', count: 8 },
+            { id: 'sw-h', name: 'Toggle Switches', count: 39 },
+            { id: 'sw-i', name: 'Dimmer Switches', count: 9 },
+            { id: 'sw-j', name: 'Home Appliances', count: 1 },
+        ];
+
+        // --- Electrical Descriptions (電控描述 - 全翻譯) ---
+        const elecDescriptions = {
+            'sw-a1': 'HT-11 (2 Screw Terminal)',
+            'sw-a2': 'HT-12 (4 Screw Terminal)',
+            'sw-a3': 'HT-13 (5 Screw Terminal w/ 30A Fuse)',
+            'sw-a4': 'HT-14 (5 Screw Terminal)',
+            'sw-a5': 'HT-35 Door Switch',
+            'sw-a6': 'HT-44 (5 Screw Terminal)',
+            'sw-a7': 'HT-45 (5 Screw Terminal)',
+            'sw-a8': 'HT-46 (5 Screw Terminal)',
+            'sw-a9': 'HT-47 (4 Screw Terminal)',
+            'sw-a10': 'HT-64 (2 Screw Terminal & ON-OFF)',
+            'sw-a11': 'HT-65 (2 Screw Terminal & ON-OFF)',
+            'sw-a12': 'HT-78 Door Switch',
+            'sw-b1': 'HE-0001 1ft Full Guard Work Light 5A 125V',
+            'sw-b2': 'HE-001 Flat Full Guard Work Light 5A 125V',
+            'sw-b3': 'HE-002 Full Guard Work Light 5A 125V',
+            'sw-b4': 'HE-003 Half Guard Work Light 5A 125V',
+            'sw-b5': 'HE-004 Flat Half Guard Work Light 5A 125V',
+            'sw-b6': 'HE-006 Cigarette Lighter Work Light (12V Bulb)',
+            'sw-b7': 'HE-007 Cigarette Lighter Half Guard (12V Bulb)',
+            'sw-b8': 'HE-008 Battery Clip Full Guard (12V Bulb)',
+            'sw-b9': 'HX-009 Battery Clip Half Guard (12V Bulb)',
+            'sw-b10': 'HP-102 Male Plug 15A 125V',
+            'sw-b11': 'HD-201 Female Socket 15A 125V',
+            'sw-b12': 'HX-001 Spiral Work Light 11A 125V',
+            'sw-c1': 'HT-30',
+            'sw-c2': 'HT-59',
+            'sw-c3': 'HT-401B (Blue)',
+            'sw-c4': 'HT-401BK (Black)',
+            'sw-c5': 'HT-401G (Green)',
+            'sw-c6': 'HT-401R (Red)',
+            'sw-c7': 'HT-401Y (Yellow)',
+            'sw-c8': 'HT-402B (Blue)',
+            'sw-c9': 'HT-402BK (Black)',
+            'sw-c10': 'HT-402G (Green)',
+            'sw-c11': 'HT-402R (Red)',
+            'sw-c12': '6P 2-Position (Click for Details)',
+            'sw-c13': '6P 3-Position (Click for Details)',
+            'sw-c14': '4P 2-Position (Click for Details)',
+            'sw-c15': '3P 2-Position (Click for Details)',
+            'sw-c16': '3P 3-Position (Click for Details)',
+            'sw-c17': '2P 2-Position (Click for Details)',
+            'sw-d1': 'HT-18 Heavy Duty Push-Pull',
+            'sw-e1': 'HT-15',
+            'sw-e2': 'HT-17',
+            'sw-e3': 'HT-22',
+            'sw-e4': 'HT-31',
+            'sw-e5': 'HT-31B',
+            'sw-e6': 'HT-32',
+            'sw-e7': 'HT-33',
+            'sw-e8': 'HT-73',
+            'sw-e9': 'HT-74',
+            'sw-e10': 'HT-75',
+            'sw-e11': 'HT-76',
+            'sw-e12': 'HT-89',
+            'sw-e13': 'HT-108',
+            'sw-e14': 'HT-109',
+            'sw-e15': 'HT-16',
+            'sw-f1': 'HR-001 Ceramic Socket 660W 250V',
+            'sw-f2': 'HR-002',
+            'sw-f3': 'HR-003 Battery Clip 7.5cm',
+            'sw-f4': 'HR-004 Double Insulated Cable (13.5ft/16ft/30ft)',
+            'sw-f5': 'HR-005 Power Cable (13.5ft/16ft/30ft)',
+            'sw-f6': 'HR-006 Double Insulated Cable (13.5ft/16ft/30ft)',
+            'sw-f7': 'HR-07 O-Type Terminal (Click for Details)',
+            'sw-f8': 'HR-08 O-Type Terminal (Click for Details)',
+            'sw-f9': 'HR-09 Y-Type Terminal (Click for Details)',
+            'sw-f10': 'HT-34 Brake Light Switch',
+            'sw-f11': 'HT-37 Brake Light Switch',
+            'sw-f12': 'HT-83 Ignition Switch',
+            'sw-f13': 'HT-85 Ignition Switch',
+            'sw-f14': 'HT-86 Ignition Switch',
+            'sw-f15': 'HT-87 Ignition Switch',
+            'sw-f16': 'HT-302 Ignition Switch',
+            'sw-f17': 'HT-303 Ignition Switch',
+            'sw-f18': 'HT-122',
+            'sw-f19': 'HT-194 Rocker Switch 606 (No Silver Contact) 125V/6A',
+            'sw-f20': 'HT-195 Rocker Switch 606 (Silver Contact) 125V/10A',
+            'sw-f21': 'HT-196 Rocker Switch 626P (Beryllium Copper/Silver Contact/Red Light)',
+            'sw-f22': 'HT-197 Rocker Switch 626P (Beryllium Copper/Silver Contact/No Light)',
+            'sw-f23': 'HT-256 3P Rocker Switch (Red Light ON-OFF) 12V/15A',
+            'sw-f24': 'HT-355 6P Rocker Switch (ON-OFF-ON) 125V/6A',
+            'sw-f25': 'HT-354 4P Rocker Switch (Red Light ON-OFF) 12V/15A',
+            'sw-f26': 'HT-197 Waterproof Cap',
+            'sw-f27': 'HT-256 Safety Cover',
+            'sw-g1': 'HT-23 8mm',
+            'sw-g2': 'HT-24 13mm',
+            'sw-g3': 'HT-25 20mm',
+            'sw-g4': 'HT-26 13mm',
+            'sw-g5': 'HT-27 13mm',
+            'sw-g6': 'HT-28 20mm',
+            'sw-g7': 'HT-61 ON-OFF 12V/6A',
+            'sw-g8': 'HT-62 ON-OFF 12V/6A',
+            'sw-h1': '2P 2-Position (Click for Details)',
+            'sw-h2': '3P 2-Position (Click for Details)',
+            'sw-h3': '3P 3-Position (Click for Details)',
+            'sw-h4': '4P 2-Position (Click for Details)',
+            'sw-h5': '6P 2-Position (Click for Details)',
+            'sw-h6': '6P 3-Position (Click for Details)',
+            'sw-h7': 'HT-01 ON-OFF 2P',
+            'sw-h8': 'HT-02 ON-OFF 4P',
+            'sw-h9': 'HT-03 ON-OFF 2P',
+            'sw-h10': 'HT-04 ON-OFF-ON 3P Screw',
+            'sw-h11': 'HT-05 ON-OFF-ON 6P Screw',
+            'sw-h12': 'HT-06 ON-OFF 2P',
+            'sw-h13': 'HT-07 ON-OFF-ON 3P',
+            'sw-h14': 'HT-48 ON-OFF 2P Screw',
+            'sw-h15': 'HT-49 ON-OFF 2P Screw',
+            'sw-h16': 'HT-50 ON-OFF-ON',
+            'sw-h17': 'HT-56 ON-OFF 2P',
+            'sw-h18': 'HT-58 ON-OFF-ON 6P Screw',
+            'sw-h19': 'HT-70 ON-OFF 2P Screw',
+            'sw-h20': 'HT-70A ON-OFF 2P Screw',
+            'sw-h21': 'HT-70B ON-OFF 2P',
+            'sw-h22': 'HT-70C ON-OFF 2P Screw',
+            'sw-h23': 'HT-70D ON-OFF-ON 3P Screw',
+            'sw-h24': 'HT-71 ON-OFF-ON 3P Screw',
+            'sw-h25': 'HT-71A ON-OFF-ON 3P Screw',
+            'sw-h26': 'HT-100 ON-OFF 2P',
+            'sw-h27': 'HT-101 ON-OFF 2P Screw',
+            'sw-h28': 'HT-102 ON-OFF 2P Screw (SS304)',
+            'sw-h29': 'HT-103 ON-OFF-ON 3P Screw (Rubber Hood)',
+            'sw-h30': 'HT-104 ON-OFF 2P Screw (Rubber Hood)',
+            'sw-h31': 'HT-105 ON-OFF 2P Screw (Rubber Hood)',
+            'sw-h32': 'HT-106 ON-OFF-ON 3P Screw',
+            'sw-h33': 'HT-107 ON-OFF-ON 6P Screw (Rubber Hood)',
+            'sw-h34': 'HT-300 ON-OFF 2P Screw',
+            'sw-h35': 'HT-301 ON-OFF-ON 3P Screw',
+            'sw-h36': 'HT-350 ON-ON 3P',
+            'sw-h37': 'HT-351 ON-OFF-ON 3P',
+            'sw-h38': 'HT-352 ON-ON 3P Screw',
+            'sw-h39': 'HT-353 ON-OFF 2P',
+            'sw-i1': 'HT-39',
+            'sw-i2': 'HT-40',
+            'sw-i3': 'HT-41',
+            'sw-i4': 'HT-42',
+            'sw-i5': 'HT-42B',
+            'sw-i6': 'HT-42W',
+            'sw-i7': 'HT-43',
+            'sw-i8': 'HT-82',
+            'sw-i9': 'HT-82A',
+            'sw-j1': '14-inch DC Remote Control Fan',
+        };
+
+        // ==========================================
+        // 2. LOGIC SECTION (功能區)
+        // ==========================================
+
+        function switchPage(id) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            if(document.getElementById('nav-' + id)) document.getElementById('nav-' + id).classList.add('active');
+            
+            const sm = document.getElementById('side-menu');
+            sm.innerHTML = '';
+            if(id === 'home') {
+                sm.style.display = 'none';
+            } else {
+                sm.style.display = 'flex';
+                (id === 'mech' ? mechCats : elecCats).forEach(c => {
+                    sm.innerHTML += `<a href="#${id}-sec-${c.id}">${c.name}</a>`;
+                });
+            }
+            window.scrollTo(0,0);
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('show');
+            setTimeout(() => { document.getElementById('imageModal').style.display = 'none'; }, 300);
+        }
+
+        function openModal(src, title) {
+            const img = document.getElementById('modalImg');
+            const tit = document.getElementById('modalTitle');
+            const sizeSrc = src.replace('.png', '-size.png');
+            img.src = sizeSrc;
+            tit.innerText = title + ' (Dimensions)';
+            img.onerror = () => { img.src = src; tit.innerText = title; };
+            document.getElementById('imageModal').style.display = 'flex';
+            setTimeout(() => { document.getElementById('imageModal').classList.add('show'); }, 10);
+        }
+
+        // Render Mechanical Grid
+        const mg = document.getElementById('mech-grid');
+        const md = document.getElementById('mech-detail');
+        if(mg && md) {
+            mechCats.forEach(c => {
+                mg.innerHTML += `<div class="product-card" onclick="location.href='#mech-sec-${c.id}'"><div class="card-img"><img src="../${c.id}/${c.id === 'g' ? 'g7' : c.id + '1'}.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                let items = '';
+                for(let i=1; i<=c.count; i++) {
+                    let id = `${c.id}${i}`;
+                    let desc = mechDescriptions[id] || id; 
+                    items += `<div class="item-card" onclick="openModal('../${c.id}/${id}.png', '${desc}')"><img src="../${c.id}/${id}.png"><div class="item-desc">${desc}</div></div>`;
+                }
+                md.innerHTML += `<div id="mech-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+            });
+        }
+
+        // Render Electrical Grid
+        const eg = document.getElementById('elec-grid');
+        const ed = document.getElementById('elec-detail');
+        if(eg && ed) {
+            elecCats.forEach(c => {
+                eg.innerHTML += `<div class="product-card" onclick="location.href='#elec-sec-${c.id}'"><div class="card-img"><img src="../${c.id}/${c.id}1.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                let items = '';
+                for(let i=1; i<=c.count; i++) {
+                    let id = `${c.id}${i}`;
+                    let desc = elecDescriptions[id] || id;
+                    items += `<div class="item-card" onclick="openModal('../${c.id}/${id}.png', '${desc}')"><img src="../${c.id}/${id}.png" onerror="this.src='../logo.png'"><div class="item-desc">${desc}</div></div>`;
+                }
+                ed.innerHTML += `<div id="elec-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+            });
+        }
+
+        window.addEventListener('scroll', () => {
+            document.body.classList.toggle('show-floating-ui', window.scrollY > 400);
+        });
+    </script>
+</body>
+
+</html>
