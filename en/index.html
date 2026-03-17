@@ -930,7 +930,7 @@
             });
         }
 
-        // Render Oil Seals Grid
+      // Render Oil Seals Grid
         const og = document.getElementById('oil-grid');
         const od = document.getElementById('oil-detail');
         if(og && od) {
@@ -958,7 +958,7 @@
             });
         }
 
-        // Render Seal Kits Grid
+        // Render Seal Kits Grid (這裡就是您剛剛不小心刪掉的修理包)
         const ag = document.getElementById('air-grid');
         const ad = document.getElementById('air-detail');
         if(ag && ad) {
@@ -974,8 +974,28 @@
             });
         }
 
+        // 監聽滾動事件 (控制右下角聯絡按鈕顯示)
         window.addEventListener('scroll', () => {
             document.body.classList.toggle('show-floating-ui', window.scrollY > 400);
+        });
+
+        // ==========================================
+        // 新增：根據網址自動切換頁面 (解決 Google Ads 錨點連結問題)
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            // 抓取網址中的 # 後面的字串 (例如 "#page-oil" 會抓到 "#page-oil")
+            const hash = window.location.hash;
+            
+            if (hash) {
+                // 把 "#page-oil" 切割成 "oil"
+                const targetPage = hash.replace('#page-', '');
+                
+                // 如果目標頁面存在我們的分類中，就觸發切換
+                const validPages = ['mech', 'elec', 'oil', 'air', 'home'];
+                if (validPages.includes(targetPage)) {
+                    switchPage(targetPage);
+                }
+            }
         });
     </script>
 </body>
