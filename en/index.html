@@ -30,6 +30,7 @@
             --text-on-light: #2a3b4c;
             --text-dim-on-light: #50657b;
             --hover-glow-light: 0 15px 35px rgba(58, 109, 194, 0.25);
+            --accent-color: #e67e22; /* NEW: Accent color for cart/quotes */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,10 +49,10 @@
         .logo { display: flex; align-items: center; text-decoration: none; }
         .logo img { max-height: 60px; margin-right: 15px; }
         .logo span { font-weight: 900; font-size: 28px; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .nav-menu { display: flex; gap: 20px; align-items: center; } 
-        .nav-menu a { font-weight: 700; color: #ffffff; font-size: 17px; cursor: pointer; text-decoration: none; }
+        .nav-menu { display: flex; gap: 15px; align-items: center; } 
+        .nav-menu a { font-weight: 700; color: #ffffff; font-size: 16px; cursor: pointer; text-decoration: none; }
         .nav-menu a:hover, .nav-menu a.active { color: var(--primary-color); }
-        .cta-btn { background: var(--primary-color); color: white !important; padding: 10px 28px; border-radius: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4); border: none; }
+        .cta-btn { background: var(--primary-color); color: white !important; padding: 8px 20px; border-radius: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4); border: none; }
         .lang-btn { 
             border: 1px solid rgba(255,255,255,0.3); 
             padding: 5px 15px !important; 
@@ -67,13 +68,37 @@
             border-color: #fff;
         }
 
+        /* NEW: Search Bar */
+        .search-container { position: relative; display: flex; align-items: center; margin-right: 10px; }
+        .search-input { padding: 8px 15px 8px 35px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.2); color: #fff; outline: none; width: 160px; transition: 0.3s; font-size: 14px; }
+        .search-input:focus { width: 220px; background: rgba(0,0,0,0.4); border-color: var(--primary-color); }
+        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+        .search-icon { position: absolute; left: 10px; color: rgba(255,255,255,0.6); font-size: 14px; pointer-events: none; }
+
+        /* NEW: Quote Cart Icon */
+        .cart-icon-container { position: relative; cursor: pointer; margin-left: 5px; margin-right: 10px; }
+        .cart-icon-container svg { width: 26px; height: 26px; fill: #fff; transition: 0.3s; }
+        .cart-icon-container:hover svg { fill: var(--primary-color); }
+        .cart-badge { position: absolute; top: -6px; right: -8px; background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
         .page-content { display: none; }
         .page-content.active { display: block; }
 
         /* Hero */
-        .hero { padding: 170px 0 150px; text-align: center; color: #fff; background-size: cover; background-position: center; }
-        .hero h1 { font-size: 56px; font-weight: 900; text-shadow: 0 2px 15px rgba(0,0,0,0.7); margin-bottom: 25px; }
+        .hero { padding: 170px 0 150px; text-align: center; color: #fff; background-size: cover; background-position: center; position: relative; }
+        .hero h1 { font-size: 56px; font-weight: 900; text-shadow: 0 2px 15px rgba(0,0,0,0.7); margin-bottom: 5px; }
+        #page-oil .hero h2 {
+            font-size: 46px; 
+            font-weight: 900; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8); 
+            margin-bottom: 10px; 
+        }
         .hero p { font-size: 24px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+
+        /* NEW: Breadcrumbs */
+        .breadcrumbs { position: absolute; bottom: 20px; left: 20px; font-size: 15px; color: rgba(255,255,255,0.8); z-index: 10; background: rgba(0,0,0,0.4); padding: 6px 18px; border-radius: 20px; backdrop-filter: blur(5px); }
+        .breadcrumbs a { color: #fff; text-decoration: none; transition: 0.3s; cursor: pointer; font-weight: bold; }
+        .breadcrumbs a:hover { color: var(--primary-color); text-decoration: underline; }
 
         .home-btn-group { margin-top: 150px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
         .hero-btn { background-color: var(--primary-color); color: #ffffff; padding: 18px 45px; font-size: 20px; border-radius: 6px; font-weight: 900; cursor: pointer; border: none; box-shadow: 0 10px 25px rgba(58, 109, 194, 0.4); transition: 0.3s; }
@@ -95,11 +120,22 @@
         .detail-section { padding: 80px 0; border-top: 1px dashed rgba(58, 109, 194, 0.3); }
         .detail-header { margin-bottom: 40px; border-left: 6px solid var(--primary-color); padding-left: 20px; }
         .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
-        .item-card { background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 20px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
-        .item-card img { height: 160px; width: 100%; object-fit: contain; margin-bottom: 15px; }
-        .item-desc { font-size: 14px; color: var(--text-dim-on-light); background: #f8fbff; padding: 8px; border-radius: 4px; font-weight: 700; }
-        .item-card::after { content: '🔍 View Dimensions'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: #fff; padding: 8px 15px; border-radius: 20px; opacity: 0; transition: 0.3s; pointer-events: none; font-weight: bold; font-size: 14px; }
-        .item-card:hover::after { opacity: 1; }
+        
+        /* NEW: Modified Item Card for Add to Quote Button */
+        .item-card { background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 15px; text-align: center; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; height: 100%; position: relative; }
+        .item-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); transform: translateY(-5px); border-color: var(--primary-color); }
+        .item-img-container { height: 160px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; cursor: pointer; position: relative; }
+        .item-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .item-img-container::after { content: '🔍 Zoom In'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: #fff; padding: 6px 14px; border-radius: 15px; opacity: 0; transition: 0.3s; pointer-events: none; font-size: 13px; font-weight: bold; }
+        .item-img-container:hover::after { opacity: 1; }
+        .item-desc { font-size: 14px; color: var(--text-dim-on-light); background: #f8fbff; padding: 8px; border-radius: 4px; font-weight: 700; margin-bottom: 15px; word-break: break-all; }
+        .add-to-quote-btn { background: #f0f4f8; color: var(--primary-color); border: 1px solid var(--primary-color); padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; font-size: 14px; }
+        .add-to-quote-btn:hover { background: var(--primary-color); color: #fff; }
+        .add-to-quote-btn.added { background: #2ecc71; color: #fff; border-color: #2ecc71; }
+
+        /* NEW: Search Results Section */
+        #search-results-container { display: none; padding: 50px 0; }
+        #search-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
 
         /* Side Nav */
         .side-nav { 
@@ -118,8 +154,10 @@
             visibility: hidden; 
             transition: 0.5s; 
             transform: translateX(-20px); 
+            max-height: 75vh; overflow-y: auto;
         }
-        
+        .side-nav::-webkit-scrollbar { width: 4px; }
+        .side-nav::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
         .side-nav a { 
             display: block; 
             padding: 12px 20px; 
@@ -146,14 +184,44 @@
             transform: translateX(0); 
         }
 
-        /* Floating Contact Bar */
+        /* Floating Contact Bar & Go To Top */
         .floating-contact-bar { position: fixed; right: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; align-items: center; opacity: 0; visibility: hidden; transition: 0.5s; transform: translateX(20px); }
         .show-floating-ui .floating-contact-bar { opacity: 1; visibility: visible; transform: translateX(0); }
-        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.25); transition: 0.3s; position: relative; text-decoration: none; }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.25); transition: 0.3s; position: relative; text-decoration: none; cursor: pointer; border: none; }
         .float-btn svg { width: 30px; height: 30px; fill: white; }
+        .btn-top { background: linear-gradient(135deg, #7f8c8d, #34495e); } /* NEW: Go To Top Button */
+        .btn-top:hover { transform: translateY(-5px); }
         .btn-phone { background: linear-gradient(135deg, #3a6dc2, #2a5296); }
         .btn-mail { background: linear-gradient(135deg, #ea4335, #c5221f); }
         .btn-line { background: linear-gradient(135deg, #06C755, #00b900); }
+
+        /* NEW: Inquiry Form Section */
+        .inquiry-section { background: #f8fbff; padding: 80px 0; border-top: 1px solid #e1e8f0; }
+        .form-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-container h2 { text-align: center; color: var(--primary-dark); margin-bottom: 30px; font-size: 28px; font-weight: 900; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; font-family: inherit; transition: 0.3s; }
+        .form-control:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(58,109,194,0.2); }
+        textarea.form-control { resize: vertical; min-height: 120px; }
+        .submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.3s; }
+        .submit-btn:hover { background: var(--primary-dark); }
+
+        /* NEW: Quote Cart Modal */
+        .cart-modal { display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .cart-modal.show { display: flex; animation: fadeIn 0.3s; }
+        .cart-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; max-height: 80vh; }
+        .cart-header { background: var(--bg-dark); color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .cart-header h3 { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 20px; }
+        .cart-close { color: #fff; font-size: 28px; cursor: pointer; background: none; border: none; line-height: 1; }
+        .cart-items { padding: 20px; overflow-y: auto; flex-grow: 1; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .cart-item-name { font-weight: bold; font-size: 15px; max-width: 75%; }
+        .cart-item-remove { color: #e74c3c; cursor: pointer; background: none; border: none; font-size: 14px; font-weight: bold; padding: 5px 10px; }
+        .cart-footer { padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; }
+        .cart-submit-btn { background: var(--accent-color); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .cart-submit-btn:hover { background: #d67118; }
+        .empty-cart-msg { text-align: center; color: #999; padding: 30px 0; }
 
         /* Footer & Modal */
         footer { background: var(--bg-dark-gradient); color: #a0b3c6; padding: 100px 0 40px; font-size: 18px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); }
@@ -189,31 +257,37 @@
             .nav-menu { gap: 10px !important; flex-wrap: wrap; justify-content: center; width: 100%; }
             .nav-menu a { font-size: 15px !important; padding: 5px 8px; }
             .cta-btn { padding: 8px 15px !important; font-size: 15px !important; }
+            .search-input { width: 150px; }
+            .search-input:focus { width: 180px; }
             .hero h1 { font-size: 32px; }
+            #page-oil .hero h2 { font-size: 28px; }
+            .hero { padding: 100px 0 80px; }
             .home-btn-group { margin-top: 40px; }
+            .breadcrumbs { bottom: 10px; left: 10px; font-size: 12px; }
 
+            /* ★ Mobile Category Nav (Horizontal Scroll) ★ */
             .side-nav { 
                 position: fixed !important; 
                 top: auto !important; 
-                bottom: 75px !important; 
+                bottom: 80px !important; 
                 left: 0 !important;
                 right: 0 !important;
                 width: 100%;
                 display: flex !important; 
                 flex-direction: row !important;
                 gap: 8px !important;
-                background: rgba(255, 255, 255, 0.98) !important; 
-                padding: 12px 15px 8px 15px !important; 
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px);
+                padding: 10px 15px !important;
                 border-radius: 0 !important;
-                box-shadow: 0 -5px 15px rgba(0,0,0,0.08) !important; 
+                box-shadow: 0 -5px 15px rgba(0,0,0,0.08) !important;
                 overflow-x: auto; 
                 white-space: nowrap; 
                 -webkit-overflow-scrolling: touch; 
                 z-index: 8900 !important; 
-                
                 opacity: 0 !important; 
                 visibility: hidden !important;
-                transform: translateY(20px) !important; 
+                transform: translateY(20px) !important;
                 transition: all 0.5s ease !important;
             }
 
@@ -244,19 +318,18 @@
                 background: rgba(255, 255, 255, 0.98) !important; 
                 padding: 5px 0 15px 0 !important; 
                 justify-content: center !important; 
-                gap: 40px !important; 
+                gap: 20px !important; 
                 width: 100% !important; 
                 box-shadow: none !important; 
                 z-index: 8900 !important;
-
                 opacity: 0 !important; 
                 visibility: hidden !important;
                 transform: translateY(20px) !important;
                 transition: all 0.5s ease !important;
             }
 
-            .float-btn { width: 50px !important; height: 50px !important; }
-            .float-btn svg { width: 25px !important; height: 25px !important; }
+            .float-btn { width: 45px !important; height: 45px !important; }
+            .float-btn svg { width: 22px !important; height: 22px !important; }
 
             .show-floating-ui .side-nav, 
             .show-floating-ui .floating-contact-bar { 
@@ -273,23 +346,44 @@
     <header>
         <div class="container header-inner">
             <a href="#" class="logo" onclick="switchPage('home')">
-                <img src="logo.png" alt="Yin Xin Co., Ltd.">
+                <img src="../logo.png" alt="Yin Xin Co., Ltd.">
                 <span>Yin Xin Co., Ltd.</span>
             </a>
            <nav class="nav-menu">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search product / P/N...">
+                </div>
+
                 <a onclick="switchPage('home')" id="nav-home" class="active">Home</a>
                 <a onclick="switchPage('mech')" id="nav-mech" style="display: none;">Cabinet Hardware</a>
                 <a onclick="switchPage('elec')" id="nav-elec">Electrical</a>
                 <a onclick="switchPage('oil')" id="nav-oil">Oil Seals</a>
                 <a onclick="switchPage('air')" id="nav-air">Seal Kits</a>
                 <a href="../index.html" class="lang-btn">中文</a>
-                <a href="https://lin.ee/kPi0UuF" target="_blank" class="cta-btn">Contact on LINE</a>
+                
+                <div class="cart-icon-container" onclick="openCart()">
+                    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </div>
             </nav>
         </div>
     </header>
 
+    <main id="page-search" class="page-content">
+        <section class="hero" style="background-color: var(--primary-dark); padding: 100px 0 60px;">
+            <div class="container">
+                <h1>Search Results</h1>
+                <p id="search-query-display">Showing results for: "..."</p>
+            </div>
+        </section>
+        <div id="search-results-container" class="container">
+            <div id="search-results-grid"></div>
+        </div>
+    </main>
+
     <main id="page-home" class="page-content active">
-        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.4), rgba(15, 28, 46, 0.4)), url('l2.png');">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.4), rgba(15, 28, 46, 0.4)), url('../l2.png');">
             <div class="container">
                 <h1>Industrial Accessories Integration Expert</h1>
                 <p>Professionally supplying mechanical hardware, electrical parts, oil seals, and home appliances. Providing the most reliable support for heavy industries.</p>
@@ -304,11 +398,14 @@
     </main>
 
     <main id="page-mech" class="page-content">
-        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('l1.png');">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('../l1.png');">
             <div class="container">
                 <h1>The Solid Backbone of Industrial Cabinet Hardware</h1>
                 <p>Specialized production: Flush handles, industrial hinges, locks, and leveling feet</p>
-                <button onclick="window.open('catalog-mech/index.html', '_blank')" class="hero-btn" style="margin-top: 30px; padding: 12px 35px; font-size: 18px; background-color: #e67e22; box-shadow: 0 5px 15px rgba(230,126,34,0.4);">📖 View E-Catalog</button>
+                <button onclick="window.open('../catalog-mech/index.html', '_blank')" class="hero-btn" style="margin-top: 30px; padding: 12px 35px; font-size: 18px; background-color: #e67e22; box-shadow: 0 5px 15px rgba(230,126,34,0.4);">📖 View E-Catalog</button>
+            </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">Home</a> > <span>Cabinet Hardware</span>
             </div>
         </section>
         <div class="container"><div id="mech-grid" class="product-grid"></div></div>
@@ -316,11 +413,14 @@
     </main>
 
     <main id="page-elec" class="page-content">
-        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('elec-hero.png');">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('../elec-hero.png');">
             <div class="container">
                 <h1>The Solid Core of Power Control</h1>
                 <p>Specialized production: Toggle switches, waterproof switches, control panel accessories, forklift parts, and home appliances. Exported worldwide.</p>
-                <button onclick="window.open('catalog-elec/index.html', '_blank')" class="hero-btn" style="margin-top: 30px; padding: 12px 35px; font-size: 18px; background-color: #e67e22; box-shadow: 0 5px 15px rgba(230,126,34,0.4);">📖 View E-Catalog</button>
+                <button onclick="window.open('../catalog-elec/index.html', '_blank')" class="hero-btn" style="margin-top: 30px; padding: 12px 35px; font-size: 18px; background-color: #e67e22; box-shadow: 0 5px 15px rgba(230,126,34,0.4);">📖 View E-Catalog</button>
+            </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">Home</a> > <span>Electrical Switches</span>
             </div>
         </section>
         <div class="container"><div id="elec-grid" class="product-grid"></div></div>
@@ -328,10 +428,14 @@
     </main>
 
     <main id="page-oil" class="page-content">
-        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('bg1.png');">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('../bg1.png');">
             <div class="container">
                 <h1>Oil Seals and Hydraulic Parts</h1>
+                <h2>NOK-HALLITE-SAKAGAMI-VALQUA</h2>
                 <p>Providing stable and reliable sealing solutions for various machinery and industrial applications.</p>
+            </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">Home</a> > <span>Oil Seals</span>
             </div>
         </section>
         <div class="container"><div id="oil-grid" class="product-grid"></div></div>
@@ -339,21 +443,51 @@
     </main>
 
     <main id="page-air" class="page-content">
-        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('bg1.png');">
+        <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('../bg1.png');">
             <div class="container">
                 <h1>Heavy Machinery Seal Kits</h1>
                 <p>Providing the most complete repair seal kits for heavy machinery such as excavators, forklifts, and skid steer loaders.</p>
+            </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">Home</a> > <span>Seal Kits</span>
             </div>
         </section>
         <div class="container"><div id="air-grid" class="product-grid"></div></div>
         <div id="air-detail" class="container"></div>
     </main>
 
+    <section class="inquiry-section" id="inquiry-form-anchor">
+        <div class="container">
+            <div class="form-container">
+                <h2>Request a Quote / Contact Us</h2>
+                <form id="contactForm" onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="companyName" class="form-control" required placeholder="Your Company">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Name</label>
+                        <input type="text" id="contactName" class="form-control" required placeholder="Your Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="contactEmail" class="form-control" required placeholder="example@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Inquiry Details (Products, Quantity, Specifications)</label>
+                        <textarea id="inquiryDetails" class="form-control" required placeholder="Please describe your requirements..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Inquiry</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <footer id="contact">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <div class="footer-brand"><img src="logo.png" alt="Yin Xin"><h3>Yin Xin Co., Ltd.</h3></div>
+                    <div class="footer-brand"><img src="../logo.png" alt="Yin Xin"><h3>Yin Xin Co., Ltd.</h3></div>
                     <p>We focus on manufacturing industrial hardware, providing the most reliable logistics support for heavy industries in Taiwan. Welcome to request a physical catalog or call for inquiries.<br>Your Trusted Partner in Industrial Hardware Worldwide.</p>
                 </div>
                 
@@ -370,8 +504,8 @@
                 <div class="footer-col">
                     <h3 class="simple-title">E-Catalogs</h3>
                     <ul class="footer-links">
-                        <li style="display: none;"><a href="catalog-mech/index.html" target="_blank">📖 Cabinet Hardware Catalog</a></li>
-                        <li><a href="catalog-elec/index.html" target="_blank">📖 Electrical Switches Catalog</a></li>
+                        <li style="display: none;"><a href="../catalog-mech/index.html" target="_blank">📖 Cabinet Hardware Catalog</a></li>
+                        <li><a href="../catalog-elec/index.html" target="_blank">📖 Electrical Switches Catalog</a></li>
                     </ul>
                 </div>
 
@@ -390,6 +524,9 @@
     <nav id="side-menu" class="side-nav"></nav>
 
     <div class="floating-contact-bar">
+        <button class="float-btn btn-top" onclick="scrollToTop()" title="Go to top">
+            <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+        </button>
         <a href="tel:+886-4-8521867" class="float-btn btn-phone">
             <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1.01A11.36 11.36 0 0 1 8.59 3.99C8.59 3.44 8.14 3 7.59 3H4.03C3.48 3 3 3.45 3 4.01 3 13.39 10.61 21 20 21c.55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
         </a>
@@ -406,6 +543,20 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <img id="modalImg" src="" style="max-width: 100%; max-height: 80vh; object-fit: contain;">
             <div id="modalTitle" style="text-align: center; padding: 10px; font-weight: 900; color: #333;"></div>
+        </div>
+    </div>
+
+    <div id="cartModal" class="cart-modal" onclick="closeCart()">
+        <div class="cart-content" onclick="event.stopPropagation()">
+            <div class="cart-header">
+                <h3><svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> Inquiry Cart</h3>
+                <button class="cart-close" onclick="closeCart()">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItemsList">
+                </div>
+            <div class="cart-footer">
+                <button class="cart-submit-btn" onclick="checkoutCart()">Proceed to Inquiry Form</button>
+            </div>
         </div>
     </div>
 
@@ -938,7 +1089,7 @@
         ];
 
         const airDescriptions = {
-'sw-a1': 'GW', 
+            'sw-a1': 'GW', 
             'sw-a2': 'UNIC',
             'sw-a3': 'NANSEI',
             'sw-a4': 'TADANO',
@@ -965,12 +1116,144 @@
         };
 
         // ==========================================
-        // Application Logic
+        // NEW: Global Search Array & Cart State
+        // ==========================================
+        let allProducts = [];
+        let quoteCart = [];
+
+        function toggleCartItem(id, desc, btnElement) {
+            const index = quoteCart.findIndex(item => item.id === id);
+            if (index > -1) {
+                // Remove
+                quoteCart.splice(index, 1);
+                btnElement.classList.remove('added');
+                btnElement.innerText = '+ Add to Quote';
+            } else {
+                // Add
+                quoteCart.push({ id, desc });
+                btnElement.classList.add('added');
+                btnElement.innerText = '✓ Added';
+            }
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            badge.innerText = quoteCart.length;
+            badge.style.display = quoteCart.length > 0 ? 'block' : 'none';
+        }
+
+        function openCart() {
+            const modal = document.getElementById('cartModal');
+            const list = document.getElementById('cartItemsList');
+            
+            if (quoteCart.length === 0) {
+                list.innerHTML = '<div class="empty-cart-msg">Your inquiry cart is empty.<br>Please click "Add to Quote" on products to add them here.</div>';
+            } else {
+                list.innerHTML = quoteCart.map(item => `
+                    <div class="cart-item" id="cart-row-${item.id}">
+                        <span class="cart-item-name">${item.desc}</span>
+                        <button class="cart-item-remove" onclick="removeCartItem('${item.id}')">Remove</button>
+                    </div>
+                `).join('');
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        function removeCartItem(id) {
+            quoteCart = quoteCart.filter(item => item.id !== id);
+            // Sync UI button state if visible
+            const btn = document.getElementById(`btn-${id}`);
+            if(btn) {
+                btn.classList.remove('added');
+                btn.innerText = '+ Add to Quote';
+            }
+            updateCartBadge();
+            openCart(); // Refresh list
+        }
+
+        function checkoutCart() {
+            if(quoteCart.length === 0) {
+                alert("The inquiry cart is empty. Please add products first.");
+                return;
+            }
+            closeCart();
+            const detailsArea = document.getElementById('inquiryDetails');
+            let text = "Hello, I am interested in the following products:\n\n";
+            quoteCart.forEach((item, index) => {
+                // Fixed Issue 2: Do not display product code in form content
+                text += `${index + 1}. ${item.desc}\n`;
+            });
+            text += "\nRequired quantity: \nOther specifications: ";
+            detailsArea.value = text;
+            
+            // Smooth scroll to form section
+            document.getElementById('inquiry-form-anchor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Fixed Issue 1: Add mailto function to open default email client
+        function submitForm(e) {
+            e.preventDefault();
+            
+            const company = document.getElementById('companyName').value;
+            const contact = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const details = document.getElementById('inquiryDetails').value;
+            
+            const subject = encodeURIComponent(`[Inquiry] from ${company} - ${contact}`);
+            const body = encodeURIComponent(`Company Name: ${company}\nContact Name: ${contact}\nContact Email: ${email}\n\nInquiry Details:\n${details}`);
+            
+            // Trigger mailto link
+            window.location.href = `mailto:yinxinhardware.co@gmail.com?subject=${subject}&body=${body}`;
+            
+            // Keep original prompt message
+            alert("Thank you! We have received your inquiry information and will contact you as soon as possible. (This is a frontend demonstration, not connected to a backend)");
+        }
+
+        // Helper function to build item card HTML
+        function buildItemCard(id, desc, imgSrc, folder) {
+            const isAdded = quoteCart.some(item => item.id === id);
+            const btnClass = isAdded ? 'add-to-quote-btn added' : 'add-to-quote-btn';
+            const btnText = isAdded ? '✓ Added' : '+ Add to Quote';
+
+            // Push to global array for search
+            allProducts.push({ id, desc, imgSrc, folder });
+
+            return `
+                <div class="item-card">
+                    <div class="item-img-container" onclick="openModal('${imgSrc}', '${desc}')">
+                        <img src="${imgSrc}" onerror="this.src='../logo.png'">
+                    </div>
+                    <div class="item-desc">${desc}</div>
+                    <button id="btn-${id}" class="${btnClass}" onclick="toggleCartItem('${id}', '${desc}', this); event.stopPropagation();">${btnText}</button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // Page Switching & Initialization Logic
         // ==========================================
 
         function switchPage(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
+            
+            // Handle search page
+            if(id === 'search') {
+                document.getElementById('page-search').classList.add('active');
+                document.getElementById('side-menu').style.display = 'none';
+                window.scrollTo(0,0);
+                return;
+            }
+
             document.getElementById('page-' + id).classList.add('active');
             if(document.getElementById('nav-' + id)) document.getElementById('nav-' + id).classList.add('active');
             
@@ -1010,89 +1293,141 @@
             setTimeout(() => { document.getElementById('imageModal').classList.add('show'); }, 10);
         }
 
-        // Render Mechanical/Cabinet Hardware
-        const mg = document.getElementById('mech-grid');
-        const md = document.getElementById('mech-detail');
-        if(mg && md) {
-            mechCats.forEach(c => {
-                mg.innerHTML += `<div class="product-card" onclick="location.href='#mech-sec-${c.id}'"><div class="card-img"><img src="../${c.id}/${c.id === 'g' ? 'g7' : c.id + '1'}.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = mechDescriptions[id] || id;
-                    items += `<div class="item-card" onclick="openModal('../${c.id}/${id}.png', '${desc}')"><img src="../${c.id}/${id}.png" onerror="this.src='../logo.png'"><div class="item-desc">${desc}</div></div>`;
-                }
-                md.innerHTML += `<div id="mech-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
+        // Initialize rendering for each department
+        function initRender() {
+            // Render Mechanical/Cabinet Hardware
+            const mg = document.getElementById('mech-grid');
+            const md = document.getElementById('mech-detail');
+            if(mg && md) {
+                mechCats.forEach(c => {
+                    mg.innerHTML += `<div class="product-card" onclick="location.href='#mech-sec-${c.id}'"><div class="card-img"><img src="../${c.id}/${c.id === 'g' ? 'g7' : c.id + '1'}.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = mechDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `../${c.id}/${id}.png`, 'mech');
+                    }
+                    md.innerHTML += `<div id="mech-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
+
+            // Render Electrical Switches
+            const eg = document.getElementById('elec-grid');
+            const ed = document.getElementById('elec-detail');
+            if(eg && ed) {
+                elecCats.forEach(c => {
+                    eg.innerHTML += `<div class="product-card" onclick="location.href='#elec-sec-${c.id}'"><div class="card-img"><img src="../${c.id}/${c.id}1.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = elecDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `../${c.id}/${id}.png`, 'elec');
+                    }
+                    ed.innerHTML += `<div id="elec-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
+
+            // Render Oil Seals
+            const og = document.getElementById('oil-grid');
+            const od = document.getElementById('oil-detail');
+            if(og && od) {
+                oilCats.forEach(c => {
+                    og.innerHTML += `
+                        <div class="product-card" onclick="location.href='#oil-sec-${c.id}'">
+                            <div class="card-img">
+                                <img src="../oil/${c.id}/${c.id}1.png" onerror="this.src='../logo.png'">
+                            </div>
+                            <div class="card-content">
+                                <h3>${c.name}</h3>
+                            </div>
+                        </div>`;
+                    
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = oilDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `../oil/${c.id}/${id}.png`, 'oil');
+                    }
+                    od.innerHTML += `<div id="oil-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
+
+            // Render Seal Kits
+            const ag = document.getElementById('air-grid');
+            const ad = document.getElementById('air-detail');
+            if(ag && ad) {
+                airCats.forEach(c => {
+                    ag.innerHTML += `<div class="product-card" onclick="location.href='#air-sec-${c.id}'"><div class="card-img"><img src="../air/${c.id}/${c.id}0.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = airDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `../air/${c.id}/${id}.png`, 'air');
+                    }
+                    ad.innerHTML += `<div id="air-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
         }
 
-        // Render Electrical Switches
-        const eg = document.getElementById('elec-grid');
-        const ed = document.getElementById('elec-detail');
-        if(eg && ed) {
-            elecCats.forEach(c => {
-                eg.innerHTML += `<div class="product-card" onclick="location.href='#elec-sec-${c.id}'"><div class="card-img"><img src="../${c.id}/${c.id}1.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = elecDescriptions[id] || id;
-                    items += `<div class="item-card" onclick="openModal('../${c.id}/${id}.png', '${desc}')"><img src="../${c.id}/${id}.png" onerror="this.src='../logo.png'"><div class="item-desc">${desc}</div></div>`;
-                }
-                ed.innerHTML += `<div id="elec-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
-        }
-
-        // Render Oil Seals
-        const og = document.getElementById('oil-grid');
-        const od = document.getElementById('oil-detail');
-        if(og && od) {
-            oilCats.forEach(c => {
-                og.innerHTML += `
-                    <div class="product-card" onclick="location.href='#oil-sec-${c.id}'">
-                        <div class="card-img">
-                            <img src="../oil/${c.id}/${c.id}1.png" onerror="this.src='../logo.png'">
-                        </div>
-                        <div class="card-content">
-                            <h3>${c.name}</h3>
-                        </div>
-                    </div>`;
+        // NEW: Search Input Enter Event Listener
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = this.value.toLowerCase().trim();
+                if(!query) return;
                 
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = oilDescriptions[id] || id;
-                    items += `<div class="item-card" onclick="openModal('../oil/${c.id}/${id}.png', '${desc}')">
-                                <img src="../oil/${c.id}/${id}.png" onerror="this.src='../logo.png'">
-                                <div class="item-desc">${desc}</div>
-                              </div>`;
-                }
-                od.innerHTML += `<div id="oil-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
-        }
+                switchPage('search');
+                document.getElementById('search-query-display').innerText = `Showing results for: "${query}"`;
+                
+                const resultsContainer = document.getElementById('search-results-container');
+                const resultsGrid = document.getElementById('search-results-grid');
+                resultsContainer.style.display = 'block';
+                resultsGrid.innerHTML = '';
 
-        // Render Seal Kits
-        const ag = document.getElementById('air-grid');
-        const ad = document.getElementById('air-detail');
-        if(ag && ad) {
-            airCats.forEach(c => {
-                ag.innerHTML += `<div class="product-card" onclick="location.href='#air-sec-${c.id}'"><div class="card-img"><img src="../air/${c.id}/${c.id}0.png" onerror="this.src='../logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = airDescriptions[id] || id;
-                    items += `<div class="item-card" onclick="openModal('../air/${c.id}/${id}.png', '${desc}')"><img src="../air/${c.id}/${id}.png" onerror="this.src='../logo.png'"><div class="item-desc">${desc}</div></div>`;
-                }
-                ad.innerHTML += `<div id="air-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
-        }
+                // Filter product data
+                const results = allProducts.filter(p => p.desc.toLowerCase().includes(query) || p.id.toLowerCase().includes(query));
+                
+                if(results.length === 0) {
+                    resultsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; font-size: 18px;">No products found matching your search. Please try different keywords.</p>';
+                } else {
+                    let html = '';
+                    // Manually construct HTML to prevent duplicate pushing to allProducts
+                    results.forEach(p => {
+                        const isAdded = quoteCart.some(item => item.id === p.id);
+                        const btnClass = isAdded ? 'add-to-quote-btn added' : 'add-to-quote-btn';
+                        const btnText = isAdded ? '✓ Added' : '+ Add to Quote';
+                        let departmentName = '';
+                        switch(p.folder) {
+                            case 'mech': departmentName = 'Cabinet Hardware'; break;
+                            case 'elec': departmentName = 'Electrical Switches'; break;
+                            case 'oil': departmentName = 'Oil Seals'; break;
+                            case 'air': departmentName = 'Seal Kits'; break;
+                            default: departmentName = 'Other';
+                        }
 
-        // Scroll event to toggle floating UI
+                        html += `
+                            <div class="item-card">
+                                <div class="item-img-container" onclick="openModal('${p.imgSrc}', '${p.desc}')">
+                                    <img src="${p.imgSrc}" onerror="this.src='../logo.png'">
+                                </div>
+                                <div class="item-desc">${p.desc} <br><small style="color:var(--primary-color);">(${departmentName})</small></div>
+                                <button id="btn-search-${p.id}" class="${btnClass}" onclick="toggleCartItem('${p.id}', '${p.desc}', this); event.stopPropagation();">${btnText}</button>
+                            </div>
+                        `;
+                    });
+                    resultsGrid.innerHTML = html;
+                }
+            }
+        });
+
+        // Scroll event to control floating UI visibility
         window.addEventListener('scroll', () => {
             document.body.classList.toggle('show-floating-ui', window.scrollY > 400);
         });
 
-        // Parse hash on load
+        // Automatically switch page based on URL hash
         window.addEventListener('DOMContentLoaded', () => {
+            initRender();
+            
             const hash = window.location.hash;
             if (hash) {
                 const targetPage = hash.replace('#page-', '');
