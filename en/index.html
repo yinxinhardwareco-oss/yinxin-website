@@ -121,7 +121,7 @@
         .detail-header { margin-bottom: 40px; border-left: 6px solid var(--primary-color); padding-left: 20px; }
         .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
         
-        /* NEW: Modified Item Card for Add to Quote Button */
+        /* Modified Item Card for Add to Quote Button */
         .item-card { background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 15px; text-align: center; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; height: 100%; position: relative; }
         .item-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); transform: translateY(-5px); border-color: var(--primary-color); }
         .item-img-container { height: 160px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; cursor: pointer; position: relative; }
@@ -133,7 +133,7 @@
         .add-to-quote-btn:hover { background: var(--primary-color); color: #fff; }
         .add-to-quote-btn.added { background: #2ecc71; color: #fff; border-color: #2ecc71; }
 
-        /* NEW: Search Results Section */
+        /* Search Results Section */
         #search-results-container { display: none; padding: 50px 0; }
         #search-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
 
@@ -195,7 +195,7 @@
         .btn-mail { background: linear-gradient(135deg, #ea4335, #c5221f); }
         .btn-line { background: linear-gradient(135deg, #06C755, #00b900); }
 
-        /* NEW: Inquiry Form Section */
+        /* Inquiry Form Section */
         .inquiry-section { background: #f8fbff; padding: 80px 0; border-top: 1px solid #e1e8f0; }
         .form-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .form-container h2 { text-align: center; color: var(--primary-dark); margin-bottom: 30px; font-size: 28px; font-weight: 900; }
@@ -207,7 +207,7 @@
         .submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.3s; }
         .submit-btn:hover { background: var(--primary-dark); }
 
-        /* NEW: Quote Cart Modal */
+        /* Quote Cart Modal */
         .cart-modal { display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
         .cart-modal.show { display: flex; animation: fadeIn 0.3s; }
         .cart-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; max-height: 80vh; }
@@ -223,8 +223,8 @@
         .cart-submit-btn:hover { background: #d67118; }
         .empty-cart-msg { text-align: center; color: #999; padding: 30px 0; }
 
-        /* Footer & Modal */
-        footer { background: var(--bg-dark-gradient); color: #a0b3c6; padding: 100px 0 40px; font-size: 18px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); }
+        /* Footer & Animations */
+        footer { background: var(--bg-dark-gradient); color: #a0b3c6; padding: 100px 0 40px; font-size: 18px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 80px; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 60px; }
         .footer-brand { display: inline-flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
         .footer-brand img { height: 60px; }
@@ -235,11 +235,6 @@
         .footer-links a:hover { color: var(--primary-color); padding-left: 5px; }
         .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; margin-top: 60px; font-size: 15px; }
 
-        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
-        .modal.show { display: flex; opacity: 1; }
-        .modal-content { position: relative; background: #fff; padding: 10px; border-radius: 8px; max-width: 90%; max-height: 90%; }
-        .close-btn { position: absolute; top: -40px; right: 0; color: #fff; font-size: 35px; cursor: pointer; }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -248,6 +243,20 @@
         .hero {
             animation: fadeIn 2s ease-in; 
         }
+
+        /* MODIFIED: Zoom & Pan Modal CSS */
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; overflow: hidden; }
+        .modal.show { display: flex; opacity: 1; }
+        .modal-content { position: relative; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100vw; height: 100vh; }
+        .close-btn { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; z-index: 10002; background: rgba(0,0,0,0.5); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .close-btn:hover { background: rgba(0,0,0,0.8); }
+        
+        #modalImgContainer { width: 100%; height: 80vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: grab; }
+        #modalImgContainer:active { cursor: grabbing; }
+        #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center; pointer-events: none; background: #fff; padding: 10px; border-radius: 8px;}
+        
+        #modalTitle { text-align: center; padding: 15px; font-weight: 900; color: #fff; font-size: 20px; z-index: 10001; background: rgba(0,0,0,0.5); border-radius: 8px; margin-top: 10px;}
+        .zoom-hint { color: #ccc; font-size: 14px; margin-top: 5px; }
 
         /* Mobile Adjustments */
         @media (max-width: 768px) {
@@ -337,6 +346,10 @@
                 visibility: visible !important; 
                 transform: translateY(0) !important; 
             }
+            .zoom-hint::after { content: " (Pinch to zoom & drag to pan)"; }
+        }
+        @media (min-width: 769px) {
+             .zoom-hint::after { content: " (Scroll to zoom, click & drag to pan)"; }
         }
     </style>
 </head>
@@ -538,11 +551,14 @@
         </a>
     </div>
 
-    <div id="imageModal" class="modal" onclick="closeModal()">
+    <div id="imageModal" class="modal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <img id="modalImg" src="" style="max-width: 100%; max-height: 80vh; object-fit: contain;">
-            <div id="modalTitle" style="text-align: center; padding: 10px; font-weight: 900; color: #333;"></div>
+            <span class="close-btn" onclick="closeModal(event)">&times;</span>
+            <div id="modalImgContainer">
+                <img id="modalImg" src="">
+            </div>
+            <div id="modalTitle"></div>
+            <div class="zoom-hint"></div>
         </div>
     </div>
 
@@ -553,7 +569,7 @@
                 <button class="cart-close" onclick="closeCart()">&times;</button>
             </div>
             <div class="cart-items" id="cartItemsList">
-                </div>
+            </div>
             <div class="cart-footer">
                 <button class="cart-submit-btn" onclick="checkoutCart()">Proceed to Inquiry Form</button>
             </div>
@@ -561,9 +577,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. Mechanical/Cabinet Hardware Data
-        // ==========================================
         const mechCats = [
             { id: 'a', name: 'Flush Handles', count: 32 },
             { id: 'b', name: 'Stainless Steel Handles', count: 18 },
@@ -823,9 +836,6 @@
             'm3': 'Rigid Leveling Feet',
         };
 
-        // ==========================================
-        // 2. Electrical Switches Data
-        // ==========================================
         const elecCats = [
             { id: 'sw-a', name: 'Headlight Switches', count: 12 },
             { id: 'sw-b', name: 'Work Lights', count: 12 },
@@ -985,9 +995,6 @@
             'sw-k1': 'Adjustable Air Conditioner Bracket',
         };
 
-        // ==========================================
-        // 3. Oil Seals Data
-        // ==========================================
         const oilCats = [
             { id: 'a', name: 'Symmetrical Seals', count: 9 },
             { id: 'b', name: 'Rod Seals', count: 5 },
@@ -1077,9 +1084,6 @@
             'k7': 'Plastic Plugs',
         };
 
-        // ==========================================
-        // 4. Seal Kits Data
-        // ==========================================
         const airCats = [
             { id: 'sw-a', name: 'Cranes', count: 9 },
             { id: 'sw-b', name: 'Forklifts', count: 3 },
@@ -1115,21 +1119,16 @@
             'sw-e2': 'GENIE',
         };
 
-        // ==========================================
-        // NEW: Global Search Array & Cart State
-        // ==========================================
         let allProducts = [];
         let quoteCart = [];
 
         function toggleCartItem(id, desc, btnElement) {
             const index = quoteCart.findIndex(item => item.id === id);
             if (index > -1) {
-                // Remove
                 quoteCart.splice(index, 1);
                 btnElement.classList.remove('added');
                 btnElement.innerText = '+ Add to Quote';
             } else {
-                // Add
                 quoteCart.push({ id, desc });
                 btnElement.classList.add('added');
                 btnElement.innerText = '✓ Added';
@@ -1166,14 +1165,13 @@
 
         function removeCartItem(id) {
             quoteCart = quoteCart.filter(item => item.id !== id);
-            // Sync UI button state if visible
             const btn = document.getElementById(`btn-${id}`);
             if(btn) {
                 btn.classList.remove('added');
                 btn.innerText = '+ Add to Quote';
             }
             updateCartBadge();
-            openCart(); // Refresh list
+            openCart(); 
         }
 
         function checkoutCart() {
@@ -1185,13 +1183,11 @@
             const detailsArea = document.getElementById('inquiryDetails');
             let text = "Hello, I am interested in the following products:\n\n";
             quoteCart.forEach((item, index) => {
-                // Fixed Issue 2: Do not display product code in form content
                 text += `${index + 1}. ${item.desc}\n`;
             });
             text += "\nRequired quantity: \nOther specifications: ";
             detailsArea.value = text;
             
-            // Smooth scroll to form section
             document.getElementById('inquiry-form-anchor').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -1199,7 +1195,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Fixed Issue 1: Add mailto function to open default email client
         function submitForm(e) {
             e.preventDefault();
             
@@ -1211,20 +1206,15 @@
             const subject = encodeURIComponent(`[Inquiry] from ${company} - ${contact}`);
             const body = encodeURIComponent(`Company Name: ${company}\nContact Name: ${contact}\nContact Email: ${email}\n\nInquiry Details:\n${details}`);
             
-            // Trigger mailto link
             window.location.href = `mailto:yinxinhardware.co@gmail.com?subject=${subject}&body=${body}`;
-            
-            // Keep original prompt message
-            alert("Thank you! We have received your inquiry information and will contact you as soon as possible. (This is a frontend demonstration, not connected to a backend)");
+            alert("Thank you! We have received your inquiry information and will contact you as soon as possible.");
         }
 
-        // Helper function to build item card HTML
         function buildItemCard(id, desc, imgSrc, folder) {
             const isAdded = quoteCart.some(item => item.id === id);
             const btnClass = isAdded ? 'add-to-quote-btn added' : 'add-to-quote-btn';
             const btnText = isAdded ? '✓ Added' : '+ Add to Quote';
 
-            // Push to global array for search
             allProducts.push({ id, desc, imgSrc, folder });
 
             return `
@@ -1238,15 +1228,10 @@
             `;
         }
 
-        // ==========================================
-        // Page Switching & Initialization Logic
-        // ==========================================
-
         function switchPage(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
             
-            // Handle search page
             if(id === 'search') {
                 document.getElementById('page-search').classList.add('active');
                 document.getElementById('side-menu').style.display = 'none';
@@ -1277,25 +1262,160 @@
             window.scrollTo(0,0);
         }
 
-        function closeModal() {
-            document.getElementById('imageModal').classList.remove('show');
-            setTimeout(() => { document.getElementById('imageModal').style.display = 'none'; }, 300);
+        // ==========================================
+        // MODIFIED: Zoom & Pan Logic
+        // ==========================================
+        let scale = 1;
+        let panning = false;
+        let isDragging = false; 
+        let pointX = 0;
+        let pointY = 0;
+        let startX = 0;
+        let startY = 0;
+        
+        const modalImg = document.getElementById('modalImg');
+        const imgContainer = document.getElementById('modalImgContainer');
+
+        function setTransform() {
+            modalImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
+
+        function resetZoom() {
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+            setTransform();
         }
 
         function openModal(src, title) {
-            const img = document.getElementById('modalImg');
             const tit = document.getElementById('modalTitle');
             const sizeSrc = src.replace('.png', '-size.png');
-            img.src = sizeSrc;
+            modalImg.src = sizeSrc;
             tit.innerText = title + ' (Dimensions)';
-            img.onerror = () => { img.src = src; tit.innerText = title; };
+            modalImg.onerror = () => { modalImg.src = src; tit.innerText = title; };
+            
+            resetZoom();
             document.getElementById('imageModal').style.display = 'flex';
             setTimeout(() => { document.getElementById('imageModal').classList.add('show'); }, 10);
         }
 
-        // Initialize rendering for each department
+        function closeModal(e) {
+            if(e && (e.target === imgContainer || e.target === modalImg) && isDragging) return;
+            if(e && (e.target === imgContainer || e.target === modalImg)) return;
+
+            document.getElementById('imageModal').classList.remove('show');
+            setTimeout(() => { document.getElementById('imageModal').style.display = 'none'; resetZoom(); }, 300);
+        }
+
+        imgContainer.onclick = function(e) {
+            e.stopPropagation();
+            if(isDragging) {
+                isDragging = false; 
+                return;
+            }
+            
+            if(scale === 1) {
+                scale = 2.5;
+                pointX = 0;
+                pointY = 0;
+            } else {
+                resetZoom();
+            }
+            setTransform();
+        };
+
+        imgContainer.onwheel = function(e) {
+            e.preventDefault();
+            
+            if (e.deltaY < 0) {
+                scale *= 1.15;
+            } else {
+                scale /= 1.15;
+            }
+            
+            scale = Math.min(Math.max(1, scale), 5);
+            
+            if (scale === 1) {
+                pointX = 0;
+                pointY = 0;
+            }
+            setTransform();
+        };
+
+        imgContainer.onmousedown = function(e) {
+            e.preventDefault();
+            startX = e.clientX - pointX;
+            startY = e.clientY - pointY;
+            panning = true;
+            isDragging = false; 
+        };
+
+        imgContainer.onmouseup = function(e) {
+            panning = false;
+        };
+
+        imgContainer.onmouseleave = function(e) {
+            panning = false;
+        };
+
+        imgContainer.onmousemove = function(e) {
+            if (!panning || scale === 1) return;
+            e.preventDefault();
+            isDragging = true; 
+            pointX = e.clientX - startX;
+            pointY = e.clientY - startY;
+            setTransform();
+        };
+
+        let initialDistance = null;
+        let initialScale = 1;
+
+        imgContainer.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 1 && scale > 1) {
+                startX = e.touches[0].clientX - pointX;
+                startY = e.touches[0].clientY - pointY;
+                panning = true;
+                isDragging = false;
+            }
+            if (e.touches.length === 2) {
+                initialDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialScale = scale;
+            }
+        }, {passive: false});
+
+        imgContainer.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 1 && panning && scale > 1) {
+                e.preventDefault();
+                isDragging = true;
+                pointX = e.touches[0].clientX - startX;
+                pointY = e.touches[0].clientY - startY;
+                setTransform();
+            }
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                scale = initialScale * (currentDistance / initialDistance);
+                scale = Math.min(Math.max(1, scale), 5);
+                if (scale === 1) {
+                    pointX = 0; pointY = 0;
+                }
+                setTransform();
+            }
+        }, {passive: false});
+
+        imgContainer.addEventListener('touchend', function(e) {
+            panning = false;
+            initialDistance = null;
+            setTimeout(() => { isDragging = false; }, 50); 
+        });
+
         function initRender() {
-            // Render Mechanical/Cabinet Hardware
             const mg = document.getElementById('mech-grid');
             const md = document.getElementById('mech-detail');
             if(mg && md) {
@@ -1311,7 +1431,6 @@
                 });
             }
 
-            // Render Electrical Switches
             const eg = document.getElementById('elec-grid');
             const ed = document.getElementById('elec-detail');
             if(eg && ed) {
@@ -1327,7 +1446,6 @@
                 });
             }
 
-            // Render Oil Seals
             const og = document.getElementById('oil-grid');
             const od = document.getElementById('oil-detail');
             if(og && od) {
@@ -1352,7 +1470,6 @@
                 });
             }
 
-            // Render Seal Kits
             const ag = document.getElementById('air-grid');
             const ad = document.getElementById('air-detail');
             if(ag && ad) {
@@ -1369,7 +1486,6 @@
             }
         }
 
-        // NEW: Search Input Enter Event Listener
         document.getElementById('searchInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 const query = this.value.toLowerCase().trim();
@@ -1383,14 +1499,12 @@
                 resultsContainer.style.display = 'block';
                 resultsGrid.innerHTML = '';
 
-                // Filter product data
                 const results = allProducts.filter(p => p.desc.toLowerCase().includes(query) || p.id.toLowerCase().includes(query));
                 
                 if(results.length === 0) {
                     resultsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; font-size: 18px;">No products found matching your search. Please try different keywords.</p>';
                 } else {
                     let html = '';
-                    // Manually construct HTML to prevent duplicate pushing to allProducts
                     results.forEach(p => {
                         const isAdded = quoteCart.some(item => item.id === p.id);
                         const btnClass = isAdded ? 'add-to-quote-btn added' : 'add-to-quote-btn';
@@ -1419,12 +1533,10 @@
             }
         });
 
-        // Scroll event to control floating UI visibility
         window.addEventListener('scroll', () => {
             document.body.classList.toggle('show-floating-ui', window.scrollY > 400);
         });
 
-        // Automatically switch page based on URL hash
         window.addEventListener('DOMContentLoaded', () => {
             initRender();
             
