@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>銀鑫有限公司 | 電控開關與油封材料的專家 - 彰化伸港現貨供應 | 各式油封・電控開關・防水開關</title>
+    <title>銀鑫有限公司 | 電控開關與油封材料的專家 - 彰化伸港現貨供應 | 各式油封・電控開關・防水開關</title>
 
 <meta name="description" content="銀鑫有限公司位在彰化伸港，專業供應高品質工業五金與電控配件。現貨供應：平面把手、工業鉸鏈(丁雙)、防水搖頭開關、堆高機配件與精密鑄造件。規格齊全，滿足自動化與重工採購需求。">
 
@@ -16,7 +16,6 @@
 <link rel="alternate" hreflang="zh-Hant" href="https://yinxin.github.io/" />
 <link rel="alternate" hreflang="en" href="https://yinxin.github.io/en/index.html" />
 <link rel="alternate" hreflang="x-default" href="https://yinxin.github.io/en/index.html" />
-
     <style>
         /* ==========================================================================
            1. 核心變數與基礎設定
@@ -30,6 +29,7 @@
             --text-on-light: #2a3b4c;
             --text-dim-on-light: #50657b;
             --hover-glow-light: 0 15px 35px rgba(58, 109, 194, 0.25);
+            --accent-color: #e67e22; /* NEW: 詢價車等強調色 */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,10 +48,10 @@
         .logo { display: flex; align-items: center; text-decoration: none; }
         .logo img { max-height: 60px; margin-right: 15px; }
         .logo span { font-weight: 900; font-size: 28px; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .nav-menu { display: flex; gap: 20px; align-items: center; } /* 縮小一點gap容納新按鈕 */
-        .nav-menu a { font-weight: 700; color: #ffffff; font-size: 17px; cursor: pointer; text-decoration: none; }
+        .nav-menu { display: flex; gap: 15px; align-items: center; } /* 縮小gap容納新按鈕 */
+        .nav-menu a { font-weight: 700; color: #ffffff; font-size: 16px; cursor: pointer; text-decoration: none; }
         .nav-menu a:hover, .nav-menu a.active { color: var(--primary-color); }
-        .cta-btn { background: var(--primary-color); color: white !important; padding: 10px 28px; border-radius: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4); border: none; }
+        .cta-btn { background: var(--primary-color); color: white !important; padding: 8px 20px; border-radius: 50px; font-weight: 900; box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4); border: none; }
         .lang-btn { 
             border: 1px solid rgba(255,255,255,0.3); 
             padding: 5px 15px !important; 
@@ -67,13 +67,37 @@
             border-color: #fff;
         }
 
+        /* NEW: 搜尋框設計 */
+        .search-container { position: relative; display: flex; align-items: center; margin-right: 10px; }
+        .search-input { padding: 8px 15px 8px 35px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.2); color: #fff; outline: none; width: 160px; transition: 0.3s; font-size: 14px; }
+        .search-input:focus { width: 220px; background: rgba(0,0,0,0.4); border-color: var(--primary-color); }
+        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+        .search-icon { position: absolute; left: 10px; color: rgba(255,255,255,0.6); font-size: 14px; pointer-events: none; }
+
+        /* NEW: 詢價購物車 Icon */
+        .cart-icon-container { position: relative; cursor: pointer; margin-left: 5px; margin-right: 10px; }
+        .cart-icon-container svg { width: 26px; height: 26px; fill: #fff; transition: 0.3s; }
+        .cart-icon-container:hover svg { fill: var(--primary-color); }
+        .cart-badge { position: absolute; top: -6px; right: -8px; background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
         .page-content { display: none; }
         .page-content.active { display: block; }
 
         /* Hero 與首頁按鈕 */
-        .hero { padding: 170px 0 150px; text-align: center; color: #fff; background-size: cover; background-position: center; }
-        .hero h1 { font-size: 56px; font-weight: 900; text-shadow: 0 2px 15px rgba(0,0,0,0.7); margin-bottom: 25px; }
+        .hero { padding: 170px 0 150px; text-align: center; color: #fff; background-size: cover; background-position: center; position: relative; } /* Added position: relative for breadcrumbs */
+        .hero h1 { font-size: 56px; font-weight: 900; text-shadow: 0 2px 15px rgba(0,0,0,0.7); margin-bottom: 5px; }
+        #page-oil .hero h2 {
+            font-size: 46px; 
+            font-weight: 900; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8); 
+            margin-bottom: 10px; 
+        }
         .hero p { font-size: 24px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+
+        /* NEW: 麵包屑導覽 */
+        .breadcrumbs { position: absolute; bottom: 20px; left: 20px; font-size: 15px; color: rgba(255,255,255,0.8); z-index: 10; background: rgba(0,0,0,0.4); padding: 6px 18px; border-radius: 20px; backdrop-filter: blur(5px); }
+        .breadcrumbs a { color: #fff; text-decoration: none; transition: 0.3s; cursor: pointer; font-weight: bold; }
+        .breadcrumbs a:hover { color: var(--primary-color); text-decoration: underline; }
 
         .home-btn-group { margin-top: 150px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
         .hero-btn { background-color: var(--primary-color); color: #ffffff; padding: 18px 45px; font-size: 20px; border-radius: 6px; font-weight: 900; cursor: pointer; border: none; box-shadow: 0 10px 25px rgba(58, 109, 194, 0.4); transition: 0.3s; }
@@ -95,38 +119,49 @@
         .detail-section { padding: 80px 0; border-top: 1px dashed rgba(58, 109, 194, 0.3); }
         .detail-header { margin-bottom: 40px; border-left: 6px solid var(--primary-color); padding-left: 20px; }
         .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
-        .item-card { background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 20px; text-align: center; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
-        .item-card img { height: 160px; width: 100%; object-fit: contain; margin-bottom: 15px; }
-        .item-desc { font-size: 14px; color: var(--text-dim-on-light); background: #f8fbff; padding: 8px; border-radius: 4px; font-weight: 700; }
-        .item-card::after { content: '🔍 點擊查看尺寸'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: #fff; padding: 8px 15px; border-radius: 20px; opacity: 0; transition: 0.3s; pointer-events: none; font-weight: bold; font-size: 14px; }
-        .item-card:hover::after { opacity: 1; }
+        
+        /* Modified: 產品卡片加入詢價按鈕 */
+        .item-card { background: #fff; border: 1px solid #eef2f7; border-radius: 8px; padding: 15px; text-align: center; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; height: 100%; position: relative; }
+        .item-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); transform: translateY(-5px); border-color: var(--primary-color); }
+        .item-img-container { height: 160px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; cursor: pointer; position: relative; }
+        .item-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .item-img-container::after { content: '🔍 放大查看'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: #fff; padding: 6px 14px; border-radius: 15px; opacity: 0; transition: 0.3s; pointer-events: none; font-size: 13px; font-weight: bold; }
+        .item-img-container:hover::after { opacity: 1; }
+        .item-desc { font-size: 14px; color: var(--text-dim-on-light); background: #f8fbff; padding: 8px; border-radius: 4px; font-weight: 700; margin-bottom: 15px; word-break: break-all; }
+        .add-to-quote-btn { background: #f0f4f8; color: var(--primary-color); border: 1px solid var(--primary-color); padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; font-size: 14px; }
+        .add-to-quote-btn:hover { background: var(--primary-color); color: #fff; }
+        .add-to-quote-btn.added { background: #2ecc71; color: #fff; border-color: #2ecc71; }
 
-       /* =========================================
-           電腦版：左側導覽選單 (大膠囊狀風格) 
-           ========================================= */
+        /* NEW: 搜尋結果區塊 */
+        #search-results-container { display: none; padding: 50px 0; }
+        #search-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
+
+        /* 電腦版：左側導覽選單 (大膠囊狀風格) */
         .side-nav { 
             position: fixed; 
-            left: 20px; /* 移到左邊 */
+            left: 20px; 
             top: 120px !important; 
             z-index: 9000; 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; /* 加大選項之間的間距 */
-            background: rgba(255, 255, 255, 0.98); /* 幾乎純白底色 */
-            padding: 25px 10px; /* 增加上下內距，拉長膠囊視覺 */
-            border-radius: 30px; /* 更圓潤的膠囊造型 */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* 柔和的陰影凸顯立體感 */
+            gap: 10px; 
+            background: rgba(255, 255, 255, 0.98); 
+            padding: 25px 10px; 
+            border-radius: 30px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
             opacity: 0; 
             visibility: hidden; 
             transition: 0.5s; 
-            transform: translateX(-20px); /* 隱藏時稍微往左退，出現時會有滑入效果 */
+            transform: translateX(-20px); 
+            max-height: 75vh; overflow-y: auto;
         }
-        
+        .side-nav::-webkit-scrollbar { width: 4px; }
+        .side-nav::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
         .side-nav a { 
             display: block; 
-            padding: 12px 20px; /* 加大按鈕可點擊範圍 */
-            font-size: 16px; /* 放大字體 */
-            color: var(--text-on-light); /* 預設為深色字體，視覺更清晰 */
+            padding: 12px 20px; 
+            font-size: 16px; 
+            color: var(--text-on-light); 
             font-weight: 900; 
             text-align: center; 
             border-radius: 15px; 
@@ -138,7 +173,7 @@
         .side-nav a:hover { 
             background-color: var(--primary-color); 
             color: #fff; 
-            transform: translateY(-2px); /* 滑鼠游標經過時改為微微上浮 */
+            transform: translateY(-2px); 
             box-shadow: 0 4px 10px rgba(58, 109, 194, 0.3);
         }
 
@@ -146,24 +181,55 @@
         .show-floating-ui .side-nav { 
             opacity: 1; 
             visibility: visible; 
-            transform: translateX(0); /* 歸位 */
+            transform: translateX(0); 
         }
 
-        /* =========================================
-           懸浮聯絡工具 (原本的不要刪掉喔！) 
-           ========================================= */
+        /* 懸浮聯絡工具與回到最上層 */
         .floating-contact-bar { position: fixed; right: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; align-items: center; opacity: 0; visibility: hidden; transition: 0.5s; transform: translateX(20px); }
         .show-floating-ui .floating-contact-bar { opacity: 1; visibility: visible; transform: translateX(0); }
-        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.25); transition: 0.3s; position: relative; text-decoration: none; }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.25); transition: 0.3s; position: relative; text-decoration: none; cursor: pointer; border: none; }
         .float-btn svg { width: 30px; height: 30px; fill: white; }
+        .btn-top { background: linear-gradient(135deg, #7f8c8d, #34495e); } /* NEW: 回到最上方按鈕 */
+        .btn-top:hover { transform: translateY(-5px); }
         .btn-phone { background: linear-gradient(135deg, #3a6dc2, #2a5296); }
         .btn-mail { background: linear-gradient(135deg, #ea4335, #c5221f); }
         .btn-line { background: linear-gradient(135deg, #06C755, #00b900); }
 
-        /* =========================================
-           頁尾、彈出視窗與動畫 
-           ========================================= */
-        footer { background: var(--bg-dark-gradient); color: #a0b3c6; padding: 100px 0 40px; font-size: 18px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); }
+        /* NEW: 聯絡表單區塊 */
+        .inquiry-section { background: #f8fbff; padding: 80px 0; border-top: 1px solid #e1e8f0; }
+        .form-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-container h2 { text-align: center; color: var(--primary-dark); margin-bottom: 30px; font-size: 28px; font-weight: 900; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; font-family: inherit; transition: 0.3s; }
+        .form-control:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(58,109,194,0.2); }
+        textarea.form-control { resize: vertical; min-height: 120px; }
+        .submit-btn { background: var(--primary-color); color: #fff; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; transition: 0.3s; }
+        .submit-btn:hover { background: var(--primary-dark); }
+
+        /* NEW: 詢價購物車彈出視窗 */
+        .cart-modal { display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .cart-modal.show { display: flex; animation: fadeIn 0.3s; }
+        .cart-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; max-height: 80vh; }
+        .cart-header { background: var(--bg-dark); color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .cart-header h3 { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 20px; }
+        .cart-close { color: #fff; font-size: 28px; cursor: pointer; background: none; border: none; line-height: 1; }
+        .cart-items { padding: 20px; overflow-y: auto; flex-grow: 1; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .cart-item-name { font-weight: bold; font-size: 15px; max-width: 75%; }
+        .cart-item-remove { color: #e74c3c; cursor: pointer; background: none; border: none; font-size: 14px; font-weight: bold; padding: 5px 10px; }
+        .cart-footer { padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; }
+        .cart-submit-btn { background: var(--accent-color); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .cart-submit-btn:hover { background: #d67118; }
+        .empty-cart-msg { text-align: center; color: #999; padding: 30px 0; }
+
+        /* 圖片放大視窗 */
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
+        .modal.show { display: flex; opacity: 1; }
+        .modal-content { position: relative; background: #fff; padding: 10px; border-radius: 8px; max-width: 90%; max-height: 90%; }
+        .close-btn { position: absolute; top: -40px; right: 0; color: #fff; font-size: 35px; cursor: pointer; }
+
+        footer { background: var(--bg-dark-gradient); color: #a0b3c6; padding: 100px 0 40px; font-size: 18px; border-top: 1px solid rgba(255,255,255,0.1); }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 60px; }
         .footer-brand { display: inline-flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
         .footer-brand img { height: 60px; }
@@ -174,11 +240,6 @@
         .footer-links a:hover { color: var(--primary-color); padding-left: 5px; }
         .copyright { text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; margin-top: 60px; font-size: 15px; }
 
-        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
-        .modal.show { display: flex; opacity: 1; }
-        .modal-content { position: relative; background: #fff; padding: 10px; border-radius: 8px; max-width: 90%; max-height: 90%; }
-        .close-btn { position: absolute; top: -40px; right: 0; color: #fff; font-size: 35px; cursor: pointer; }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -188,7 +249,7 @@
             animation: fadeIn 2s ease-in; 
         }
 
-/* 手機版樣式 (底部一體成型面板：上方滑動分類 + 下方聯絡按鈕) */
+       /* 手機版樣式 */
         @media (max-width: 768px) {
             .header-inner { flex-direction: column !important; height: auto !important; padding: 15px 0; gap: 10px; }
             .logo img { max-height: 40px !important; margin-right: 10px !important; }
@@ -196,33 +257,37 @@
             .nav-menu { gap: 10px !important; flex-wrap: wrap; justify-content: center; width: 100%; }
             .nav-menu a { font-size: 15px !important; padding: 5px 8px; }
             .cta-btn { padding: 8px 15px !important; font-size: 15px !important; }
+            .search-input { width: 150px; }
+            .search-input:focus { width: 180px; }
             .hero h1 { font-size: 32px; }
+            #page-oil .hero h2 { font-size: 28px; }
+            .hero { padding: 100px 0 80px; }
             .home-btn-group { margin-top: 40px; }
+            .breadcrumbs { bottom: 10px; left: 10px; font-size: 12px; }
 
-            /* ★ 1. 手機版分類導覽 (置於底部聯絡按鈕的正上方) ★ */
+            /* ★ 手機版分類導覽 (底部橫向滑動) ★ */
             .side-nav { 
                 position: fixed !important; 
                 top: auto !important; 
-                bottom: 75px !important; /* 剛好保留 75px 給下方的聯絡按鈕 */
+                bottom: 80px !important; /* 固定在聯絡按鈕上方 */
                 left: 0 !important;
                 right: 0 !important;
                 width: 100%;
                 display: flex !important; 
                 flex-direction: row !important;
                 gap: 8px !important;
-                background: rgba(255, 255, 255, 0.98) !important; 
-                padding: 12px 15px 8px 15px !important; 
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px);
+                padding: 10px 15px !important;
                 border-radius: 0 !important;
-                box-shadow: 0 -5px 15px rgba(0,0,0,0.08) !important; 
+                box-shadow: 0 -5px 15px rgba(0,0,0,0.08) !important;
                 overflow-x: auto; 
                 white-space: nowrap; 
                 -webkit-overflow-scrolling: touch; 
                 z-index: 8900 !important; 
-                
-                /* 恢復「滑到最上方自動消失」的設定 */
                 opacity: 0 !important; 
                 visibility: hidden !important;
-                transform: translateY(20px) !important; 
+                transform: translateY(20px) !important;
                 transition: all 0.5s ease !important;
             }
 
@@ -245,7 +310,6 @@
                 transform: none !important; 
             }
 
-            /* ★ 2. 手機版聯絡圖示 (置於最底部空白處) ★ */
             .floating-contact-bar { 
                 display: flex !important; 
                 flex-direction: row; 
@@ -255,22 +319,19 @@
                 background: rgba(255, 255, 255, 0.98) !important; 
                 padding: 5px 0 15px 0 !important; 
                 justify-content: center !important; 
-                gap: 40px !important; 
+                gap: 20px !important; 
                 width: 100% !important; 
                 box-shadow: none !important; 
                 z-index: 8900 !important;
-
-                /* 恢復「滑到最上方自動消失」的設定 */
                 opacity: 0 !important; 
                 visibility: hidden !important;
                 transform: translateY(20px) !important;
                 transition: all 0.5s ease !important;
             }
 
-            .float-btn { width: 50px !important; height: 50px !important; }
-            .float-btn svg { width: 25px !important; height: 25px !important; }
+            .float-btn { width: 45px !important; height: 45px !important; }
+            .float-btn svg { width: 22px !important; height: 22px !important; }
 
-            /* ★ 3. 觸發顯示動畫：當網頁往下捲動時一起由底部浮現 ★ */
             .show-floating-ui .side-nav, 
             .show-floating-ui .floating-contact-bar { 
                 opacity: 1 !important; 
@@ -290,16 +351,37 @@
                 <span>銀鑫有限公司</span>
             </a>
            <nav class="nav-menu">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="搜尋產品或型號...">
+                </div>
+
                 <a onclick="switchPage('home')" id="nav-home" class="active">首頁</a>
                 <a onclick="switchPage('mech')" id="nav-mech" style="display: none;">機械五金部門</a>
                 <a onclick="switchPage('elec')" id="nav-elec">電控開關部門</a>
                 <a onclick="switchPage('oil')" id="nav-oil">油封部門</a>
                 <a onclick="switchPage('air')" id="nav-air">油封修理包</a>
                 <a href="en/index.html" class="lang-btn">English</a>
-                <a href="https://lin.ee/kPi0UuF" target="_blank" class="cta-btn">LINE 洽詢</a>
+                
+                <div class="cart-icon-container" onclick="openCart()">
+                    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </div>
             </nav>
         </div>
     </header>
+
+    <main id="page-search" class="page-content">
+        <section class="hero" style="background-color: var(--primary-dark); padding: 100px 0 60px;">
+            <div class="container">
+                <h1>搜尋結果</h1>
+                <p id="search-query-display">正在顯示: "..." 的結果</p>
+            </div>
+        </section>
+        <div id="search-results-container" class="container">
+            <div id="search-results-grid"></div>
+        </div>
+    </main>
 
     <main id="page-home" class="page-content active">
         <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.4), rgba(15, 28, 46, 0.4)), url('l2.png');">
@@ -323,6 +405,9 @@
                 <p>專業生產：平面把手、工業鉸鏈、鎖具、腳座</p>
                 <button onclick="window.open('catalog-mech/index.html', '_blank')" class="hero-btn" style="margin-top: 30px; padding: 12px 35px; font-size: 18px; background-color: #e67e22; box-shadow: 0 5px 15px rgba(230,126,34,0.4);">📖 查看互動電子型錄</button>
             </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">首頁</a> > <span>機械五金部門</span>
+            </div>
         </section>
         <div class="container"><div id="mech-grid" class="product-grid"></div></div>
         <div id="mech-detail" class="container"></div>
@@ -332,8 +417,11 @@
         <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('elec-hero.png');">
             <div class="container">
                 <h1>電力控制的堅實核心</h1>
-                <p>專業生產：搖頭開關、防水開關、電控盤配件、堆高機配件、家電等多項產品，外銷多國</p>
+                <p>專業製造搖頭開關、防水開關與各類電控配件，產品廣泛應用於重型機具及家電設備，長年深受國際市場信賴</p>
                 <button onclick="window.open('catalog-elec/index.html', '_blank')" class="hero-btn" style="margin-top: 30px; padding: 12px 35px; font-size: 18px; background-color: #e67e22; box-shadow: 0 5px 15px rgba(230,126,34,0.4);">📖 查看互動電子型錄</button>
+            </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">首頁</a> > <span>電控開關部門</span>
             </div>
         </section>
         <div class="container"><div id="elec-grid" class="product-grid"></div></div>
@@ -343,8 +431,12 @@
     <main id="page-oil" class="page-content">
         <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('bg1.png');">
             <div class="container">
-                <h1>油封產品與油壓零件</h1>
-                <p>專業提供穩定可靠的密封解決方案，適用於各類機械設備與工業應用</p>
+                <h1>各式油封-橡膠-鐵氟龍製品-其他訂製品</h1>
+                <h2>NOK-HALLITE-SAKAGAMI-VALQUA</h2>
+                <p>產品種類繁多，不及備載，歡迎聯絡洽詢，特殊規格可透過加工達到客製化要求</p>
+            </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">首頁</a> > <span>油封部門</span>
             </div>
         </section>
         <div class="container"><div id="oil-grid" class="product-grid"></div></div>
@@ -355,20 +447,49 @@
         <section class="hero" style="background-image: linear-gradient(rgba(15, 28, 46, 0.3), rgba(15, 28, 46, 0.1)), url('bg1.png');">
             <div class="container">
                 <h1>重機具油封修理包</h1>
-                <p>針對怪手、堆高機、山貓等重機具提供最完整的維修密封組件</p>
+                <p>針對怪手、堆高機、山貓、吊車、高空車等重機具提供最完整的維修密封組件</p>
+            </div>
+            <div class="breadcrumbs">
+                <a onclick="switchPage('home')">首頁</a> > <span>油封修理包</span>
             </div>
         </section>
         <div class="container"><div id="air-grid" class="product-grid"></div></div>
         <div id="air-detail" class="container"></div>
     </main>
 
+    <section class="inquiry-section" id="inquiry-form-anchor">
+        <div class="container">
+            <div class="form-container">
+                <h2>索取報價 / 聯絡我們</h2>
+                <form id="contactForm" onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label>公司名稱 (Company Name)</label>
+                        <input type="text" id="companyName" class="form-control" required placeholder="請輸入貴公司名稱">
+                    </div>
+                    <div class="form-group">
+                        <label>聯絡人姓名 (Contact Name)</label>
+                        <input type="text" id="contactName" class="form-control" required placeholder="請輸入您的姓名">
+                    </div>
+                    <div class="form-group">
+                        <label>聯絡信箱 (Email Address)</label>
+                        <input type="email" id="contactEmail" class="form-control" required placeholder="example@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label>需求細節 (包含產品型號、數量、特殊規格等)</label>
+                        <textarea id="inquiryDetails" class="form-control" required placeholder="請描述您的需求..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">送出詢價單</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <footer id="contact">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
                     <div class="footer-brand"><img src="logo.png" alt="銀鑫"><h3>銀鑫有限公司</h3></div>
-                    <p>我們專注於工業五金製造，為全台重工業提供最可靠的後勤支援。歡迎索取實體型錄或來電洽詢。
-Your Trusted Partner in Industrial Hardware Worldwide.</p>
+                    <p>我們專注於工業五金製造，為全台重工業提供最可靠的後勤支援。歡迎索取實體型錄或來電洽詢。<br>Your Trusted Partner in Industrial Hardware Worldwide.</p>
                 </div>
                 
                 <div class="footer-col">
@@ -404,6 +525,9 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
     <nav id="side-menu" class="side-nav"></nav>
 
     <div class="floating-contact-bar">
+        <button class="float-btn btn-top" onclick="scrollToTop()" title="回到最上方">
+            <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+        </button>
         <a href="tel:04-8521867" class="float-btn btn-phone">
             <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1.01A11.36 11.36 0 0 1 8.59 3.99C8.59 3.44 8.14 3 7.59 3H4.03C3.48 3 3 3.45 3 4.01 3 13.39 10.61 21 20 21c.55 0 1-.45 1-1v-3.62c0-.55-.45-1-1-1z"/></svg>
         </a>
@@ -420,6 +544,20 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <img id="modalImg" src="" style="max-width: 100%; max-height: 80vh; object-fit: contain;">
             <div id="modalTitle" style="text-align: center; padding: 10px; font-weight: 900; color: #333;"></div>
+        </div>
+    </div>
+
+    <div id="cartModal" class="cart-modal" onclick="closeCart()">
+        <div class="cart-content" onclick="event.stopPropagation()">
+            <div class="cart-header">
+                <h3><svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> 詢價清單</h3>
+                <button class="cart-close" onclick="closeCart()">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItemsList">
+                </div>
+            <div class="cart-footer">
+                <button class="cart-submit-btn" onclick="checkoutCart()">前往填寫表單</button>
+            </div>
         </div>
     </div>
 
@@ -677,7 +815,7 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
             'l5': '不鏽鋼尼龍圈/白鐵圈鉸鍊', 
             'l6': '不鏽鋼特厚角型鉸鍊', 
             'l7': '不鏽鋼門栓 SIZE (A)101 4"小 (B)102 2 1/2 大', 
-            'l8': '不鏽鋼大門栓 SIZE (A)104 6" (B)103 8"',    
+            'l8': '不鏽鋼大門栓 SIZE (A)104 6" (B)103 8"',  
             'l9': '不鏽鋼角鐵', 
             'l10': '不鏽鋼下直通、下角通、下三通', 
             'l11': '不鏽鋼上直通、上角通、上三通',
@@ -704,7 +842,7 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
         ];
 
         const elecDescriptions = {
-                      'sw-a1': 'YXT-S011 (2螺絲端子)',
+            'sw-a1': 'YXT-S011 (2螺絲端子)',
             'sw-a2': 'YXT-S012 (4螺絲端子)',
             'sw-a3': 'YXT-S013 (5螺絲端子 附30A保險絲)',
             'sw-a4': 'YXT-S014 (5螺絲端子)',
@@ -979,12 +1117,144 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
         };
 
         // ==========================================
-        // 功能邏輯區
+        // NEW: 全域搜尋陣列與購物車狀態
+        // ==========================================
+        let allProducts = [];
+        let quoteCart = [];
+
+        function toggleCartItem(id, desc, btnElement) {
+            const index = quoteCart.findIndex(item => item.id === id);
+            if (index > -1) {
+                // 移除
+                quoteCart.splice(index, 1);
+                btnElement.classList.remove('added');
+                btnElement.innerText = '+ 加入詢價';
+            } else {
+                // 新增
+                quoteCart.push({ id, desc });
+                btnElement.classList.add('added');
+                btnElement.innerText = '✓ 已加入';
+            }
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            badge.innerText = quoteCart.length;
+            badge.style.display = quoteCart.length > 0 ? 'block' : 'none';
+        }
+
+        function openCart() {
+            const modal = document.getElementById('cartModal');
+            const list = document.getElementById('cartItemsList');
+            
+            if (quoteCart.length === 0) {
+                list.innerHTML = '<div class="empty-cart-msg">您的詢價清單是空的。<br>請在產品頁面點擊「加入詢價」來新增產品。</div>';
+            } else {
+                list.innerHTML = quoteCart.map(item => `
+                    <div class="cart-item" id="cart-row-${item.id}">
+                        <span class="cart-item-name">${item.desc}</span>
+                        <button class="cart-item-remove" onclick="removeCartItem('${item.id}')">移除</button>
+                    </div>
+                `).join('');
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        function removeCartItem(id) {
+            quoteCart = quoteCart.filter(item => item.id !== id);
+            // 同步更新畫面上的按鈕狀態 (如果有顯示的話)
+            const btn = document.getElementById(`btn-${id}`);
+            if(btn) {
+                btn.classList.remove('added');
+                btn.innerText = '+ 加入詢價';
+            }
+            updateCartBadge();
+            openCart(); // 重新整理清單
+        }
+
+        function checkoutCart() {
+            if(quoteCart.length === 0) {
+                alert("詢價清單為空，請先加入產品。");
+                return;
+            }
+            closeCart();
+            const detailsArea = document.getElementById('inquiryDetails');
+            let text = "您好，我對以下產品有興趣：\n\n";
+            quoteCart.forEach((item, index) => {
+                // 修正問題二: 不要在表單內容顯示產品代號 (例如 [代號: sw-a3])
+                text += `${index + 1}. ${item.desc}\n`;
+            });
+            text += "\n請協助報價。需求數量為：\n其他規格需求：";
+            detailsArea.value = text;
+            
+            // 平滑滾動至表單區塊
+            document.getElementById('inquiry-form-anchor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 修正問題一: 加入 mailto 功能，開啟預設信箱軟體
+        function submitForm(e) {
+            e.preventDefault();
+            
+            const company = document.getElementById('companyName').value;
+            const contact = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const details = document.getElementById('inquiryDetails').value;
+            
+            const subject = encodeURIComponent(`【詢價需求】來自 ${company} - ${contact}`);
+            const body = encodeURIComponent(`公司名稱：${company}\n聯絡人：${contact}\n聯絡信箱：${email}\n\n需求內容：\n${details}`);
+            
+            // 觸發 mailto 連結
+            window.location.href = `mailto:yinxinhardware.co@gmail.com?subject=${subject}&body=${body}`;
+            
+            // 保留原本的提示訊息
+            alert("謝謝您！我們已收到您的詢價資訊，將盡快與您聯繫。");
+        }
+
+        // 輔助函式：建立產品卡片 HTML
+        function buildItemCard(id, desc, imgSrc, folder) {
+            const isAdded = quoteCart.some(item => item.id === id);
+            const btnClass = isAdded ? 'add-to-quote-btn added' : 'add-to-quote-btn';
+            const btnText = isAdded ? '✓ 已加入' : '+ 加入詢價';
+
+            // 將產品資料存入全域陣列供搜尋使用
+            allProducts.push({ id, desc, imgSrc, folder });
+
+            return `
+                <div class="item-card">
+                    <div class="item-img-container" onclick="openModal('${imgSrc}', '${desc}')">
+                        <img src="${imgSrc}" onerror="this.src='logo.png'">
+                    </div>
+                    <div class="item-desc">${desc}</div>
+                    <button id="btn-${id}" class="${btnClass}" onclick="toggleCartItem('${id}', '${desc}', this); event.stopPropagation();">${btnText}</button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 頁面切換與初始化邏輯
         // ==========================================
 
         function switchPage(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
+            
+            // 處理搜尋頁面
+            if(id === 'search') {
+                document.getElementById('page-search').classList.add('active');
+                document.getElementById('side-menu').style.display = 'none';
+                window.scrollTo(0,0);
+                return;
+            }
+
             document.getElementById('page-' + id).classList.add('active');
             if(document.getElementById('nav-' + id)) document.getElementById('nav-' + id).classList.add('active');
             
@@ -995,7 +1265,6 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
             } else {
                 sm.style.display = 'flex';
                 
-                // 動態判斷要載入哪一個部門的清單
                 let targetCats = [];
                 if (id === 'mech') targetCats = mechCats;
                 else if (id === 'elec') targetCats = elecCats;
@@ -1025,103 +1294,144 @@ Your Trusted Partner in Industrial Hardware Worldwide.</p>
             setTimeout(() => { document.getElementById('imageModal').classList.add('show'); }, 10);
         }
 
-        // 渲染機械五金部
-        const mg = document.getElementById('mech-grid');
-        const md = document.getElementById('mech-detail');
-        if(mg && md) {
-            mechCats.forEach(c => {
-                mg.innerHTML += `<div class="product-card" onclick="location.href='#mech-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id === 'g' ? 'g7' : c.id + '1'}.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = mechDescriptions[id] || id;
-                    items += `<div class="item-card" onclick="openModal('${c.id}/${id}.png', '${desc}')"><img src="${c.id}/${id}.png" onerror="this.src='logo.png'"><div class="item-desc">${desc}</div></div>`;
-                }
-                md.innerHTML += `<div id="mech-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
+        // 初始化渲染各部門產品
+        function initRender() {
+            // 渲染機械五金部
+            const mg = document.getElementById('mech-grid');
+            const md = document.getElementById('mech-detail');
+            if(mg && md) {
+                mechCats.forEach(c => {
+                    mg.innerHTML += `<div class="product-card" onclick="location.href='#mech-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id === 'g' ? 'g7' : c.id + '1'}.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = mechDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `${c.id}/${id}.png`, 'mech');
+                    }
+                    md.innerHTML += `<div id="mech-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
+
+            // 渲染電控開關部
+            const eg = document.getElementById('elec-grid');
+            const ed = document.getElementById('elec-detail');
+            if(eg && ed) {
+                elecCats.forEach(c => {
+                    eg.innerHTML += `<div class="product-card" onclick="location.href='#elec-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id}1.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = elecDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `${c.id}/${id}.png`, 'elec');
+                    }
+                    ed.innerHTML += `<div id="elec-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
+
+            // 渲染油封產品部 (整合自名韋，並加上 oil/ 路徑)
+            const og = document.getElementById('oil-grid');
+            const od = document.getElementById('oil-detail');
+            if(og && od) {
+                oilCats.forEach(c => {
+                    og.innerHTML += `
+                        <div class="product-card" onclick="location.href='#oil-sec-${c.id}'">
+                            <div class="card-img">
+                                <img src="oil/${c.id}/${c.id}1.png" onerror="this.src='logo.png'">
+                            </div>
+                            <div class="card-content">
+                                <h3>${c.name}</h3>
+                            </div>
+                        </div>`;
+                    
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = oilDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `oil/${c.id}/${id}.png`, 'oil');
+                    }
+                    od.innerHTML += `<div id="oil-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
+
+            // 渲染油封修理包部 (整合自名韋，並加上 air/ 路徑)
+            const ag = document.getElementById('air-grid');
+            const ad = document.getElementById('air-detail');
+            if(ag && ad) {
+                airCats.forEach(c => {
+                    ag.innerHTML += `<div class="product-card" onclick="location.href='#air-sec-${c.id}'"><div class="card-img"><img src="air/${c.id}/${c.id}0.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
+                    let items = '';
+                    for(let i=1; i<=c.count; i++) {
+                        let id = `${c.id}${i}`;
+                        let desc = airDescriptions[id] || id;
+                        items += buildItemCard(id, desc, `air/${c.id}/${id}.png`, 'air');
+                    }
+                    ad.innerHTML += `<div id="air-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
+                });
+            }
         }
 
-        // 渲染電控開關部
-        const eg = document.getElementById('elec-grid');
-        const ed = document.getElementById('elec-detail');
-        if(eg && ed) {
-            elecCats.forEach(c => {
-                eg.innerHTML += `<div class="product-card" onclick="location.href='#elec-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id}1.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = elecDescriptions[id] || id;
-                    items += `<div class="item-card" onclick="openModal('${c.id}/${id}.png', '${desc}')"><img src="${c.id}/${id}.png" onerror="this.src='logo.png'"><div class="item-desc">${desc}</div></div>`;
-                }
-                ed.innerHTML += `<div id="elec-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
-        }
-
-        // 渲染油封產品部 (整合自名韋，並加上 oil/ 路徑)
-        const og = document.getElementById('oil-grid');
-        const od = document.getElementById('oil-detail');
-        if(og && od) {
-            oilCats.forEach(c => {
-                // 注意這裡的圖片路徑加上了 oil/
-                og.innerHTML += `
-                    <div class="product-card" onclick="location.href='#oil-sec-${c.id}'">
-                        <div class="card-img">
-                            <img src="oil/${c.id}/${c.id}1.png" onerror="this.src='logo.png'">
-                        </div>
-                        <div class="card-content">
-                            <h3>${c.name}</h3>
-                        </div>
-                    </div>`;
+        // NEW: 搜尋框 Enter 事件監聽
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = this.value.toLowerCase().trim();
+                if(!query) return;
                 
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = oilDescriptions[id] || id;
-                    // 注意這裡的 modal 跟圖片路徑都加上了 oil/
-                    items += `<div class="item-card" onclick="openModal('oil/${c.id}/${id}.png', '${desc}')">
-                                <img src="oil/${c.id}/${id}.png" onerror="this.src='logo.png'">
-                                <div class="item-desc">${desc}</div>
-                              </div>`;
-                }
-                od.innerHTML += `<div id="oil-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
-        }
+                switchPage('search');
+                document.getElementById('search-query-display').innerText = `正在顯示: "${query}" 的結果`;
+                
+                const resultsContainer = document.getElementById('search-results-container');
+                const resultsGrid = document.getElementById('search-results-grid');
+                resultsContainer.style.display = 'block';
+                resultsGrid.innerHTML = '';
 
-        // 渲染油封修理包部 (整合自名韋，並加上 air/ 路徑)
-        const ag = document.getElementById('air-grid');
-        const ad = document.getElementById('air-detail');
-        if(ag && ad) {
-            airCats.forEach(c => {
-                // 注意這裡的圖片路徑加上了 air/
-                ag.innerHTML += `<div class="product-card" onclick="location.href='#air-sec-${c.id}'"><div class="card-img"><img src="air/${c.id}/${c.id}0.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                let items = '';
-                for(let i=1; i<=c.count; i++) {
-                    let id = `${c.id}${i}`;
-                    let desc = airDescriptions[id] || id;
-                    // 注意這裡的 modal 跟圖片路徑都加上了 air/
-                    items += `<div class="item-card" onclick="openModal('air/${c.id}/${id}.png', '${desc}')"><img src="air/${c.id}/${id}.png" onerror="this.src='logo.png'"><div class="item-desc">${desc}</div></div>`;
-                }
-                ad.innerHTML += `<div id="air-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-            });
-        }
+                // 過濾產品資料
+                const results = allProducts.filter(p => p.desc.toLowerCase().includes(query) || p.id.toLowerCase().includes(query));
+                
+                if(results.length === 0) {
+                    resultsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; font-size: 18px;">找不到符合的產品，請嘗試其他關鍵字。</p>';
+                } else {
+                    let html = '';
+                    // 為了確保不重複 push 到 allProducts，這裡我們直接手動組合 HTML
+                    results.forEach(p => {
+                        const isAdded = quoteCart.some(item => item.id === p.id);
+                        const btnClass = isAdded ? 'add-to-quote-btn added' : 'add-to-quote-btn';
+                        const btnText = isAdded ? '✓ 已加入' : '+ 加入詢價';
+                        let departmentName = '';
+                        switch(p.folder) {
+                            case 'mech': departmentName = '機械五金'; break;
+                            case 'elec': departmentName = '電控開關'; break;
+                            case 'oil': departmentName = '油封產品'; break;
+                            case 'air': departmentName = '修理包'; break;
+                            default: departmentName = '其他';
+                        }
 
-      // 監聽滾動事件 (控制右下角聯絡按鈕顯示)
+                        html += `
+                            <div class="item-card">
+                                <div class="item-img-container" onclick="openModal('${p.imgSrc}', '${p.desc}')">
+                                    <img src="${p.imgSrc}" onerror="this.src='logo.png'">
+                                </div>
+                                <div class="item-desc">${p.desc} <br><small style="color:var(--primary-color);">(${departmentName})</small></div>
+                                <button id="btn-search-${p.id}" class="${btnClass}" onclick="toggleCartItem('${p.id}', '${p.desc}', this); event.stopPropagation();">${btnText}</button>
+                            </div>
+                        `;
+                    });
+                    resultsGrid.innerHTML = html;
+                }
+            }
+        });
+
+        // 監聽滾動事件 (控制右下角聯絡按鈕顯示)
         window.addEventListener('scroll', () => {
             document.body.classList.toggle('show-floating-ui', window.scrollY > 400);
         });
 
-        // ==========================================
-        // 新增：根據網址自動切換頁面 (解決 Google Ads 錨點連結問題)
-        // ==========================================
+        // 根據網址自動切換頁面
         window.addEventListener('DOMContentLoaded', () => {
-            // 抓取網址中的 # 後面的字串 (例如 "#page-oil" 會抓到 "#page-oil")
-            const hash = window.location.hash;
+            initRender();
             
+            const hash = window.location.hash;
             if (hash) {
-                // 把 "#page-oil" 切割成 "oil"
                 const targetPage = hash.replace('#page-', '');
-                
-                // 如果目標頁面存在我們的分類中，就觸發切換
                 const validPages = ['mech', 'elec', 'oil', 'air', 'home'];
                 if (validPages.includes(targetPage)) {
                     switchPage(targetPage);
