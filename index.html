@@ -1210,10 +1210,11 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-// 🌟 1. 請確保這一行放在 script 區塊的最上方 (填入你複製的那串 GAS 網址)
+// ==========================================
+// 🌟 請把剛才複製的最新 GAS 網址貼到下面這裡
 const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
+// ==========================================
 
-// 🌟 2. 升級後的提交函數
 async function submitForm(e) {
     e.preventDefault();
     
@@ -1236,16 +1237,16 @@ async function submitForm(e) {
     submitBtn.innerText = "⏳ 傳送中，請稍候...";
 
     try {
-        // 🚀 重頭戲：發送到 GAS 後台觸發「存入試算表」與「寄送 Gmail」
+        // 🚀 發送到最新的 GAS 後台觸發「存入試算表」與「寄送 Gmail」
         await fetch(CLOUD_API_URL, {
             method: 'POST',
             mode: 'no-cors', // 使用 no-cors 確保發送不被瀏覽器攔截
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
-                sheet: "NewInquiry", // 這個標籤會觸發 GAS 裡的 Email 引擎
+                sheet: "NewInquiry", // 這個標籤會觸發 GAS 裡的新版 Email 與寫入引擎
                 data: {
                     name: `${company} / ${contact}`,
-                    tel: email, // 這裡存入客戶的 Email
+                    tel: email, 
                     content: details
                 }
             })
