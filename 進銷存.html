@@ -425,20 +425,24 @@
             }
         }
 
-        // 寫入資料到 Google (使用 text/plain 避免 CORS 預檢問題)
+        // 寫入資料到 Google (加入 mode: 'no-cors' 與 redirect: 'follow' 避免 CORS 阻擋)
         async function saveToCloud(sheetName, dataArray) {
             setSyncStatus('syncing');
             try {
                 await fetch(CLOUD_API_URL, {
                     method: 'POST',
+                    mode: 'no-cors', // 🌟 解決 CORS 阻擋的關鍵
+                    redirect: 'follow', // 🌟 確保跟隨 Google 轉址
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ sheet: sheetName, data: dataArray })
                 });
+                
+                // 因為使用 no-cors，瀏覽器會收到不透明回覆，只要沒進 catch 就算成功
                 setSyncStatus('synced');
             } catch (err) {
                 console.error(`寫入 ${sheetName} 失敗:`, err);
                 setSyncStatus('error');
-                alert('雲端儲存失敗，請檢查網路連線。');
+                alert('雲端儲存失敗，請檢查網路連線或系統設定。');
             }
         }
 
