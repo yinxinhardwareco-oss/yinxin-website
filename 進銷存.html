@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>銀鑫進銷存系統 - 雲端同步版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 共用變數與銀鑫品牌色 */
+        :root {
+            --primary-color: #3a6dc2;
+            --primary-dark: #2a5296;
+            --bg-dark: #1e293b;
+            --bg-sidebar: #0f172a;
+            --bg-light: #f8fafc;
+            --text-main: #334155;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* 左側導覽列 */
+        .sidebar { width: 260px; background: var(--bg-sidebar); color: #f8fafc; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 100; transition: 0.3s; }
+        .sidebar-logo { padding: 25px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; font-weight: 900; font-size: 22px; color: #fff; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .nav-btn { background: none; border: none; color: #cbd5e1; padding: 16px 20px; text-align: left; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; border-left: 4px solid transparent; display: flex; align-items: center; gap: 10px; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-btn.active { background: rgba(58, 109, 194, 0.2); color: #fff; border-left-color: var(--primary-color); }
+
+        /* 右側主要內容區 */
+        .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
+        .topbar { background: #fff; height: 70px; min-height: 70px; display: flex; align-items: center; padding: 0 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-weight: 700; font-size: 20px; color: var(--bg-sidebar); position: sticky; top: 0; z-index: 50; justify-content: space-between; }
+        .page-container { padding: 30px; flex: 1; padding-bottom: 100px; }
+        
+        .page { display: none; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); border: 1px solid var(--border-color); margin-bottom: 30px;}
+        .page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h3 { border-left: 5px solid var(--primary-color); padding-left: 12px; margin-bottom: 20px; color: var(--bg-sidebar); font-size: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;}
+
+        /* 雲端同步狀態標籤 */
+        .sync-status { font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
+        .sync-status.synced { background: #d1fae5; color: #059669; border: 1px solid #6ee7b7; }
+        .sync-status.syncing { background: #fef08a; color: #b45309; border: 1px solid #fde047; }
+        .sync-status.error { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+
+        /* 表單與控制項 */
+        .control-panel { background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid var(--border-color); }
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1 1 200px; min-width: 0; }
+        .form-group.small { flex: 0 1 120px; }
+        .form-group.large { flex: 2 1 300px; }
+        .form-group label { font-size: 13px; font-weight: 700; color: #64748b; }
+        input[type="text"], input[type="number"], input[type="date"], select, textarea { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; outline: none; transition: 0.2s; width: 100%; background: #fff;}
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(58,109,194,0.1); }
+        .highlight-bg { background-color: #eff6ff; border: 1px dashed #93c5fd; }
+
+        /* 按鈕樣式 */
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 14px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;}
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-info { background: var(--info); color: white; }
+        .btn-info:hover { background: #0284c7; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+        /* 標籤樣式 */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+        .badge-unpaid { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; }
+        .badge-paid { background: #d1fae5; color: #10b981; border: 1px solid #6ee7b7; }
+
+        /* 表格樣式 */
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; min-width: 700px; }
+        th, td { border-bottom: 1px solid var(--border-color); padding: 15px 12px; text-align: left; }
+        th { background-color: #f8fafc; color: #475569; font-weight: 700; font-size: 14px; border-bottom: 2px solid #cbd5e1; }
+        td { font-size: 15px; }
+        tr:hover td { background-color: #f8fafc; }
+        
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .text-danger { color: var(--danger); font-weight: bold; }
+        .text-success { color: var(--success); font-weight: bold; }
+        
+        .stock-input-group { display: flex; align-items: center; gap: 5px; }
+        .stock-input-group input { width: 70px; padding: 6px; text-align: center; }
+
+        /* 列印用報價單排版 */
+        .print-only { display: none; }
+        .quote-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px; }
+        .quote-header h1 { font-weight: 900; color: #000; font-size: 36px; letter-spacing: 2px; margin-bottom: 5px; }
+        .quote-header p { font-size: 14px; color: #333; }
+        .quote-title { display: inline-block; font-size: 24px; font-weight: 900; border: 1px solid #000; padding: 5px 30px; margin-top: 15px; letter-spacing: 5px; }
+        
+        .quote-meta { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 15px; line-height: 1.8; }
+        .total-area { display: flex; flex-direction: column; align-items: flex-end; margin-top: 15px; font-size: 16px; line-height: 1.8; }
+        .total-area .final-total { font-size: 22px; font-weight: 900; border-bottom: 4px double #000; padding-bottom: 2px; margin-top: 5px; }
+        .quote-notes-print { margin-top: 30px; font-size: 14px; line-height: 1.6; }
+
+        /* 📱 手機版 RWD 設計 */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { flex-direction: row; position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; z-index: 9999; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); overflow-x: auto; overflow-y: hidden; background: #fff; border-top: 1px solid #e2e8f0; }
+            .sidebar-logo, .nav-btn span { display: none; }
+            .nav-btn { flex: 1; justify-content: center; padding: 10px; font-size: 22px; color: #64748b; border-left: none; border-bottom: 4px solid transparent; min-width: 60px; }
+            .nav-btn.active { background: #f8fafc; color: var(--primary-color); border-bottom-color: var(--primary-color); }
+            
+            .main-content { padding-bottom: 70px; } 
+            .topbar { padding: 0 15px; font-size: 16px; justify-content: space-between; }
+            .page-container { padding: 15px; }
+            .page { padding: 15px; }
+            .control-panel { padding: 15px; }
+            .form-row { flex-direction: column; gap: 10px; align-items: stretch; }
+            .form-group { flex: 1 1 auto; }
+            .btn { width: 100%; height: 45px; margin-top: 5px; }
+            .hide-on-mobile { display: none; }
+        }
+
+        /* 🖨️ 列印模式設定 */
+        @media print {
+            .sidebar, .topbar, .no-print, .control-panel { display: none !important; }
+            body, .main-content, .page-container { padding: 0; margin: 0; background: #fff; height: auto; overflow: visible; display: block; }
+            .page { box-shadow: none; border: none; padding: 0; margin: 0; }
+            .print-only { display: block; }
+            
+            table { border: 1px solid #000; border-collapse: collapse; margin-bottom: 10px; white-space: normal; min-width: 100%; }
+            th, td { border: 1px solid #000 !important; padding: 8px !important; font-size: 13px; color: #000; }
+            th { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
+            
+            .total-area { border-top: 1px solid #000; padding-top: 10px; }
+            input[type="text"], textarea { border: none; padding: 0; font-family: inherit; font-size: inherit; resize: none; background: transparent; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+
+        /* 全螢幕載入畫面 */
+        #cloud-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="cloud-loader">
+        <div class="spinner"></div>
+        <h2 style="color: var(--primary-dark);">☁️ 正在與 Google 雲端同步資料...</h2>
+        <p style="color: #64748b; margin-top: 10px;">請稍候，這可能需要幾秒鐘</p>
+    </div>
+
+    <div class="sidebar no-print">
+        <div class="sidebar-logo">⚙️ 銀鑫 ERP</div>
+        <button class="nav-btn active" onclick="switchTab('inventory', '📦 產品庫存管理')" id="nav-inventory" title="庫存管理">📦 <span>庫存管理</span></button>
+        <button class="nav-btn" onclick="switchTab('customers', '👥 客戶資料管理')" id="nav-customers" title="客戶管理">👥 <span>客戶管理</span></button>
+        <button class="nav-btn" onclick="switchTab('quotation', '📝 報價單開立系統')" id="nav-quotation" title="報價單開立">📝 <span>開立報價</span></button>
+        <button class="nav-btn" onclick="switchTab('quote-history', '📂 歷史報價紀錄')" id="nav-quote-history" title="歷史報價">📂 <span>歷史報價</span></button>
+        <button class="nav-btn" onclick="switchTab('settings', '⚙️ 系統設定')" id="nav-settings" title="系統設定">⚙️ <span>系統設定</span></button>
+        <div style="flex: 1;" class="hide-on-mobile"></div>
+        <button class="nav-btn hide-on-mobile" style="border-top: 1px solid rgba(255,255,255,0.1);" onclick="window.location.href='index.html'">🏠 <span>返回官網</span></button>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar no-print">
+            <span id="topbar-title">📦 產品庫存管理</span>
+            <div id="sync-status-indicator" class="sync-status syncing">
+                ⏳ 系統連線中
+            </div>
+        </div>
+        
+        <div class="page-container">
+            
+            <div id="page-inventory" class="page active">
+                <div class="control-panel no-print">
+                    <h3>新增產品建檔</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>產品型號 (SKU)</label><input type="text" id="inv-sku" placeholder="例: A-150-A"></div>
+                        <div class="form-group large"><label>產品名稱/規格</label><input type="text" id="inv-name" placeholder="例: 平面把手"></div>
+                        <div class="form-group"><label>產品類別</label><input type="text" id="inv-category" placeholder="機械/電控"></div>
+                        <div class="form-group small"><label>進貨成本</label><input type="number" id="inv-cost" placeholder="0" min="0"></div>
+                        <div class="form-group small"><label>標準銷價</label><input type="number" id="inv-price" placeholder="0" min="0"></div>
+                        <div class="form-group small"><label>期初庫存</label><input type="number" id="inv-stock" value="0" min="0"></div>
+                        <button class="btn btn-success" style="height: 42px;" onclick="addProduct()">➕ 新增建檔</button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>型號</th>
+                                <th>產品名稱</th>
+                                <th class="hide-on-mobile">進/銷價</th>
+                                <th class="text-center">目前庫存</th>
+                                <th class="no-print">快速進銷作業</th>
+                                <th class="no-print text-center hide-on-mobile">管理</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="page-customers" class="page">
+                <div class="control-panel no-print">
+                    <h3>新增客戶資料</h3>
+                    <div class="form-row">
+                        <div class="form-group large"><label>客戶/公司名稱 *</label><input type="text" id="cust-name" placeholder="例: 某某工業股份有限公司"></div>
+                        <div class="form-group"><label>統一編號</label><input type="text" id="cust-taxid" placeholder="8碼數字" maxlength="8"></div>
+                        <div class="form-group"><label>聯絡人</label><input type="text" id="cust-contact" placeholder="姓名/職稱"></div>
+                        <div class="form-group"><label>聯絡電話</label><input type="text" id="cust-tel" placeholder="市話或手機"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group large"><label>公司地址 / 備註</label><input type="text" id="cust-address" placeholder="出貨地址或特殊備註事項"></div>
+                        <button class="btn btn-success" style="height: 42px;" onclick="addCustomer()">➕ 儲存客戶</button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>客戶名稱</th>
+                                <th>統一編號</th>
+                                <th>聯絡資訊</th>
+                                <th class="hide-on-mobile">地址/備註</th>
+                                <th class="no-print text-center" width="150px">業務操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="page-quotation" class="page">
+                <div class="quote-header print-only">
+                    <h1>銀鑫有限公司</h1>
+                    <p>YINXIN HARDWARE CO., LTD.</p>
+                    <p>彰化縣伸港鄉定興路124號 | TEL: (04)852-1867 | FAX: (04)852-1945</p>
+                    <div class="quote-title">報 價 單</div>
+                </div>
+
+                <div class="quote-meta print-only">
+                    <div>
+                        <p><strong>客戶名稱：</strong> <span id="print-cust-name">_________________</span></p>
+                        <p><strong>統一編號：</strong> <span id="print-cust-taxid">_________________</span></p>
+                        <p><strong>聯 絡 人 ：</strong> <span id="print-cust-contact">_________________</span></p>
+                        <p><strong>聯絡電話：</strong> <span id="print-cust-tel">_________________</span></p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p><strong>報價單號：</strong> <span id="print-quote-no"></span></p>
+                        <p><strong>報價日期：</strong> <span id="print-date"></span></p>
+                        <p><strong>有效期限：</strong> <span id="print-validity">30 天</span></p>
+                    </div>
+                </div>
+
+                <div class="control-panel no-print">
+                    <h3 style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        報價單基本設定
+                        <div class="form-group highlight-bg" style="padding: 5px 10px; border-radius: 6px; margin: 0; min-width: 200px;">
+                            <select id="q-quick-customer" onchange="autoFillCustomerFromSelect()" style="border: none; background: transparent; font-weight: bold; color: var(--primary-dark);">
+                                <option value="">💡 從雲端客戶庫快速帶入...</option>
+                            </select>
+                        </div>
+                    </h3>
+                    <div class="form-row">
+                        <div class="form-group large"><label>客戶名稱</label><input type="text" id="q-cust-name" placeholder="輸入客戶名稱" oninput="updatePrintView('print-cust-name', this.value)"></div>
+                        <div class="form-group"><label>統一編號</label><input type="text" id="q-cust-taxid" placeholder="8碼數字" oninput="updatePrintView('print-cust-taxid', this.value)"></div>
+                        <div class="form-group"><label>聯絡人</label><input type="text" id="q-cust-contact" placeholder="輸入聯絡人" oninput="updatePrintView('print-cust-contact', this.value)"></div>
+                        <div class="form-group"><label>聯絡電話</label><input type="text" id="q-cust-tel" placeholder="輸入電話" oninput="updatePrintView('print-cust-tel', this.value)"></div>
+                    </div>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <div class="form-group"><label>報價單號 (可修改)</label><input type="text" id="q-quote-no" oninput="updatePrintView('print-quote-no', this.value)"></div>
+                        <div class="form-group"><label>報價日期 (可修改)</label><input type="date" id="q-quote-date" onchange="updatePrintDate(this.value)"></div>
+                        <div class="form-group"><label>有效期限</label><input type="text" id="q-quote-validity" value="30 天" oninput="updatePrintView('print-validity', this.value)"></div>
+                    </div>
+                    
+                    <h3 style="margin-top: 25px;">加入報價項目</h3>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <label>選擇雲端庫存產品</label>
+                            <select id="q-product-select" onchange="autoFillPrice()"></select>
+                        </div>
+                        <div class="form-group small"><label>數量</label><input type="number" id="q-qty" value="1" min="1"></div>
+                        <div class="form-group">
+                            <label>報價單價 (可修改)</label>
+                            <input type="number" id="q-override-price" placeholder="自動帶入銷價">
+                        </div>
+                        <button class="btn btn-primary" style="height: 42px;" onclick="addQuoteItem()">➕ 加入明細</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center hide-on-mobile">項次</th>
+                                <th width="20%">產品型號</th>
+                                <th width="35%">品名規格</th>
+                                <th width="10%" class="text-center">數量</th>
+                                <th width="15%" class="text-right">單價 (NT$)</th>
+                                <th width="15%" class="text-right">小計 (NT$)</th>
+                                <th width="5%" class="no-print text-center">刪</th>
+                            </tr>
+                        </thead>
+                        <tbody id="quotation-list"></tbody>
+                    </table>
+                </div>
+                
+                <div class="total-area">
+                    <div style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px;"><span>小計：</span> <span id="calc-subtotal">$0</span></div>
+                    
+                    <div class="no-print" style="width: 300px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <span style="color:var(--danger); font-weight:bold;">折讓金額：</span> 
+                        <input type="number" id="q-discount" value="0" style="width: 100px; text-align: right; padding: 5px;" oninput="renderQuotation()">
+                    </div>
+                    <div class="print-only" style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px; color:var(--danger);"><span>折讓：</span> <span id="calc-discount-print">-$0</span></div>
+                    
+                    <div style="width: 300px; display: flex; justify-content: space-between;"><span>營業稅 (5%)：</span> <span id="calc-tax">$0</span></div>
+                    <div style="width: 300px; display: flex; justify-content: space-between;" class="final-total"><span>總計金額：</span> <span id="calc-total">$0</span></div>
+                </div>
+
+                <div class="quote-notes-print">
+                    <strong>備註：</strong><br>
+                    <textarea id="q-notes" rows="4" style="width: 100%; border: 1px solid #cbd5e1; padding: 10px; border-radius: 4px; margin-top: 5px; outline: none;" placeholder="在此輸入交期、匯款帳號等備註事項..."></textarea>
+                </div>
+
+                <div class="no-print" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; flex-wrap: wrap;">
+                    <button class="btn btn-outline" onclick="clearQuotation()">🗑️ 清空明細</button>
+                    <button class="btn btn-info" style="font-size: 16px;" onclick="saveQuotationToHistory()">☁️ 儲存至雲端紀錄</button>
+                    <button class="btn btn-success" style="font-size: 16px;" onclick="printQuotation()">🖨️ 列印 / 轉 PDF</button>
+                </div>
+            </div>
+
+            <div id="page-quote-history" class="page">
+                <div class="control-panel no-print" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h3 style="margin-bottom: 5px; border-left: none; padding-left: 0;">📂 歷史報價紀錄與應收帳款</h3>
+                        <span style="color:#64748b; font-size:14px;">所有資料已同步至 Google 試算表。點擊「編輯」可修改並覆蓋紀錄。</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>報價日期</th>
+                                <th>單號</th>
+                                <th>客戶名稱</th>
+                                <th class="text-right">總計金額</th>
+                                <th class="text-center">收款狀態</th>
+                                <th class="no-print text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-quote-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="page-settings" class="page">
+                <div class="control-panel">
+                    <h3>☁️ 雲端系統狀態</h3>
+                    <p style="margin-bottom: 20px; color: #10b981; line-height: 1.6; font-weight: bold;">
+                        ✅ 目前系統已成功連接 Google Apps Script 雲端伺服器。<br>
+                        所有操作將自動儲存於您的 Google 試算表中，跨裝置即時同步。
+                    </p>
+                    
+                    <div style="display: flex; gap: 20px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0; margin-bottom: 20px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="window.open('https://docs.google.com/spreadsheets/', '_blank')">📊 前往 Google 試算表查看原始資料</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🔒 請將你從 Google Apps Script 複製的網址，貼到下方的雙引號中
+        // ==========================================
+        const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
+        
+        // 雲端資料庫陣列
+        let inventory = [];
+        let customers = [];
+        let quoteHistory = [];
+        let quoteItems = [];
+        let currentQuoteTotal = 0; 
+
+        // --- 核心：雲端 API 連線模組 ---
+        
+        // 控制 UI 燈號
+        function setSyncStatus(status) {
+            const indicator = document.getElementById('sync-status-indicator');
+            indicator.className = 'sync-status'; // 清除所有 class
+            if (status === 'syncing') {
+                indicator.classList.add('syncing');
+                indicator.innerHTML = '⏳ 雲端同步中...';
+            } else if (status === 'synced') {
+                indicator.classList.add('synced');
+                indicator.innerHTML = '✅ 與雲端同步完成';
+                setTimeout(() => { indicator.innerHTML = '☁️ 雲端系統運作中'; }, 3000);
+            } else {
+                indicator.classList.add('error');
+                indicator.innerHTML = '❌ 連線失敗';
+            }
+        }
+
+        // 從 Google 讀取資料
+        async function fetchFromCloud(sheetName) {
+            try {
+                const res = await fetch(`${CLOUD_API_URL}?sheet=${sheetName}`);
+                const data = await res.json();
+                return data;
+            } catch (err) {
+                console.error(`讀取 ${sheetName} 失敗:`, err);
+                return [];
+            }
+        }
+
+        // 寫入資料到 Google (使用 text/plain 避免 CORS 預檢問題)
+        async function saveToCloud(sheetName, dataArray) {
+            setSyncStatus('syncing');
+            try {
+                await fetch(CLOUD_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ sheet: sheetName, data: dataArray })
+                });
+                setSyncStatus('synced');
+            } catch (err) {
+                console.error(`寫入 ${sheetName} 失敗:`, err);
+                setSyncStatus('error');
+                alert('雲端儲存失敗，請檢查網路連線。');
+            }
+        }
+
+        // --- 系統初始化 ---
+        async function init() {
+           if(CLOUD_API_URL === "請把你的網址貼在這裡") {
+                document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>⚠️ 請先在程式碼設定 CLOUD_API_URL</h2>";
+                return;
+            }
+
+            // 平行載入三個工作表的資料
+            try {
+                const [invData, custData, quotesData] = await Promise.all([
+                    fetchFromCloud('Inventory'),
+                    fetchFromCloud('Customers'),
+                    fetchFromCloud('Quotes')
+                ]);
+                
+                inventory = invData;
+                customers = custData;
+                quoteHistory = quotesData;
+
+                // 隱藏載入畫面
+                document.getElementById('cloud-loader').style.display = 'none';
+                setSyncStatus('synced');
+
+                // 渲染畫面
+                renderInventory();
+                renderCustomers();
+                renderQuoteHistory();
+                updateProductDropdown();
+                updateCustomerDropdown();
+                resetQuotationFormDate();
+
+            } catch (error) {
+                document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>❌ 無法連線到 Google 伺服器，請檢查網址或網路設定。</h2>";
+            }
+        }
+
+        function resetQuotationFormDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+            const dd = today.getDate().toString().padStart(2, '0');
+            
+            const defaultDateInput = `${yyyy}-${mm}-${dd}`;
+            const displayDateStr = `${yyyy}/${mm}/${dd}`;
+            const randomNum = Math.floor(Math.random() * 900) + 100;
+            const defaultQuoteNo = `YX${yyyy}${mm}${dd}-${randomNum}`;
+
+            document.getElementById('q-quote-no').value = defaultQuoteNo;
+            document.getElementById('q-quote-date').value = defaultDateInput;
+            
+            updatePrintView('print-quote-no', defaultQuoteNo);
+            document.getElementById('print-date').innerText = displayDateStr;
+        }
+
+        function updatePrintView(elementId, value) { document.getElementById(elementId).innerText = value || '_________________'; }
+        function updatePrintDate(val) { document.getElementById('print-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; }
+
+        function switchTab(tabId, title) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`page-${tabId}`).classList.add('active');
+            document.getElementById(`nav-${tabId}`).classList.add('active');
+            document.getElementById('topbar-title').innerText = title;
+            
+            if(tabId === 'quotation') { updateProductDropdown(); updateCustomerDropdown(); }
+            if(tabId === 'quote-history') { renderQuoteHistory(); }
+        }
+
+        // --- 庫存模組 (連線版) ---
+        function renderInventory() {
+            const tbody = document.getElementById('inventory-list');
+            tbody.innerHTML = '';
+            inventory.forEach((item, index) => {
+                const stockColor = item.stock < 10 ? 'text-danger' : 'text-success';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span style="font-size:12px; background:#e2e8f0; padding:2px 5px; border-radius:3px;">${item.category||'未分類'}</span><br><strong>${item.sku}</strong></td>
+                        <td>${item.name}</td>
+                        <td class="hide-on-mobile" style="color: #64748b;">$${item.cost} / $${item.price}</td>
+                        <td class="text-center ${stockColor}" style="font-size:18px;">${item.stock}</td>
+                        <td class="no-print">
+                            <div class="stock-input-group">
+                                <input type="number" id="adj-${index}" value="1" min="1">
+                                <button class="btn btn-success btn-sm" onclick="adjustStock(${index}, 1)">進</button>
+                                <button class="btn btn-primary btn-sm" onclick="adjustStock(${index}, -1)">銷</button>
+                            </div>
+                        </td>
+                        <td class="no-print text-center hide-on-mobile">
+                            <button class="btn btn-outline btn-sm" onclick="deleteProduct(${index})">刪除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(inventory.length === 0) tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding:20px; color:#94a3b8;">雲端目前沒有產品紀錄</td></tr>';
+        }
+
+        function addProduct() {
+            const sku = document.getElementById('inv-sku').value.trim();
+            const name = document.getElementById('inv-name').value.trim();
+            const category = document.getElementById('inv-category').value || '未分類';
+            const cost = parseInt(document.getElementById('inv-cost').value) || 0;
+            const price = parseInt(document.getElementById('inv-price').value) || 0;
+            const stock = parseInt(document.getElementById('inv-stock').value) || 0;
+            
+            if(!sku || !name) return alert('請填寫完整型號與名稱！');
+            if(inventory.find(i => i.sku === sku)) return alert('此型號(SKU)已存在！');
+
+            // 1. 更新本地陣列
+            inventory.push({ sku, name, category, cost, price, stock });
+            // 2. 立即更新畫面 (Optimistic UI)
+            renderInventory(); 
+            // 3. 背景發送給雲端
+            saveToCloud('Inventory', inventory);
+            
+            document.querySelectorAll('#page-inventory input').forEach(input => input.value = '');
+            document.getElementById('inv-stock').value = 0;
+        }
+
+        function adjustStock(index, multiplier) {
+            const qty = parseInt(document.getElementById(`adj-${index}`).value);
+            if(!qty || qty <= 0) return alert('請輸入大於 0 的數量');
+            let newStock = Number(inventory[index].stock) + (qty * multiplier);
+            if(newStock < 0 && !confirm(`警告：扣除後庫存將變為負數 (${newStock})，確定要繼續嗎？`)) return;
+            
+            inventory[index].stock = newStock;
+            renderInventory();
+            saveToCloud('Inventory', inventory);
+        }
+
+        function deleteProduct(index) {
+            if(confirm(`確定要從雲端刪除「${inventory[index].name}」嗎？`)) {
+                inventory.splice(index, 1);
+                renderInventory();
+                saveToCloud('Inventory', inventory);
+            }
+        }
+
+        // --- 客戶模組 (連線版) ---
+        function renderCustomers() {
+            const tbody = document.getElementById('customers-list');
+            tbody.innerHTML = '';
+            customers.forEach((c, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${c.name}</strong></td>
+                        <td>${c.taxid || '-'}</td>
+                        <td>${c.contact || '-'}<br><span style="font-size:12px;color:#666;">${c.tel || ''}</span></td>
+                        <td class="hide-on-mobile"><span style="font-size:13px; color:#64748b;">${c.address || '-'}</span></td>
+                        <td class="no-print text-center">
+                            <button class="btn btn-primary btn-sm" onclick="quoteForCustomer(${index})">📝 報價</button>
+                            <button class="btn btn-outline btn-sm hide-on-mobile" onclick="deleteCustomer(${index})">刪除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(customers.length === 0) tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding:20px; color:#94a3b8;">雲端目前沒有客戶資料</td></tr>';
+        }
+
+        function addCustomer() {
+            const name = document.getElementById('cust-name').value.trim();
+            if(!name) return alert('客戶/公司名稱為必填項目！');
+            
+            customers.push({
+                name: name,
+                taxid: document.getElementById('cust-taxid').value.trim(),
+                contact: document.getElementById('cust-contact').value.trim(),
+                tel: document.getElementById('cust-tel').value.trim(),
+                address: document.getElementById('cust-address').value.trim()
+            });
+
+            renderCustomers();
+            saveToCloud('Customers', customers);
+            document.querySelectorAll('#page-customers input').forEach(input => input.value = '');
+        }
+
+        function deleteCustomer(index) {
+            if(confirm(`確定要從雲端刪除客戶「${customers[index].name}」嗎？`)) {
+                customers.splice(index, 1);
+                renderCustomers();
+                updateCustomerDropdown();
+                saveToCloud('Customers', customers);
+            }
+        }
+
+        function quoteForCustomer(index) {
+            switchTab('quotation', '📝 報價單開立系統');
+            fillQuoteCustomerForm(customers[index]);
+        }
+
+        // --- 報價單模組 (不需連線，存成紀錄時才連線) ---
+        function updateCustomerDropdown() {
+            const select = document.getElementById('q-quick-customer');
+            select.innerHTML = '<option value="">💡 從雲端客戶庫快速帶入...</option>';
+            customers.forEach((c, index) => {
+                select.innerHTML += `<option value="${index}">${c.name} ${c.taxid ? '('+c.taxid+')' : ''}</option>`;
+            });
+        }
+
+        function autoFillCustomerFromSelect() {
+            const index = document.getElementById('q-quick-customer').value;
+            if(index === "") return;
+            fillQuoteCustomerForm(customers[index]);
+            document.getElementById('q-quick-customer').value = ""; 
+        }
+
+        function fillQuoteCustomerForm(c) {
+            document.getElementById('q-cust-name').value = c.name || '';
+            document.getElementById('q-cust-taxid').value = c.taxid || '';
+            document.getElementById('q-cust-contact').value = c.contact || '';
+            document.getElementById('q-cust-tel').value = c.tel || '';
+            
+            updatePrintView('print-cust-name', c.name);
+            updatePrintView('print-cust-taxid', c.taxid);
+            updatePrintView('print-cust-contact', c.contact);
+            updatePrintView('print-cust-tel', c.tel);
+        }
+
+        function updateProductDropdown() {
+            const select = document.getElementById('q-product-select');
+            select.innerHTML = '<option value="">-- 請選擇產品 --</option>';
+            inventory.forEach(item => {
+                select.innerHTML += `<option value="${item.sku}">[${item.sku}] ${item.name} (庫存:${item.stock})</option>`;
+            });
+        }
+
+        function autoFillPrice() {
+            const sku = document.getElementById('q-product-select').value;
+            if(!sku) return document.getElementById('q-override-price').value = '';
+            const product = inventory.find(i => i.sku === sku);
+            if(product) document.getElementById('q-override-price').value = product.price; 
+        }
+
+        function addQuoteItem() {
+            const sku = document.getElementById('q-product-select').value;
+            const qty = parseInt(document.getElementById('q-qty').value) || 1;
+            const customPrice = document.getElementById('q-override-price').value;
+
+            if(!sku) return alert('請先選擇要報價的產品！');
+            if(customPrice === '') return alert('請確認報價單價！');
+
+            const product = inventory.find(i => i.sku === sku);
+            const finalPrice = parseInt(customPrice);
+
+            const existingIndex = quoteItems.findIndex(i => i.sku === sku && i.price === finalPrice);
+            if(existingIndex > -1) {
+                quoteItems[existingIndex].qty += qty;
+            } else {
+                quoteItems.push({ sku: product.sku, name: product.name, qty: qty, price: finalPrice });
+            }
+            
+            renderQuotation();
+            document.getElementById('q-product-select').value = '';
+            document.getElementById('q-qty').value = '1';
+            document.getElementById('q-override-price').value = '';
+        }
+
+        function removeQuoteItem(index) {
+            quoteItems.splice(index, 1);
+            renderQuotation();
+        }
+
+        function clearQuotation() {
+            if(confirm('確定要清空這份報價單重新開立嗎？')) {
+                quoteItems = [];
+                document.getElementById('q-discount').value = 0;
+                document.getElementById('q-cust-name').value = '';
+                document.getElementById('q-cust-taxid').value = '';
+                document.getElementById('q-cust-contact').value = '';
+                document.getElementById('q-cust-tel').value = '';
+                document.getElementById('q-notes').value = '';
+                
+                updatePrintView('print-cust-name', '');
+                updatePrintView('print-cust-taxid', '');
+                updatePrintView('print-cust-contact', '');
+                updatePrintView('print-cust-tel', '');
+                
+                resetQuotationFormDate();
+                renderQuotation();
+            }
+        }
+
+        function renderQuotation() {
+            const tbody = document.getElementById('quotation-list');
+            tbody.innerHTML = '';
+            let subtotal = 0;
+
+            quoteItems.forEach((item, index) => {
+                const itemTotal = item.price * item.qty;
+                subtotal += itemTotal;
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center hide-on-mobile">${index + 1}</td>
+                        <td>${item.sku}</td>
+                        <td>${item.name}</td>
+                        <td class="text-center">${item.qty}</td>
+                        <td class="text-right">$${item.price.toLocaleString()}</td>
+                        <td class="text-right">$${itemTotal.toLocaleString()}</td>
+                        <td class="no-print text-center"><button class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="removeQuoteItem(${index})">X</button></td>
+                    </tr>
+                `;
+            });
+
+            if(quoteItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:30px; color:#94a3b8;">尚未加入任何報價項目</td></tr>`;
+            }
+
+            const discount = parseInt(document.getElementById('q-discount').value) || 0;
+            const tax = Math.round((subtotal - discount) * 0.05);
+            const total = (subtotal - discount) + tax;
+            currentQuoteTotal = total; 
+
+            document.getElementById('calc-subtotal').innerText = `$${subtotal.toLocaleString()}`;
+            document.getElementById('calc-discount-print').innerText = `-$${discount.toLocaleString()}`;
+            document.getElementById('calc-tax').innerText = `$${tax.toLocaleString()}`;
+            document.getElementById('calc-total').innerText = `$${total.toLocaleString()}`;
+        }
+
+        function printQuotation() {
+            if(quoteItems.length === 0) return alert('報價單內沒有項目喔！請先加入明細。');
+            window.print();
+        }
+
+        // --- 歷史報價紀錄與應收帳款模組 (連線版) ---
+        function saveQuotationToHistory() {
+            const custName = document.getElementById('q-cust-name').value.trim();
+            const quoteNo = document.getElementById('q-quote-no').value.trim();
+            const date = document.getElementById('q-quote-date').value;
+            const discount = parseInt(document.getElementById('q-discount').value) || 0;
+            const notes = document.getElementById('q-notes').value;
+
+            const custTaxId = document.getElementById('q-cust-taxid').value;
+            const custContact = document.getElementById('q-cust-contact').value;
+            const custTel = document.getElementById('q-cust-tel').value;
+
+            if(!custName || quoteItems.length === 0) {
+                return alert('請確認已填寫「客戶名稱」且「報價單內有產品明細」！');
+            }
+
+            const existingIndex = quoteHistory.findIndex(q => q.quoteNo === quoteNo);
+
+            const recordData = {
+                quoteNo: quoteNo,
+                date: date,
+                custName: custName,
+                custTaxId: custTaxId,
+                custContact: custContact,
+                custTel: custTel,
+                items: quoteItems, // 陣列，存入雲端時會被轉成字串
+                discount: discount,
+                notes: notes,
+                totalAmount: currentQuoteTotal,
+                status: 'unpaid'
+            };
+
+            if (existingIndex > -1) {
+                if(confirm(`雲端已存在報價單 [${quoteNo}]。確定要覆蓋更新嗎？`)) {
+                    recordData.status = quoteHistory[existingIndex].status; 
+                    quoteHistory[existingIndex] = recordData;
+                    renderQuoteHistory();
+                    saveToCloud('Quotes', quoteHistory); // 同步雲端
+                    alert(`✅ 報價單 ${quoteNo} 已成功覆蓋更新至雲端！`);
+                }
+            } else {
+                quoteHistory.unshift(recordData);
+                renderQuoteHistory();
+                saveToCloud('Quotes', quoteHistory); // 同步雲端
+                alert(`✅ 報價單 ${quoteNo} 已成功儲存至雲端！`);
+            }
+        }
+
+        function editQuoteRecord(index) {
+            const record = quoteHistory[index];
+            switchTab('quotation', '📝 報價單開立系統');
+            
+            document.getElementById('q-cust-name').value = record.custName || '';
+            document.getElementById('q-cust-taxid').value = record.custTaxId || '';
+            document.getElementById('q-cust-contact').value = record.custContact || '';
+            document.getElementById('q-cust-tel').value = record.custTel || '';
+            document.getElementById('q-quote-no').value = record.quoteNo || '';
+            document.getElementById('q-quote-date').value = record.date || '';
+            
+            updatePrintView('print-cust-name', record.custName);
+            updatePrintView('print-cust-taxid', record.custTaxId);
+            updatePrintView('print-cust-contact', record.custContact);
+            updatePrintView('print-cust-tel', record.custTel);
+            updatePrintView('print-quote-no', record.quoteNo);
+            updatePrintDate(record.date);
+
+            // 確保明細有正確被解析回來
+            quoteItems = typeof record.items === 'string' ? JSON.parse(record.items) : (record.items || []);
+            document.getElementById('q-discount').value = record.discount || 0;
+            document.getElementById('q-notes').value = record.notes || '';
+            
+            renderQuotation();
+        }
+
+        function renderQuoteHistory() {
+            const tbody = document.getElementById('history-quote-list');
+            tbody.innerHTML = '';
+            
+            quoteHistory.forEach((record, index) => {
+                const statusBadge = record.status === 'paid' 
+                    ? '<span class="badge badge-paid">✅ 已收款</span>' 
+                    : '<span class="badge badge-unpaid">⏳ 未收款</span>';
+                const toggleBtnTxt = record.status === 'paid' ? '標為未收' : '標為已收';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${record.date}</td>
+                        <td><strong>${record.quoteNo}</strong></td>
+                        <td>${record.custName}</td>
+                        <td class="text-right font-weight-bold">$${Number(record.totalAmount).toLocaleString()}</td>
+                        <td class="text-center" id="status-${index}">${statusBadge}</td>
+                        <td class="no-print text-center">
+                            <button class="btn btn-info btn-sm" style="padding: 4px 8px;" onclick="editQuoteRecord(${index})">📝 編輯</button>
+                            <button class="btn btn-outline btn-sm" style="padding: 4px 8px; margin-left: 5px;" onclick="toggleQuoteStatus(${index})">${toggleBtnTxt}</button>
+                            <button class="btn btn-danger btn-sm" style="padding: 4px 8px; margin-left: 5px;" onclick="deleteQuoteRecord(${index})">刪</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(quoteHistory.length === 0) tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding:20px; color:#94a3b8;">雲端沒有任何報價單紀錄。</td></tr>';
+        }
+
+        function toggleQuoteStatus(index) {
+            quoteHistory[index].status = quoteHistory[index].status === 'paid' ? 'unpaid' : 'paid';
+            renderQuoteHistory();
+            saveToCloud('Quotes', quoteHistory);
+        }
+
+        function deleteQuoteRecord(index) {
+            if(confirm(`確定要從雲端刪除報價單 [${quoteHistory[index].quoteNo}] 嗎？`)) {
+                quoteHistory.splice(index, 1);
+                renderQuoteHistory();
+                saveToCloud('Quotes', quoteHistory);
+            }
+        }
+
+        // --- 啟動引擎 ---
+        window.onload = init;
+
+    </script>
+</body>
+</html>
