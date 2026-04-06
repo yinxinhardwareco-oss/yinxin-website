@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>銀鑫進銷存系統 3.0</title>
+    <title>銀鑫進銷存系統 - 雲端同步版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -426,13 +426,12 @@
             }
         }
 
-// 寫入資料到 Google (修正版：移除 no-cors 以便捕捉真實錯誤)
+        // 寫入資料到 Google (修正版：移除 no-cors 以便捕捉真實錯誤)
         async function saveToCloud(sheetName, dataArray) {
             setSyncStatus('syncing');
             try {
                 const response = await fetch(CLOUD_API_URL, {
                     method: 'POST',
-                    // 🌟 這裡已經拿掉 mode: 'no-cors' 了，讓瀏覽器恢復正常的連線狀態
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ sheet: sheetName, data: dataArray })
                 });
@@ -684,7 +683,7 @@
             if(product) document.getElementById('q-override-price').value = product.price; 
         }
 
-function addQuoteItem() {
+        function addQuoteItem() {
             const sku = document.getElementById('q-product-select').value;
             const qty = parseInt(document.getElementById('q-qty').value) || 1;
             let customPrice = document.getElementById('q-override-price').value;
@@ -707,12 +706,6 @@ function addQuoteItem() {
             } else {
                 quoteItems.push({ sku: product.sku, name: product.name, qty: qty, price: finalPrice });
             }
-            
-            renderQuotation();
-            document.getElementById('q-product-select').value = '';
-            document.getElementById('q-qty').value = '1';
-            document.getElementById('q-override-price').value = '';
-        }
             
             renderQuotation();
             document.getElementById('q-product-select').value = '';
@@ -781,17 +774,13 @@ function addQuoteItem() {
             document.getElementById('calc-total').innerText = `$${total.toLocaleString()}`;
         }
 
-       // --- 升級版 PDF 列印功能 ---
+        // --- 升級版 PDF 列印功能 (含貼心下載提示) ---
         function printQuotation() {
             if(quoteItems.length === 0) return alert('報價單內沒有項目喔！請先加入明細。');
 
-            // 判斷是否為行動裝置 (手機/平板)
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
             if (isMobile) {
-                // 【手機版】強制使用 html2pdf 直接產生 PDF 檔案
-                alert('⏳ 正在為您產生 PDF 檔案，請稍候...');
-
                 // 1. 暫時套用列印樣式 (隱藏按鈕、選單等)
                 document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
                 document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block');
@@ -799,23 +788,25 @@ function addQuoteItem() {
                 pageElement.style.boxShadow = 'none';
                 pageElement.style.border = 'none';
 
-                // 2. 設定 PDF 匯出格式
                 const quoteNo = document.getElementById('q-quote-no').value || '未命名';
                 const opt = {
                     margin:       10,
                     filename:     `銀鑫報價單_${quoteNo}.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true }, // 提高清晰度
+                    html2canvas:  { scale: 2, useCORS: true },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // 3. 執行轉換並下載
+                // 2. 執行轉換並下載
                 html2pdf().set(opt).from(pageElement).save().then(() => {
-                    // 4. 下載完成後，把畫面恢復原狀
+                    // 3. 下載指令送出後，把畫面恢復原狀
                     document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
                     document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none');
                     pageElement.style.boxShadow = '';
                     pageElement.style.border = '';
+                    
+                    // 4. 跳出貼心提示告訴使用者去哪找檔案
+                    alert('✅ PDF 轉檔成功並已送出下載！\n\n📌 檔案去哪了？\n🍎 iPhone：請回桌面打開「檔案」App ➔ 進入「下載項目」。\n🤖 安卓：請打開「檔案管理」App ➔ 進入「下載」。\n\n(若未下載，請確認您是使用原生的 Safari 或 Chrome 瀏覽器開啟此網頁)');
                 });
 
             } else {
