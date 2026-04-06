@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>銀鑫進銷存系統 2.0</title>
+    <title>銀鑫進銷存系統 3.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -684,16 +684,22 @@
             if(product) document.getElementById('q-override-price').value = product.price; 
         }
 
-        function addQuoteItem() {
+function addQuoteItem() {
             const sku = document.getElementById('q-product-select').value;
             const qty = parseInt(document.getElementById('q-qty').value) || 1;
-            const customPrice = document.getElementById('q-override-price').value;
+            let customPrice = document.getElementById('q-override-price').value;
 
             if(!sku) return alert('請先選擇要報價的產品！');
-            if(customPrice === '') return alert('請確認報價單價！');
 
+            // 先找出你選的產品資料
             const product = inventory.find(i => i.sku === sku);
-            const finalPrice = parseInt(customPrice);
+
+            // 🌟 聰明邏輯：如果你沒有手動輸入價格，就自動帶入產品建檔時的「標準銷價」
+            if(customPrice === '') {
+                customPrice = product.price;
+            }
+
+            const finalPrice = parseInt(customPrice) || 0;
 
             const existingIndex = quoteItems.findIndex(i => i.sku === sku && i.price === finalPrice);
             if(existingIndex > -1) {
@@ -701,6 +707,12 @@
             } else {
                 quoteItems.push({ sku: product.sku, name: product.name, qty: qty, price: finalPrice });
             }
+            
+            renderQuotation();
+            document.getElementById('q-product-select').value = '';
+            document.getElementById('q-qty').value = '1';
+            document.getElementById('q-override-price').value = '';
+        }
             
             renderQuotation();
             document.getElementById('q-product-select').value = '';
