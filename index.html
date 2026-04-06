@@ -1210,20 +1210,62 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function submitForm(e) {
-            e.preventDefault();
-            
-            const company = document.getElementById('companyName').value;
-            const contact = document.getElementById('contactName').value;
-            const email = document.getElementById('contactEmail').value;
-            const details = document.getElementById('inquiryDetails').value;
-            
-            const subject = encodeURIComponent(`【詢價需求】來自 ${company} - ${contact}`);
-            const body = encodeURIComponent(`公司名稱：${company}\n聯絡人：${contact}\n聯絡信箱：${email}\n\n需求內容：\n${details}`);
-            
-            window.location.href = `mailto:yinxinhardware.co@gmail.com?subject=${subject}&body=${body}`;
-            alert("謝謝您！我們已收到您的詢價資訊，將盡快與您聯繫。");
-        }
+// 🌟 1. 請確保這一行放在 script 區塊的最上方 (填入你複製的那串 GAS 網址)
+const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
+
+// 🌟 2. 升級後的提交函數
+async function submitForm(e) {
+    e.preventDefault();
+    
+    // 取得按鈕元件，用來做載入中的視覺效果
+    const submitBtn = e.target.querySelector('button') || e.target.querySelector('.submit-btn');
+    
+    // 抓取網頁表單上的內容
+    const company = document.getElementById('companyName').value.trim();
+    const contact = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const details = document.getElementById('inquiryDetails').value.trim();
+
+    // 防呆檢查
+    if(!company || !contact || !email || !details) {
+        return alert("請填寫完整資訊後再送出，謝謝！");
+    }
+
+    // 變更按鈕狀態，防止重複點擊
+    submitBtn.disabled = true;
+    submitBtn.innerText = "⏳ 傳送中，請稍候...";
+
+    try {
+        // 🚀 重頭戲：發送到 GAS 後台觸發「存入試算表」與「寄送 Gmail」
+        await fetch(CLOUD_API_URL, {
+            method: 'POST',
+            mode: 'no-cors', // 使用 no-cors 確保發送不被瀏覽器攔截
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                sheet: "NewInquiry", // 這個標籤會觸發 GAS 裡的 Email 引擎
+                data: {
+                    name: `${company} / ${contact}`,
+                    tel: email, // 這裡存入客戶的 Email
+                    content: details
+                }
+            })
+        });
+
+        // 成功後的提示
+        alert("✅ 謝謝您！我們已收到您的詢價資訊。\n系統已自動同步至銀鑫後台，並通知相關專人處理。");
+        
+        // 清空表單
+        document.getElementById('contactForm').reset();
+
+    } catch (err) {
+        console.error(err);
+        alert("❌ 傳送失敗！請檢查網路，或直接撥打 (04)852-1867 與我們聯絡。");
+    } finally {
+        // 恢復按鈕狀態
+        submitBtn.disabled = false;
+        submitBtn.innerText = "送出詢價單";
+    }
+}
 
         function buildItemCard(id, desc, imgSrc, folder) {
             const isAdded = quoteCart.some(item => item.id === id);
