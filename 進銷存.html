@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>銀鑫進銷存系統 - 雲端同步版</title>
+    <title>銀鑫進銷存系統 - 3.0版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -24,6 +24,13 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; }
         body { background-color: var(--bg-light); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* 🔒 登入畫面專屬樣式 */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 99999; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; width: 90%; max-width: 350px; }
+        .login-box h2 { color: var(--primary-dark); margin-bottom: 20px; font-weight: 900; letter-spacing: 2px; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 16px; text-align: center; outline: none; }
+        .login-box input:focus { border-color: var(--primary-color); }
 
         /* 左側導覽列 */
         .sidebar { width: 260px; background: var(--bg-sidebar); color: #f8fafc; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 100; transition: 0.3s; }
@@ -57,7 +64,7 @@
         .form-group.small { flex: 0 1 120px; }
         .form-group.large { flex: 2 1 300px; }
         .form-group label { font-size: 13px; font-weight: 700; color: #64748b; }
-        input[type="text"], input[type="number"], input[type="date"], select, textarea { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; outline: none; transition: 0.2s; width: 100%; background: #fff;}
+        input[type="text"], input[type="number"], input[type="date"], input[type="password"], select, textarea { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; outline: none; transition: 0.2s; width: 100%; background: #fff;}
         input:focus, select:focus, textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(58,109,194,0.1); }
         .highlight-bg { background-color: #eff6ff; border: 1px dashed #93c5fd; }
 
@@ -79,6 +86,7 @@
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
         .badge-unpaid { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; }
         .badge-paid { background: #d1fae5; color: #10b981; border: 1px solid #6ee7b7; }
+        .badge-new { background: #fef08a; color: #b45309; border: 1px solid #fde047; } /* 詢價單未處理標籤 */
 
         /* 表格樣式 */
         .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -144,12 +152,21 @@
         }
 
         /* 全螢幕載入畫面 */
-        #cloud-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #cloud-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>⚙️ 銀鑫 ERP 後台</h2>
+            <p style="color: #64748b; margin-bottom: 20px; font-size: 14px;">請輸入管理員密碼以進入系統</p>
+            <input type="password" id="sys-pwd" placeholder="請輸入密碼" onkeypress="if(event.key === 'Enter') checkLogin()">
+            <button class="btn btn-primary" style="width: 100%; font-size: 16px; padding: 12px;" onclick="checkLogin()">登入系統</button>
+        </div>
+    </div>
 
     <div id="cloud-loader">
         <div class="spinner"></div>
@@ -163,6 +180,7 @@
         <button class="nav-btn" onclick="switchTab('customers', '👥 客戶資料管理')" id="nav-customers" title="客戶管理">👥 <span>客戶管理</span></button>
         <button class="nav-btn" onclick="switchTab('quotation', '📝 報價單開立系統')" id="nav-quotation" title="報價單開立">📝 <span>開立報價</span></button>
         <button class="nav-btn" onclick="switchTab('quote-history', '📂 歷史報價紀錄')" id="nav-quote-history" title="歷史報價">📂 <span>歷史報價</span></button>
+        <button class="nav-btn" onclick="switchTab('inquiries', '📩 詢價單管理')" id="nav-inquiries" title="詢價單管理">📩 <span>詢價單管理</span></button>
         <button class="nav-btn" onclick="switchTab('settings', '⚙️ 系統設定')" id="nav-settings" title="系統設定">⚙️ <span>系統設定</span></button>
         <div style="flex: 1;" class="hide-on-mobile"></div>
         <button class="nav-btn hide-on-mobile" style="border-top: 1px solid rgba(255,255,255,0.1);" onclick="window.location.href='index.html'">🏠 <span>返回官網</span></button>
@@ -365,6 +383,28 @@
                 </div>
             </div>
 
+            <div id="page-inquiries" class="page">
+                <div class="control-panel no-print">
+                    <h3 style="margin-bottom: 5px; border-left: none; padding-left: 0;">📩 來自官網的詢價紀錄</h3>
+                    <span style="color:#64748b; font-size:14px;">客戶在官網填寫表單後，資料會自動傳送到這裡。處理完畢後可點擊標記。</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>詢價時間</th>
+                                <th>客戶姓名</th>
+                                <th>聯絡電話</th>
+                                <th style="width: 40%;">需求內容</th>
+                                <th class="text-center">狀態</th>
+                                <th class="no-print text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inquiries-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <div id="page-settings" class="page">
                 <div class="control-panel">
                     <h3>☁️ 雲端系統狀態</h3>
@@ -384,23 +424,51 @@
 
     <script>
         // ==========================================
-        // 🔒 請將你從 Google Apps Script 複製的網址，貼到下方的雙引號中
+        // 🔒 你的專屬設定區
         // ==========================================
         const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
         
+        // 這是預設密碼 "99849999" 經過 SHA-256 加密後的指紋，已為你設定好囉！
+        // 如果之後想換密碼，請在下方 checkLogin 函數裡使用 F12 偷印指紋的魔法
+        const SYSTEM_PASSWORD_HASH = "8031d2ba5b1115bc5dae82ee30d1d78da4a8bd99236d8d64d96c97a9f73f4e1d"; 
+
         // 雲端資料庫陣列
         let inventory = [];
         let customers = [];
         let quoteHistory = [];
         let quoteItems = [];
+        let inquiries = []; // 🌟 新增：存放詢價單資料的陣列
         let currentQuoteTotal = 0; 
 
+        // --- 密碼鎖邏輯 (加密升級版 + 偷印指紋魔法) ---
+        async function checkLogin() {
+            const inputPwd = document.getElementById('sys-pwd').value;
+            
+            // 將輸入的密碼轉換成 SHA-256 指紋
+            const msgBuffer = new TextEncoder().encode(inputPwd);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            // 🕵️‍♂️ 偷吃步：把輸入密碼的指紋印在 F12 主控台，方便以後想換密碼時複製！
+            console.log("👇 如果你想換密碼，請複製下面這串指紋，貼到 SYSTEM_PASSWORD_HASH 裡面 👇");
+            console.log(hashHex);
+
+            // 比對指紋是否相符
+            if(hashHex === SYSTEM_PASSWORD_HASH) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('cloud-loader').style.display = 'flex'; 
+                init(); // 密碼正確才啟動資料抓取
+            } else {
+                alert('❌ 密碼錯誤，請重新輸入！(若要換密碼請按 F12 查看主控台)');
+                document.getElementById('sys-pwd').value = '';
+            }
+        }
+
         // --- 核心：雲端 API 連線模組 ---
-        
-        // 控制 UI 燈號
         function setSyncStatus(status) {
             const indicator = document.getElementById('sync-status-indicator');
-            indicator.className = 'sync-status'; // 清除所有 class
+            indicator.className = 'sync-status';
             if (status === 'syncing') {
                 indicator.classList.add('syncing');
                 indicator.innerHTML = '⏳ 雲端同步中...';
@@ -414,7 +482,6 @@
             }
         }
 
-        // 從 Google 讀取資料
         async function fetchFromCloud(sheetName) {
             try {
                 const res = await fetch(`${CLOUD_API_URL}?sheet=${sheetName}`);
@@ -426,7 +493,6 @@
             }
         }
 
-        // 寫入資料到 Google (修正版：移除 no-cors 以便捕捉真實錯誤)
         async function saveToCloud(sheetName, dataArray) {
             setSyncStatus('syncing');
             try {
@@ -435,10 +501,7 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ sheet: sheetName, data: dataArray })
                 });
-                
-                // 讀取 GAS 真正回傳的訊息
                 const result = await response.text(); 
-                
                 if (response.ok) {
                     setSyncStatus('synced');
                 } else {
@@ -458,19 +521,20 @@
                 return;
             }
 
-            // 平行載入三個工作表的資料
             try {
-                const [invData, custData, quotesData] = await Promise.all([
+                // 🌟 更新：平行載入四個工作表的資料 (包含 Inquiries)
+                const [invData, custData, quotesData, inqData] = await Promise.all([
                     fetchFromCloud('Inventory'),
                     fetchFromCloud('Customers'),
-                    fetchFromCloud('Quotes')
+                    fetchFromCloud('Quotes'),
+                    fetchFromCloud('Inquiries')
                 ]);
                 
                 inventory = invData;
                 customers = custData;
                 quoteHistory = quotesData;
+                inquiries = inqData; // 存入詢價單資料
 
-                // 隱藏載入畫面
                 document.getElementById('cloud-loader').style.display = 'none';
                 setSyncStatus('synced');
 
@@ -478,6 +542,7 @@
                 renderInventory();
                 renderCustomers();
                 renderQuoteHistory();
+                renderInquiries(); // 渲染詢價單
                 updateProductDropdown();
                 updateCustomerDropdown();
                 resetQuotationFormDate();
@@ -487,6 +552,41 @@
             }
         }
 
+        // --- 詢價單模組 (新增) ---
+        function renderInquiries() {
+            const tbody = document.getElementById('inquiries-list');
+            tbody.innerHTML = '';
+            inquiries.forEach((item, index) => {
+                const isHandled = item.status === '已處理';
+                const statusBadge = isHandled 
+                    ? '<span class="badge badge-paid">✅ 已處理</span>' 
+                    : '<span class="badge badge-new">⚠️ 未處理</span>';
+                const toggleBtnTxt = isHandled ? '標為未處理' : '標為已處理';
+                
+                tbody.innerHTML += `
+                    <tr style="${isHandled ? 'opacity: 0.6;' : ''}">
+                        <td style="font-size:13px; color:#666;">${item.date}</td>
+                        <td><strong>${item.name}</strong></td>
+                        <td>${item.tel}</td>
+                        <td style="white-space: normal; line-height:1.5;">${item.content}</td>
+                        <td class="text-center">${statusBadge}</td>
+                        <td class="no-print text-center">
+                            <button class="btn btn-outline btn-sm" onclick="toggleInquiryStatus(${index})">${toggleBtnTxt}</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(inquiries.length === 0) tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding:20px; color:#94a3b8;">目前沒有新的詢價單</td></tr>';
+        }
+
+        function toggleInquiryStatus(index) {
+            // 切換詢價單狀態
+            inquiries[index].status = inquiries[index].status === '未處理' ? '已處理' : '未處理';
+            renderInquiries();
+            saveToCloud('Inquiries', inquiries); // 存回雲端
+        }
+
+        // --- 其他工具函數 ---
         function resetQuotationFormDate() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -517,9 +617,10 @@
             
             if(tabId === 'quotation') { updateProductDropdown(); updateCustomerDropdown(); }
             if(tabId === 'quote-history') { renderQuoteHistory(); }
+            if(tabId === 'inquiries') { renderInquiries(); }
         }
 
-        // --- 庫存模組 (連線版) ---
+        // --- 庫存模組 ---
         function renderInventory() {
             const tbody = document.getElementById('inventory-list');
             tbody.innerHTML = '';
@@ -558,11 +659,8 @@
             if(!sku || !name) return alert('請填寫完整型號與名稱！');
             if(inventory.find(i => i.sku === sku)) return alert('此型號(SKU)已存在！');
 
-            // 1. 更新本地陣列
             inventory.push({ sku, name, category, cost, price, stock });
-            // 2. 立即更新畫面 (Optimistic UI)
             renderInventory(); 
-            // 3. 背景發送給雲端
             saveToCloud('Inventory', inventory);
             
             document.querySelectorAll('#page-inventory input').forEach(input => input.value = '');
@@ -588,7 +686,7 @@
             }
         }
 
-        // --- 客戶模組 (連線版) ---
+        // --- 客戶模組 ---
         function renderCustomers() {
             const tbody = document.getElementById('customers-list');
             tbody.innerHTML = '';
@@ -640,7 +738,7 @@
             fillQuoteCustomerForm(customers[index]);
         }
 
-        // --- 報價單模組 (不需連線，存成紀錄時才連線) ---
+        // --- 報價單模組 ---
         function updateCustomerDropdown() {
             const select = document.getElementById('q-quick-customer');
             select.innerHTML = '<option value="">💡 從雲端客戶庫快速帶入...</option>';
@@ -690,10 +788,8 @@
 
             if(!sku) return alert('請先選擇要報價的產品！');
 
-            // 先找出你選的產品資料
             const product = inventory.find(i => i.sku === sku);
 
-            // 🌟 聰明邏輯：如果你沒有手動輸入價格，就自動帶入產品建檔時的「標準銷價」
             if(customPrice === '') {
                 customPrice = product.price;
             }
@@ -774,14 +870,12 @@
             document.getElementById('calc-total').innerText = `$${total.toLocaleString()}`;
         }
 
-        // --- 升級版 PDF 列印功能 (含貼心下載提示) ---
         function printQuotation() {
             if(quoteItems.length === 0) return alert('報價單內沒有項目喔！請先加入明細。');
 
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
             if (isMobile) {
-                // 1. 暫時套用列印樣式 (隱藏按鈕、選單等)
                 document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
                 document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block');
                 const pageElement = document.getElementById('page-quotation');
@@ -797,25 +891,21 @@
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // 2. 執行轉換並下載
                 html2pdf().set(opt).from(pageElement).save().then(() => {
-                    // 3. 下載指令送出後，把畫面恢復原狀
                     document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
                     document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none');
                     pageElement.style.boxShadow = '';
                     pageElement.style.border = '';
                     
-                    // 4. 跳出貼心提示告訴使用者去哪找檔案
                     alert('✅ PDF 轉檔成功並已送出下載！\n\n📌 檔案去哪了？\n🍎 iPhone：請回桌面打開「檔案」App ➔ 進入「下載項目」。\n🤖 安卓：請打開「檔案管理」App ➔ 進入「下載」。\n\n(若未下載，請確認您是使用原生的 Safari 或 Chrome 瀏覽器開啟此網頁)');
                 });
 
             } else {
-                // 【電腦版】維持原本的瀏覽器列印功能，排版最精準
                 window.print();
             }
         }
 
-        // --- 歷史報價紀錄與應收帳款模組 (連線版) ---
+        // --- 歷史報價紀錄與應收帳款模組 ---
         function saveQuotationToHistory() {
             const custName = document.getElementById('q-cust-name').value.trim();
             const quoteNo = document.getElementById('q-quote-no').value.trim();
@@ -840,7 +930,7 @@
                 custTaxId: custTaxId,
                 custContact: custContact,
                 custTel: custTel,
-                items: quoteItems, // 陣列，存入雲端時會被轉成字串
+                items: quoteItems, 
                 discount: discount,
                 notes: notes,
                 totalAmount: currentQuoteTotal,
@@ -852,13 +942,13 @@
                     recordData.status = quoteHistory[existingIndex].status; 
                     quoteHistory[existingIndex] = recordData;
                     renderQuoteHistory();
-                    saveToCloud('Quotes', quoteHistory); // 同步雲端
+                    saveToCloud('Quotes', quoteHistory); 
                     alert(`✅ 報價單 ${quoteNo} 已成功覆蓋更新至雲端！`);
                 }
             } else {
                 quoteHistory.unshift(recordData);
                 renderQuoteHistory();
-                saveToCloud('Quotes', quoteHistory); // 同步雲端
+                saveToCloud('Quotes', quoteHistory); 
                 alert(`✅ 報價單 ${quoteNo} 已成功儲存至雲端！`);
             }
         }
@@ -881,7 +971,6 @@
             updatePrintView('print-quote-no', record.quoteNo);
             updatePrintDate(record.date);
 
-            // 確保明細有正確被解析回來
             quoteItems = typeof record.items === 'string' ? JSON.parse(record.items) : (record.items || []);
             document.getElementById('q-discount').value = record.discount || 0;
             document.getElementById('q-notes').value = record.notes || '';
@@ -930,9 +1019,6 @@
                 saveToCloud('Quotes', quoteHistory);
             }
         }
-
-        // --- 啟動引擎 ---
-        window.onload = init;
 
     </script>
 </body>
