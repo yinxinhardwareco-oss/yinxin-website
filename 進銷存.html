@@ -546,7 +546,7 @@
             }
         }
 
-        // --- 詢價單模組 (新增) ---
+// --- 詢價單模組 ---
         function renderInquiries() {
             const tbody = document.getElementById('inquiries-list');
             tbody.innerHTML = '';
@@ -566,6 +566,7 @@
                         <td class="text-center">${statusBadge}</td>
                         <td class="no-print text-center">
                             <button class="btn btn-outline btn-sm" onclick="toggleInquiryStatus(${index})">${toggleBtnTxt}</button>
+                            <button class="btn btn-danger btn-sm" style="margin-left: 5px;" onclick="deleteInquiry(${index})">刪除</button>
                         </td>
                     </tr>
                 `;
@@ -578,6 +579,15 @@
             inquiries[index].status = inquiries[index].status === '未處理' ? '已處理' : '未處理';
             renderInquiries();
             saveToCloud('Inquiries', inquiries); // 存回雲端
+        }
+
+        // 👇 這裡新增了負責刪除的函數 👇
+        function deleteInquiry(index) {
+            if(confirm(`確定要從雲端刪除來自「${inquiries[index].name}」的這筆詢價單嗎？`)) {
+                inquiries.splice(index, 1); // 從陣列中移除
+                renderInquiries(); // 重新渲染畫面
+                saveToCloud('Inquiries', inquiries); // 同步覆蓋雲端資料
+            }
         }
 
         // --- 其他工具函數 ---
