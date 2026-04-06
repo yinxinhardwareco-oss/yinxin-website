@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>銀鑫進銷存系統 - 3.0版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         /* 共用變數與銀鑫品牌色 */
         :root {
@@ -428,8 +429,7 @@
         // ==========================================
         const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
         
-
-const SYSTEM_PASSWORD_HASH = "2f2bdf8f7e9774d91b0fb4f570efaed37c209f560b65172e2fa7874f5d22c794";
+        const SYSTEM_PASSWORD_HASH = "2f2bdf8f7e9774d91b0fb4f570efaed37c209f560b65172e2fa7874f5d22c794";
 
         // 雲端資料庫陣列
         let inventory = [];
@@ -439,25 +439,25 @@ const SYSTEM_PASSWORD_HASH = "2f2bdf8f7e9774d91b0fb4f570efaed37c209f560b65172e2f
         let inquiries = []; // 🌟 新增：存放詢價單資料的陣列
         let currentQuoteTotal = 0; 
 
-async function checkLogin() {
-    const inputPwd = document.getElementById('sys-pwd').value;
-    
-    // 改用 CryptoJS 進行 SHA-256 雜湊，避開原生環境限制
-    const hashHex = CryptoJS.SHA256(inputPwd).toString();
+        async function checkLogin() {
+            const inputPwd = document.getElementById('sys-pwd').value;
+            
+            
+            const hashHex = CryptoJS.SHA256(inputPwd).toString();
 
-    console.log("👇 輸入的密碼雜湊值 👇");
-    console.log(hashHex);
+            console.log("👇  👇");
+            console.log(hashHex);
 
-    // 比對指紋是否相符
-    if(hashHex === SYSTEM_PASSWORD_HASH) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('cloud-loader').style.display = 'flex'; 
-        init(); // 密碼正確才啟動資料抓取
-    } else {
-        alert('❌ 密碼錯誤，請重新輸入！');
-        document.getElementById('sys-pwd').value = '';
-    }
-}
+            // 比對指紋是否相符
+            if(hashHex === SYSTEM_PASSWORD_HASH) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('cloud-loader').style.display = 'flex'; 
+                init(); // 密碼正確才啟動資料抓取
+            } else {
+                alert('❌ 密碼錯誤，請重新輸入！');
+                document.getElementById('sys-pwd').value = '';
+            }
+        }
 
         // --- 核心：雲端 API 連線模組 ---
         function setSyncStatus(status) {
@@ -510,7 +510,7 @@ async function checkLogin() {
 
         // --- 系統初始化 ---
         async function init() {
-           if(CLOUD_API_URL === "請把你的網址貼在這裡") {
+            if(CLOUD_API_URL === "請把你的網址貼在這裡") {
                 document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>⚠️ 請先在程式碼設定 CLOUD_API_URL</h2>";
                 return;
             }
@@ -899,7 +899,7 @@ async function checkLogin() {
             }
         }
 
-// --- 歷史報價紀錄與應收帳款模組 ---
+        // --- 歷史報價紀錄與應收帳款模組 ---
         function saveQuotationToHistory() {
             const custName = document.getElementById('q-cust-name').value.trim();
             const quoteNo = document.getElementById('q-quote-no').value.trim();
