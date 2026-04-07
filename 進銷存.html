@@ -505,18 +505,25 @@
         let currentPurchaseTotal = 0;
         let revenueChartInstance = null; 
 
-        // --- 🔑 登入與權限模組 ---
+        // --- 🔑 登入與權限模組 (修復版) ---
         async function checkLogin() {
             const inputPwd = document.getElementById('sys-pwd').value;
             const hashHex = CryptoJS.SHA256(inputPwd).toString();
             
+            // 1. 老闆密碼：維持高安全性的 SHA-256 加密比對
             if(hashHex === SYSTEM_PASSWORD_HASH) { 
                 currentRole = 'boss'; 
-            } else if(hashHex === SALES_PASSWORD_HASH) { 
+            } 
+            // 2. 業務密碼：改為直接比對文字 (你可以隨時在這裡改成你要的密碼)
+            else if(inputPwd === 'sales2026') { 
                 currentRole = 'sales'; 
-            } else if(hashHex === WH_PASSWORD_HASH) { 
+            } 
+            // 3. 倉管密碼：改為直接比對文字
+            else if(inputPwd === 'wh2026') { 
                 currentRole = 'wh'; 
-            } else { 
+            } 
+            // 密碼全錯
+            else { 
                 alert('❌ 密碼錯誤！請重新輸入。'); 
                 document.getElementById('sys-pwd').value = ''; 
                 return; 
@@ -527,6 +534,7 @@
             document.getElementById('cloud-loader').style.display = 'flex'; 
             init(); 
         }
+
 
         // 🛡️ 套用權限 UI 控制 (隱藏不該看的東西)
         function applyRolePermissions() {
