@@ -164,7 +164,7 @@
         #cloud-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+   
     /* 🛠️ PDF 輸出專用：解決 iPhone Safari 文字變淡白、半透明的問題 */
         .pdf-mode {
             background-color: #ffffff !important;
@@ -178,6 +178,7 @@
             color: #dc2626 !important; 
             -webkit-text-fill-color: #dc2626 !important; 
         }
+    </style>
 </head>
 <body>
 
@@ -1156,6 +1157,9 @@ function filterDashboard() {
         }
 
         function editPurchaseRecord(index) { 
+            // 💡 加上防呆提示
+            alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或增加庫存。若有增減，請至「庫存管理」手動調整！');
+            
             const r = purchaseHistory[index]; 
             document.getElementById('p-sup-name').value = r.supName; 
             document.getElementById('p-po-no').value = r.poNo; 
@@ -1166,6 +1170,37 @@ function filterDashboard() {
             renderPurchaseItems(); 
             window.scrollTo(0,0); 
             switchTab('purchase', '🛒 採購與進貨'); 
+        }
+
+        function editQuoteRecord(index) {
+            // 💡 加上防呆提示
+            alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或扣除庫存。若有增減，請至「庫存管理」手動調整！');
+            
+            const r = quoteHistory[index]; 
+            switchTab('quotation', '📝 報價/出貨單系統');
+            document.getElementById('q-cust-name').value = r.custName; 
+            document.getElementById('q-cust-taxid').value = r.custTaxId; 
+            document.getElementById('q-cust-contact').value = r.custContact; 
+            document.getElementById('q-cust-tel').value = r.custTel; 
+            document.getElementById('q-quote-no').value = r.quoteNo; 
+            document.getElementById('q-quote-date').value = r.date; 
+            document.getElementById('q-invoice').value = r.invoiceNo || ''; 
+            document.getElementById('q-delivery').value = r.deliveryMethod || '';
+            
+            updatePrintView('print-cust-name', r.custName); 
+            updatePrintView('print-cust-taxid', r.custTaxId); 
+            updatePrintView('print-cust-contact', r.custContact); 
+            updatePrintView('print-quote-no', r.quoteNo); 
+            updatePrintView('print-invoice', r.invoiceNo || '未開立'); 
+            updatePrintView('print-delivery', r.deliveryMethod || '未指定'); 
+            updatePrintDate(r.date);
+            
+            quoteItems = typeof r.items === 'string' ? JSON.parse(r.items) : r.items; 
+            document.getElementById('q-discount').value = r.discount || 0; 
+            document.getElementById('q-notes').value = r.notes || ''; 
+            
+            renderQuotation(); 
+            window.scrollTo(0,0);
         }
 
         function deletePurchaseRecord(index) { 
