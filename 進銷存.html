@@ -165,6 +165,19 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
+    /* 🛠️ PDF 輸出專用：解決 iPhone Safari 文字變淡白、半透明的問題 */
+        .pdf-mode {
+            background-color: #ffffff !important;
+        }
+        .pdf-mode, .pdf-mode td, .pdf-mode th, .pdf-mode p, .pdf-mode span, .pdf-mode div, .pdf-mode h1 {
+            color: #000000 !important;
+            border-color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important; /* 破解 iOS 字體變灰 */
+        }
+        .pdf-mode .text-danger { 
+            color: #dc2626 !important; 
+            -webkit-text-fill-color: #dc2626 !important; 
+        }
 </head>
 <body>
 
@@ -667,18 +680,15 @@
             }
         }
 
-  // --- 📄 月結對帳單功能 (4.0 核心) ---
+ // --- 📄 月結對帳單功能 (4.0 核心) ---
         function generateStatementPDF() {
             const custName = document.getElementById('stmt-customer').value;
-            const monthStr = document.getElementById('stmt-month-select').value; // 格式: YYYY-MM
+            const monthStr = document.getElementById('stmt-month-select').value; 
             if(!custName || !monthStr) return alert("請先選擇「客戶」與「對帳月份」！");
 
-            // 篩選該客戶、該月份、且尚有欠款的單據
             const stmts = quoteHistory.filter(q => q.custName === custName && q.date.startsWith(monthStr) && (q.totalAmount - q.paidAmount) > 0);
-            
             if(stmts.length === 0) return alert("太棒了！該客戶本月份沒有未結清的款項。");
 
-            // 填寫 PDF 版面資料
             document.getElementById('stmt-cust-name').innerText = custName;
             document.getElementById('stmt-month').innerText = monthStr.replace('-', ' 年 ') + ' 月';
             document.getElementById('stmt-print-date').innerText = new Date().toLocaleDateString('zh-TW');
@@ -701,25 +711,34 @@
             });
             document.getElementById('stmt-total-due').innerText = `$${totalDue.toLocaleString()}`;
 
-            // 觸發 html2pdf 列印與原生分享
             const pe = document.getElementById('statement-print-area');
-            pe.classList.add('active'); // 讓列印區暫時顯示
+            pe.classList.add('active'); 
+            
+            // 🔹 加上這行：強制套用高對比黑字白底模式
+            pe.classList.add('pdf-mode');
             
             const filename = `${custName}_${monthStr}對帳單.pdf`;
 
             html2pdf().set({
                 margin: 10, 
                 filename: filename, 
-                image: {type:'jpeg', quality:0.98}, 
-                html2canvas: {scale:2}, 
+                image: {type:'jpeg', quality: 1}, 
+                html2canvas: {
+                    scale: 2, 
+                    useCORS: true,
+                    backgroundColor: '#ffffff', // 🔹 強制白底
+                    letterRendering: true       // 🔹 改善 iOS 字體渲染
+                }, 
                 jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
             }).from(pe).output('blob').then(function(pdfBlob) {
-                pe.classList.remove('active'); // 列印完隱藏
+                pe.classList.remove('active'); 
+                
+                // 🔹 產出後移除高對比模式
+                pe.classList.remove('pdf-mode');
 
                 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                 const file = new File([pdfBlob], filename, { type: 'application/pdf' });
 
-                // 判斷是否為手機端且支援原生分享功能
                 if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
                     navigator.share({
                         files: [file],
@@ -727,7 +746,6 @@
                         text: '請查閱您的月結對帳單'
                     }).catch(err => console.log('使用者取消分享或分享失敗', err));
                 } else {
-                    // 電腦版或不支援 Web Share API 的瀏覽器：執行自動下載
                     const url = window.URL.createObjectURL(pdfBlob);
                     const a = document.createElement('a');
                     a.style.display = 'none';
@@ -1296,23 +1314,32 @@ function filterDashboard() {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); 
             
             if(isMobile) { 
-                // 手機版：調整 CSS 以確保擷取正確範圍
                 document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none'); 
                 document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block'); 
                 const pe = document.getElementById('page-quotation'); 
                 pe.style.boxShadow = 'none'; 
                 pe.style.border = 'none'; 
                 
+                // 🔹 加上這行：強制套用高對比黑字白底模式
+                pe.classList.add('pdf-mode');
+                
                 const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
 
                 html2pdf().set({
                     margin: 10, 
                     filename: filename, 
-                    image: {type: 'jpeg', quality: 0.98}, 
-                    html2canvas: {scale: 2, useCORS: true}, 
+                    image: {type: 'jpeg', quality: 1}, // 提高品質
+                    html2canvas: {
+                        scale: 2, 
+                        useCORS: true, 
+                        backgroundColor: '#ffffff', // 🔹 強制白底，避免 iOS 變透明灰
+                        letterRendering: true       // 🔹 改善 iOS 字體渲染
+                    }, 
                     jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'}
                 }).from(pe).output('blob').then(function(pdfBlob) {
-                    // 產出後將畫面復原
+                    // 🔹 產出後移除高對比模式
+                    pe.classList.remove('pdf-mode');
+                    
                     document.querySelectorAll('.no-print').forEach(el => el.style.display = ''); 
                     document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none'); 
                     pe.style.boxShadow = ''; 
@@ -1320,7 +1347,6 @@ function filterDashboard() {
 
                     const file = new File([pdfBlob], filename, { type: 'application/pdf' });
 
-                    // 觸發手機原生分享選單
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         navigator.share({
                             files: [file],
@@ -1328,7 +1354,6 @@ function filterDashboard() {
                             text: '請查閱您的報價/銷貨單'
                         }).catch(err => console.log('使用者取消分享或分享失敗', err));
                     } else {
-                        // 若手機瀏覽器異常不支援分享，退回一般下載方式
                         const url = window.URL.createObjectURL(pdfBlob);
                         const a = document.createElement('a');
                         a.style.display = 'none';
@@ -1341,7 +1366,6 @@ function filterDashboard() {
                     }
                 }); 
             } else { 
-                // 電腦版：維持原有的直接觸發列印機制，可自行選擇另存 PDF
                 window.print(); 
             } 
         }
@@ -1444,7 +1468,166 @@ if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
                 saveToCloud('Quotes', quoteHistory); 
             } 
         }
+// ==========================================
+// 🛠️ 補齊缺失的畫面渲染與邏輯函數
+// ==========================================
 
+// 1. 採購單 - 渲染明細列表
+function renderPurchaseItems() {
+    const thead = document.getElementById('purchase-item-head');
+    let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">數量</th>`;
+    if(currentRole !== 'wh') thHTML += `<th class="text-right">進價成本</th><th class="text-right">小計</th>`;
+    thHTML += `<th class="no-print text-center">操作</th></tr>`;
+    if (thead) thead.innerHTML = thHTML;
+
+    const tbody = document.getElementById('purchase-item-list');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    let total = 0;
+
+    purchaseItems.forEach((item, index) => {
+        const itemTotal = item.cost * item.qty;
+        total += itemTotal;
+        let trHTML = `<tr>
+            <td>${item.sku}</td>
+            <td>${item.name}</td>
+            <td class="text-center">${item.qty}</td>`;
+
+        if(currentRole !== 'wh') {
+            trHTML += `<td class="text-right">$${item.cost.toLocaleString()}</td>
+                       <td class="text-right">$${itemTotal.toLocaleString()}</td>`;
+        }
+
+        trHTML += `<td class="no-print text-center"><button class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="removePurchaseItem(${index})">X</button></td></tr>`;
+        tbody.innerHTML += trHTML;
+    });
+
+    if(purchaseItems.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">尚未加入任何採購項目</td></tr>`;
+
+    currentPurchaseTotal = total;
+    const totalEl = document.getElementById('calc-purchase-total');
+    if(totalEl) totalEl.innerText = `$${total.toLocaleString()}`;
+}
+
+// 2. 採購單 - 渲染歷史紀錄
+function renderPurchaseHistory() {
+    const thead = document.getElementById('history-purchase-head');
+    let thHTML = `<tr><th>單據日期</th><th>採購單號</th><th>廠商名稱</th>`;
+    if (currentRole !== 'wh') thHTML += `<th class="text-right">總金額</th>`;
+    thHTML += `<th class="text-center">狀態</th><th class="no-print text-center">操作</th></tr>`;
+    if (thead) thead.innerHTML = thHTML;
+
+    const tbody = document.getElementById('history-purchase-list');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    purchaseHistory.forEach((p, index) => {
+        const statusColor = p.status === '已到貨' ? 'text-success' : 'text-danger';
+        let trHTML = `<tr>
+            <td>${p.date}</td><td>${p.poNo}</td><td>${p.supName}</td>`;
+        if (currentRole !== 'wh') trHTML += `<td class="text-right">$${(p.totalAmount || 0).toLocaleString()}</td>`;
+        trHTML += `<td class="text-center font-weight-bold ${statusColor}">${p.status}</td>
+            <td class="no-print text-center">
+                <button class="btn btn-outline btn-sm" onclick="editPurchaseRecord(${index})">編輯</button>
+                <button class="btn btn-danger btn-sm hide-wh" onclick="deletePurchaseRecord(${index})">刪除</button>
+            </td></tr>`;
+        tbody.innerHTML += trHTML;
+    });
+    if (purchaseHistory.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">沒有歷史採購紀錄</td></tr>`;
+}
+
+// 3. 報價單 - 渲染歷史單據與帳款
+function renderQuoteHistory() {
+    const tbody = document.getElementById('history-quote-list');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    quoteHistory.forEach((q, index) => {
+        const outstanding = q.totalAmount - q.paidAmount;
+        let statusHtml = '';
+        if(q.status === 'paid') statusHtml = '<span class="badge badge-paid">✅ 已結清</span>';
+        else if(q.status === 'partial') statusHtml = '<span class="badge badge-partial">⚠️ 部分收款</span>';
+        else statusHtml = '<span class="badge badge-unpaid">❌ 未收款</span>';
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${q.date}</td>
+                <td>${q.quoteNo}<br><span style="font-size:12px;color:#666;">發票: ${q.invoiceNo || '未開'}</span></td>
+                <td><strong>${q.custName}</strong></td>
+                <td class="text-right">$${q.totalAmount.toLocaleString()}</td>
+                <td class="text-right text-success">$${q.paidAmount.toLocaleString()}</td>
+                <td class="text-right text-danger">$${outstanding.toLocaleString()}</td>
+                <td class="text-center">${statusHtml}</td>
+                <td class="no-print text-center">
+                    <button class="btn btn-success btn-sm" onclick="recordPayment(${index})">💰 收款</button>
+                    <button class="btn btn-outline btn-sm" onclick="editQuoteRecord(${index})">📝 編輯</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteQuoteRecord(${index})">刪</button>
+                </td>
+            </tr>
+        `;
+    });
+    if(quoteHistory.length === 0) tbody.innerHTML = `<tr><td colspan="8" class="text-center">沒有歷史報價/銷貨紀錄</td></tr>`;
+}
+
+// 4. 型號對照字典 - 渲染與邏輯 (預防字典頁面也卡住)
+function renderMapping() {
+    const tbody = document.getElementById('mapping-list');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    modelMappings.forEach((m, index) => {
+        tbody.innerHTML += `<tr>
+            <td><strong>${m.internalSku}</strong></td>
+            <td>${m.supplierSku}</td>
+            <td>${m.name || '-'}</td>
+            <td class="no-print text-center hide-wh">
+                <button class="btn btn-danger btn-sm" onclick="deleteMapping(${index})">刪除</button>
+            </td>
+        </tr>`;
+    });
+    if(modelMappings.length === 0) tbody.innerHTML = `<tr><td colspan="4" class="text-center">沒有字典資料</td></tr>`;
+}
+
+function addMapping() {
+    const internal = document.getElementById('map-internal').value.trim().toUpperCase();
+    const supplier = document.getElementById('map-supplier').value.trim().toUpperCase();
+    const name = document.getElementById('map-name').value.trim();
+    if(!internal || !supplier) return alert('內部型號與供應商型號必填！');
+    modelMappings.push({ internalSku: internal, supplierSku: supplier, name: name });
+    renderMapping();
+    saveToCloud('ModelMapping', modelMappings);
+    document.getElementById('map-internal').value = '';
+    document.getElementById('map-supplier').value = '';
+    document.getElementById('map-name').value = '';
+}
+
+function deleteMapping(index) {
+    if(confirm('確定刪除此綁定？')) {
+        modelMappings.splice(index, 1);
+        renderMapping();
+        saveToCloud('ModelMapping', modelMappings);
+    }
+}
+
+function searchMapping() {
+    const keyword = document.getElementById('mapping-search-input').value.toUpperCase();
+    const rows = document.getElementById('mapping-list').getElementsByTagName('tr');
+    for(let i=0; i<rows.length; i++) {
+        const text = rows[i].innerText.toUpperCase();
+        rows[i].style.display = text.includes(keyword) ? '' : 'none';
+    }
+}
+        // 5. 客戶管理 - 點擊「打單」時自動帶入資料的函數
+function fillQuoteCustomerForm(cust) {
+    document.getElementById('q-cust-name').value = cust.name || '';
+    document.getElementById('q-cust-taxid').value = cust.taxid || '';
+    document.getElementById('q-cust-contact').value = cust.contact || '';
+    document.getElementById('q-cust-tel').value = cust.tel || '';
+    document.getElementById('q-delivery').value = cust.address || '';
+    
+    // 同步更新列印畫面的預覽文字
+    updatePrintView('print-cust-name', cust.name);
+    updatePrintView('print-cust-taxid', cust.taxid);
+    updatePrintView('print-cust-contact', cust.contact);
+    updatePrintView('print-delivery', cust.address);
+}
     </script>
 </body>
 </html>
