@@ -536,20 +536,22 @@
         }
 
 
-        // 🛡️ 套用權限 UI 控制 (隱藏不該看的東西)
+       // 🛡️ 套用權限 UI 控制 (會計兼管進出貨版)
         function applyRolePermissions() {
-            let roleName = currentRole === 'boss' ? '👨‍💼 老闆權限' : (currentRole === 'sales' ? '🧑‍💼 業務權限' : '👷 倉管權限');
+            let roleName = '👨‍💼 老闆權限';
+            if (currentRole === 'sales') roleName = '🧑‍💼 業務權限';
+            if (currentRole === 'wh') roleName = '👷 倉管權限';
+            if (currentRole === 'acc') roleName = '👩‍💼 會計權限'; 
+            
             document.getElementById('role-display').innerText = roleName;
 
             if(currentRole === 'sales') {
-                // 業務看不到：儀表板、採購、廠商、設定、進貨成本
                 document.getElementById('nav-dashboard').style.display = 'none';
                 document.getElementById('nav-purchase').style.display = 'none';
                 document.getElementById('nav-suppliers').style.display = 'none';
                 document.getElementById('nav-settings').style.display = 'none';
                 document.querySelectorAll('.hide-sales').forEach(el => el.style.display = 'none');
             } else if(currentRole === 'wh') {
-                // 倉管看不到：儀表板、廠商、客戶、報價歷史、詢價單、設定、所有金額
                 document.getElementById('nav-dashboard').style.display = 'none';
                 document.getElementById('nav-suppliers').style.display = 'none';
                 document.getElementById('nav-customers').style.display = 'none';
@@ -557,6 +559,11 @@
                 document.getElementById('nav-inquiries').style.display = 'none';
                 document.getElementById('nav-settings').style.display = 'none';
                 document.querySelectorAll('.hide-wh').forEach(el => el.style.display = 'none');
+            } else if(currentRole === 'acc') {
+                // 👈 會計需要打單與進出貨，所以全面開放庫存與採購功能！
+                // 只有「官網詢價單(業務在看的)」跟「系統設定」對會計隱藏
+                document.getElementById('nav-inquiries').style.display = 'none';
+                document.getElementById('nav-settings').style.display = 'none';
             }
         }
 
