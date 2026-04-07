@@ -174,6 +174,7 @@
             <div class="login-hints">
                 <strong>🔐 權限分級說明：</strong><br>
                 老闆權限：你的專屬密碼 (全功能開放)<br>
+                會計權限：<code>acc2026</code> (全功能開放)<br>
                 業務權限：<code>sales2026</code> (隱藏成本與毛利)<br>
                 倉管權限：<code>wh2026</code> (隱藏所有金額與報價)
             </div>
@@ -536,7 +537,7 @@
         }
 
 
-       // 🛡️ 套用權限 UI 控制 (會計兼管進出貨版)
+      // 🛡️ 套用權限 UI 控制
         function applyRolePermissions() {
             let roleName = '👨‍💼 老闆權限';
             if (currentRole === 'sales') roleName = '🧑‍💼 業務權限';
@@ -560,10 +561,8 @@
                 document.getElementById('nav-settings').style.display = 'none';
                 document.querySelectorAll('.hide-wh').forEach(el => el.style.display = 'none');
             } else if(currentRole === 'acc') {
-                // 👈 會計需要打單與進出貨，所以全面開放庫存與採購功能！
-                // 只有「官網詢價單(業務在看的)」跟「系統設定」對會計隱藏
-                document.getElementById('nav-inquiries').style.display = 'none';
-                document.getElementById('nav-settings').style.display = 'none';
+                // 👈 會計幾乎擁有老闆權限，看得到成本、儀表板、進出貨
+                document.getElementById('nav-suppliers').style.display = 'none';
             }
         }
 
