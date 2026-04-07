@@ -478,18 +478,17 @@
         </div>
     </div>
     <script>
-        // ==========================================
+        
+// ==========================================
         // 🔒 你的專屬設定區
         // ==========================================
         // ⚠️ 記得貼上你的 GAS 網址！
         const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
         
-        // 🔐 權限分級密碼設定 (SHA-256 雜湊值)
-        const SYSTEM_PASSWORD_HASH = "2f2bdf8f7e9774d91b0fb4f570efaed37c209f560b65172e2fa7874f5d22c794"; // 老闆專屬密碼
-        const SALES_PASSWORD_HASH = "2215e96f130b91e921d2e1b12b5b03738e4a87e224e74e6b22572b6b19814421"; // 業務密碼：sales2026
-        const WH_PASSWORD_HASH = "f214cd14fcdaaa3729377ba01da797171d5b128c11e51b10a26e84bb5f25a7a5"; // 倉管密碼：wh2026
+        // 🔐 權限分級密碼設定 
+        const SYSTEM_PASSWORD_HASH = "2f2bdf8f7e9774d91b0fb4f570efaed37c209f560b65172e2fa7874f5d22c794"; 
 
-        let currentRole = ''; // 紀錄當前登入身分：'boss', 'sales', 'wh'
+        let currentRole = ''; // 紀錄當前登入身分：'boss', 'sales', 'wh', 'acc'
 
         // ☁️ 雲端資料庫陣列
         let inventory = [];
@@ -505,23 +504,26 @@
         let currentQuoteTotal = 0; 
         let currentPurchaseTotal = 0;
         let revenueChartInstance = null; 
-
-        // --- 🔑 登入與權限模組 (修復版) ---
+// --- 🔑 登入與權限模組 (修復版) ---
         async function checkLogin() {
             const inputPwd = document.getElementById('sys-pwd').value;
             const hashHex = CryptoJS.SHA256(inputPwd).toString();
             
-            // 1. 老闆密碼：維持高安全性的 SHA-256 加密比對
+            // 1. 老闆密碼
             if(hashHex === SYSTEM_PASSWORD_HASH) { 
                 currentRole = 'boss'; 
             } 
-            // 2. 業務密碼：改為直接比對文字 (你可以隨時在這裡改成你要的密碼)
+            // 2. 業務密碼
             else if(inputPwd === 'sales2026') { 
                 currentRole = 'sales'; 
             } 
-            // 3. 倉管密碼：改為直接比對文字
+            // 3. 倉管密碼
             else if(inputPwd === 'wh2026') { 
                 currentRole = 'wh'; 
+            } 
+            // 4. 會計密碼
+            else if(inputPwd === 'acc2026') { 
+                currentRole = 'acc'; 
             } 
             // 密碼全錯
             else { 
@@ -536,8 +538,7 @@
             init(); 
         }
 
-
-      // 🛡️ 套用權限 UI 控制
+        // 🛡️ 套用權限 UI 控制
         function applyRolePermissions() {
             let roleName = '👨‍💼 老闆權限';
             if (currentRole === 'sales') roleName = '🧑‍💼 業務權限';
@@ -565,7 +566,6 @@
                 document.getElementById('nav-suppliers').style.display = 'none';
             }
         }
-
         // --- ☁️ 雲端 API 連線模組 ---
         function setSyncStatus(status) {
             const indicator = document.getElementById('sync-status-indicator');
