@@ -1663,6 +1663,31 @@ function fillQuoteCustomerForm(cust) {
     updatePrintView('print-cust-contact', cust.contact);
     updatePrintView('print-delivery', cust.address);
 }
+        // --- 💰 AR/AP 部分收款功能 (被誤刪的函數，已幫你加強千分位顯示) ---
+        function recordPayment(index) {
+            const q = quoteHistory[index];
+            const outstanding = q.totalAmount - q.paidAmount;
+            if(outstanding <= 0) return alert('此單據已結清！');
+
+            // 加入了 toLocaleString() 讓彈出視窗的金額更易讀
+            const amtStr = prompt(`單號：${q.quoteNo}\n總計：$${q.totalAmount.toLocaleString()}\n已收：$${q.paidAmount.toLocaleString()}\n尚欠：$${outstanding.toLocaleString()}\n\n請輸入本次收到的金額：`, outstanding);
+            
+            if(amtStr === null) return; // 使用者按取消
+            const amt = parseInt(amtStr.replace(/,/g, '')); // 容錯處理：防呆使用者輸入逗號
+            if(isNaN(amt) || amt <= 0) return alert('請輸入有效的金額！');
+
+            q.paidAmount += amt;
+            if(q.paidAmount >= q.totalAmount) { 
+                q.status = 'paid'; 
+                q.paidAmount = q.totalAmount; 
+            } else { 
+                q.status = 'partial'; 
+            } 
+
+            renderQuoteHistory();
+            if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
+            saveToCloud('Quotes', quoteHistory);
+        }
     </script>
 </body>
 </html>
