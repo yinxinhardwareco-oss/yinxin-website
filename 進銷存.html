@@ -152,7 +152,7 @@
             body * { visibility: hidden; }
             #page-quotation.active, #page-quotation.active * { visibility: visible; }
             #statement-print-area.active, #statement-print-area.active * { visibility: visible; }
-            #page-quotation.active, #statement-print-area.active { position: absolute; left: 0; top: 0; width: 100%; display: block; padding: 0; border: none; box-shadow: none;}
+            #page-quotation.active, #statement-print-area.active { position: absolute; left: 0; top: 0; width: 100%; display: block; padding: 0 0 30px 0; border: none; box-shadow: none;}
             .no-print { display: none !important; }
             .print-only { display: block; }
             table { border: 1px solid #000; min-width: 100%; }
@@ -458,11 +458,13 @@
                     <div style="width: 300px; display: flex; justify-content: space-between;"><span>營業稅 (5%)：</span> <span id="calc-tax">$0</span></div>
                     <div style="width: 300px; display: flex; justify-content: space-between;" class="final-total"><span>總計金額：</span> <span id="calc-total">$0</span></div>
                 </div>
-<div class="quote-notes-print" style="margin-bottom: 30px; page-break-inside: avoid;">
+<div class="quote-notes-print" style="padding-bottom: 20px; page-break-inside: avoid;">
     <strong>備註：</strong><br>
-    <textarea id="q-notes" rows="4" style="width: 100%; box-sizing: border-box; display: block; border: 1px solid #000; resize: none;" placeholder="交期、匯款帳號等備註..."></textarea>
+    <textarea id="q-notes" rows="4" style="width: 100%; box-sizing: border-box; display: block; border: 1.5px solid #000; resize: none;" placeholder="交期、匯款帳號等備註..."></textarea>
+    <div style="height: 10px; width: 100%; display: block;"></div>
 </div>
-<div class="no-print" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+
+<div class="no-print" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
     <button class="btn btn-outline" onclick="clearQuotation()">🗑️ 清空明細</button>
     <button class="btn btn-info" style="font-size: 16px;" onclick="saveQuotationToHistory()">☁️ 儲存至雲端</button>
     <button class="btn btn-success" style="font-size: 16px;" onclick="printQuotation()">🖨️ 列印/轉PDF</button>
