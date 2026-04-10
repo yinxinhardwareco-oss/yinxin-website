@@ -458,13 +458,15 @@
                     <div style="width: 300px; display: flex; justify-content: space-between;"><span>營業稅 (5%)：</span> <span id="calc-tax">$0</span></div>
                     <div style="width: 300px; display: flex; justify-content: space-between;" class="final-total"><span>總計金額：</span> <span id="calc-total">$0</span></div>
                 </div>
-                <div class="quote-notes-print"><strong>備註：</strong><br><textarea id="q-notes" rows="4" style="width: 100%;" placeholder="交期、匯款帳號等備註..."></textarea></div>
-                <div class="no-print" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                    <button class="btn btn-outline" onclick="clearQuotation()">🗑️ 清空明細</button>
-                    <button class="btn btn-info" style="font-size: 16px;" onclick="saveQuotationToHistory()">☁️ 儲存至雲端</button>
-                    <button class="btn btn-success" style="font-size: 16px;" onclick="printQuotation()">🖨️ 列印/轉PDF</button>
-                </div>
-            </div>
+<div class="quote-notes-print" style="margin-bottom: 30px; page-break-inside: avoid;">
+    <strong>備註：</strong><br>
+    <textarea id="q-notes" rows="4" style="width: 100%; box-sizing: border-box; display: block; border: 1px solid #000; resize: none;" placeholder="交期、匯款帳號等備註..."></textarea>
+</div>
+<div class="no-print" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+    <button class="btn btn-outline" onclick="clearQuotation()">🗑️ 清空明細</button>
+    <button class="btn btn-info" style="font-size: 16px;" onclick="saveQuotationToHistory()">☁️ 儲存至雲端</button>
+    <button class="btn btn-success" style="font-size: 16px;" onclick="printQuotation()">🖨️ 列印/轉PDF</button>
+</div>
 
             <div id="page-quote-history" class="page">
                 <div class="control-panel no-print" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
