@@ -899,9 +899,9 @@ function filterDashboard() {
                 sku: sku, 
                 name: name, 
                 category: document.getElementById('inv-category').value, 
-                cost: parseInt(document.getElementById('inv-cost').value) || 0, 
-                price: parseInt(document.getElementById('inv-price').value) || 0, 
-                stock: parseInt(document.getElementById('inv-stock').value) || 0 
+                cost: parseFloat(document.getElementById('inv-cost').value) || 0, 
+                price: parseFloat(document.getElementById('inv-price').value) || 0, 
+                stock: parseFloat(document.getElementById('inv-stock').value) || 0 
             }); 
             
             renderInventory(); 
@@ -911,7 +911,7 @@ function filterDashboard() {
         }
 
         function adjustStock(index, multiplier) { 
-            const qty = parseInt(document.getElementById(`adj-${index}`).value); 
+            const qty = parseFloat(document.getElementById(`adj-${index}`).value); 
             if(!qty || qty <= 0) return alert('請輸入有效數量'); 
             let newStock = Number(inventory[index].stock) + (qty * multiplier); 
             if(newStock < 0 && !confirm(`扣除後庫存為負數，確定繼續？`)) return; 
@@ -1081,12 +1081,12 @@ function filterDashboard() {
 
         function addPurchaseItem() { 
             const sku = document.getElementById('p-selected-sku').value || document.getElementById('p-smart-sku').value.toUpperCase(); 
-            const qty = parseInt(document.getElementById('p-qty').value) || 1; 
+            const qty = parseFloat(document.getElementById('p-qty').value) || 1; 
             if(!sku) return alert('請輸入型號！'); 
             const product = inventory.find(i => i.sku.toUpperCase() === sku); 
             
             const overrideCost = document.getElementById('p-override-cost').value;
-            const customCost = overrideCost !== '' ? parseInt(overrideCost) : (product ? product.cost : 0); 
+            const customCost = overrideCost !== '' ? parseFloat(overrideCost) : (product ? product.cost : 0); 
             
             const existingIndex = purchaseItems.findIndex(i => i.sku === sku && i.cost === customCost); 
             if(existingIndex > -1) { 
@@ -1261,11 +1261,11 @@ function filterDashboard() {
         function addQuoteItem() { 
             const sku = document.getElementById('q-product-select').value; 
             if(!sku) return alert('請選擇產品！'); 
-            const qty = parseInt(document.getElementById('q-qty').value) || 1; 
+            const qty = parseFloat(document.getElementById('q-qty').value) || 1; 
             const product = inventory.find(i => i.sku === sku); 
             
             const overridePrice = document.getElementById('q-override-price').value;
-            const price = overridePrice !== '' ? parseInt(overridePrice) : (product ? product.price : 0); 
+            const price = overridePrice !== '' ? parseFloat(overridePrice) : (product ? product.price : 0); 
             
             const existingIndex = quoteItems.findIndex(i => i.sku === sku && i.price === price); 
             if(existingIndex > -1) {
@@ -1333,7 +1333,7 @@ function filterDashboard() {
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center">尚未加入任何報價項目</td></tr>`;
             }
 
-            const discount = parseInt(document.getElementById('q-discount').value) || 0; 
+            const discount = parseFloat(document.getElementById('q-discount').value) || 0; 
             const tax = Math.round((subtotal - discount) * 0.05); 
             currentQuoteTotal = (subtotal - discount) + tax; 
             
@@ -1439,7 +1439,7 @@ function filterDashboard() {
                 invoiceNo: document.getElementById('q-invoice').value, 
                 deliveryMethod: document.getElementById('q-delivery').value,
                 items: quoteItems, 
-                discount: parseInt(document.getElementById('q-discount').value) || 0, 
+                discount: parseFloat(document.getElementById('q-discount').value) || 0, 
                 notes: document.getElementById('q-notes').value, 
                 totalAmount: currentQuoteTotal, 
                 paidAmount: (existingIndex > -1 ? quoteHistory[existingIndex].paidAmount : 0), 
@@ -1673,7 +1673,7 @@ function fillQuoteCustomerForm(cust) {
             const amtStr = prompt(`單號：${q.quoteNo}\n總計：$${q.totalAmount.toLocaleString()}\n已收：$${q.paidAmount.toLocaleString()}\n尚欠：$${outstanding.toLocaleString()}\n\n請輸入本次收到的金額：`, outstanding);
             
             if(amtStr === null) return; // 使用者按取消
-            const amt = parseInt(amtStr.replace(/,/g, '')); // 容錯處理：防呆使用者輸入逗號
+            const amt = parseFloat(amtStr.replace(/,/g, '')); // 容錯處理：防呆使用者輸入逗號
             if(isNaN(amt) || amt <= 0) return alert('請輸入有效的金額！');
 
             q.paidAmount += amt;
