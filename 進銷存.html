@@ -165,16 +165,22 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
    
-    /* 🛠️ PDF 輸出專用：解決 iPhone Safari 文字變淡白、半透明的問題 */
+        /* 🛠️ PDF 輸出專用：解決 iPhone Safari 文字變淡白、半透明的問題 */
         .pdf-mode {
             background-color: #ffffff !important;
+            animation: none !important; 
+            transform: none !important; 
+            opacity: 1 !important;
         }
-        .pdf-mode, .pdf-mode td, .pdf-mode th, .pdf-mode p, .pdf-mode span, .pdf-mode div, .pdf-mode h1 {
+        .pdf-mode * {
             color: #000000 !important;
             border-color: #000000 !important;
-            -webkit-text-fill-color: #000000 !important; /* 破解 iOS 字體變灰 */
+            -webkit-text-fill-color: #000000 !important; 
+            opacity: 1 !important; 
+            animation: none !important;
+            transform: none !important;
         }
-        .pdf-mode .text-danger { 
+        .pdf-mode .text-danger, .pdf-mode .text-danger * { 
             color: #dc2626 !important; 
             -webkit-text-fill-color: #dc2626 !important; 
         }
@@ -309,6 +315,16 @@
                         <button class="btn btn-success" style="height: 42px;" onclick="addProduct()">➕ 新增建檔</button>
                     </div>
                 </div>
+
+                <div class="control-panel highlight-bg no-print">
+                    <h3>🔍 庫存快速檢索 (自動轉換新舊型號)</h3>
+                    <div class="form-row">
+                        <div class="form-group large">
+                            <input type="text" id="inventory-search-input" placeholder="輸入「內部新型號」或「原廠舊型號」(例如 HT-01) 進行搜尋..." oninput="searchInventory()">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table>
                         <thead id="inventory-head"></thead>
@@ -491,20 +507,15 @@
 
         </div>
     </div>
+
     <script>
-        
-// ==========================================
+        // ==========================================
         // 🔒 你的專屬設定區
         // ==========================================
-        // ⚠️ 記得貼上你的 GAS 網址！
         const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
-        
-        // 🔐 權限分級密碼設定 
         const SYSTEM_PASSWORD_HASH = "2f2bdf8f7e9774d91b0fb4f570efaed37c209f560b65172e2fa7874f5d22c794"; 
 
-        let currentRole = ''; // 紀錄當前登入身分：'boss', 'sales', 'wh', 'acc'
-
-        // ☁️ 雲端資料庫陣列
+        let currentRole = ''; 
         let inventory = [];
         let customers = [];
         let quoteHistory = [];
@@ -514,32 +525,18 @@
         let purchaseHistory = []; 
         let purchaseItems = []; 
         let modelMappings = []; 
-        
         let currentQuoteTotal = 0; 
         let currentPurchaseTotal = 0;
         let revenueChartInstance = null; 
-// --- 🔑 登入與權限模組 (修復版) ---
+
         async function checkLogin() {
             const inputPwd = document.getElementById('sys-pwd').value;
             const hashHex = CryptoJS.SHA256(inputPwd).toString();
             
-            // 1. 老闆密碼
-            if(hashHex === SYSTEM_PASSWORD_HASH) { 
-                currentRole = 'boss'; 
-            } 
-            // 2. 業務密碼
-            else if(inputPwd === 'sales2026') { 
-                currentRole = 'sales'; 
-            } 
-            // 3. 倉管密碼
-            else if(inputPwd === 'wh2026') { 
-                currentRole = 'wh'; 
-            } 
-            // 4. 會計密碼
-            else if(inputPwd === 'acc2026') { 
-                currentRole = 'acc'; 
-            } 
-            // 密碼全錯
+            if(hashHex === SYSTEM_PASSWORD_HASH) currentRole = 'boss'; 
+            else if(inputPwd === 'sales2026') currentRole = 'sales'; 
+            else if(inputPwd === 'wh2026') currentRole = 'wh'; 
+            else if(inputPwd === 'acc2026') currentRole = 'acc'; 
             else { 
                 alert('❌ 密碼錯誤！請重新輸入。'); 
                 document.getElementById('sys-pwd').value = ''; 
@@ -552,7 +549,6 @@
             init(); 
         }
 
-        // 🛡️ 套用權限 UI 控制
         function applyRolePermissions() {
             let roleName = '👨‍💼 老闆權限';
             if (currentRole === 'sales') roleName = '🧑‍💼 業務權限';
@@ -576,11 +572,10 @@
                 document.getElementById('nav-settings').style.display = 'none';
                 document.querySelectorAll('.hide-wh').forEach(el => el.style.display = 'none');
             } else if(currentRole === 'acc') {
-                // 👈 會計幾乎擁有老闆權限，看得到成本、儀表板、進出貨
                 document.getElementById('nav-suppliers').style.display = 'none';
             }
         }
-        // --- ☁️ 雲端 API 連線模組 ---
+
         function setSyncStatus(status) {
             const indicator = document.getElementById('sync-status-indicator');
             indicator.className = 'sync-status ' + status;
@@ -620,7 +615,6 @@
             }
         }
 
-        // --- 🚀 系統初始化 ---
         async function init() {
             if(CLOUD_API_URL === "請把你的網址貼在這裡") { 
                 document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>⚠️ 請設定 CLOUD_API_URL</h2>"; 
@@ -628,7 +622,6 @@
             }
 
             try {
-                // 一次載入 7 個分頁的資料
                 const [invData, custData, quotesData, inqData, supData, poData, mapData] = await Promise.all([
                     fetchFromCloud('Inventory'), fetchFromCloud('Customers'), fetchFromCloud('Quotes'),
                     fetchFromCloud('Inquiries'), fetchFromCloud('Suppliers'), fetchFromCloud('PurchaseOrders'), fetchFromCloud('ModelMapping')
@@ -637,7 +630,6 @@
                 inventory = invData; customers = custData; quoteHistory = quotesData;
                 inquiries = inqData; suppliers = supData; purchaseHistory = poData; modelMappings = mapData;
 
-                // 確保舊單據資料有 paidAmount 欄位 (相容 3.5 版以前的資料)
                 quoteHistory.forEach(q => { 
                     q.paidAmount = Number(q.paidAmount) || 0; 
                     q.totalAmount = Number(q.totalAmount) || 0; 
@@ -646,12 +638,10 @@
                 document.getElementById('cloud-loader').style.display = 'none'; 
                 setSyncStatus('synced');
                 
-                // 預設日期區間為當年
                 const year = new Date().getFullYear();
                 document.getElementById('dash-start-date').value = `${year}-01-01`; 
                 document.getElementById('dash-end-date').value = `${year}-12-31`;
 
-                // 渲染所有畫面
                 renderInventory(); renderCustomers(); renderQuoteHistory(); renderInquiries(); 
                 renderSuppliers(); renderPurchaseHistory(); renderMapping();
                 
@@ -660,13 +650,11 @@
                 
                 if(currentRole === 'boss' || currentRole === 'acc') filterDashboard(); 
                 
-                // 依據權限決定登入後的第一個畫面
                 let startTab = currentRole === 'wh' ? 'inventory' : (currentRole === 'sales' ? 'quotation' : 'dashboard');
                 let startTitle = currentRole === 'wh' ? '📦 產品庫存' : (currentRole === 'sales' ? '📝 開立單據' : '📈 營收儀表板');
                 switchTab(startTab, startTitle);
 
                 checkLowStockAlert();
-
             } catch (error) { 
                 document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>❌ 無法連線到伺服器，請重新整理。</h2>"; 
             }
@@ -681,7 +669,6 @@
             }
         }
 
- // --- 📄 月結對帳單功能 (4.0 核心) ---
         function generateStatementPDF() {
             const custName = document.getElementById('stmt-customer').value;
             const monthStr = document.getElementById('stmt-month-select').value; 
@@ -707,15 +694,12 @@
                         <td class="text-right">$${q.totalAmount.toLocaleString()}</td>
                         <td class="text-right">$${q.paidAmount.toLocaleString()}</td>
                         <td class="text-right text-danger font-weight-bold">$${outstanding.toLocaleString()}</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
             document.getElementById('stmt-total-due').innerText = `$${totalDue.toLocaleString()}`;
 
             const pe = document.getElementById('statement-print-area');
             pe.classList.add('active'); 
-            
-            // 🔹 加上這行：強制套用高對比黑字白底模式
             pe.classList.add('pdf-mode');
             
             const filename = `${custName}_${monthStr}對帳單.pdf`;
@@ -724,17 +708,10 @@
                 margin: 10, 
                 filename: filename, 
                 image: {type:'jpeg', quality: 1}, 
-                html2canvas: {
-                    scale: 2, 
-                    useCORS: true,
-                    backgroundColor: '#ffffff', // 🔹 強制白底
-                    letterRendering: true       // 🔹 改善 iOS 字體渲染
-                }, 
+                html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' }, 
                 jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
             }).from(pe).output('blob').then(function(pdfBlob) {
                 pe.classList.remove('active'); 
-                
-                // 🔹 產出後移除高對比模式
                 pe.classList.remove('pdf-mode');
 
                 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -760,15 +737,14 @@
             });
         }
 
-        // --- 📈 營收數據儀表板模組 ---
-function filterDashboard() {
-    if(currentRole !== 'boss' && currentRole !== 'acc') return;
+        function filterDashboard() {
+            if(currentRole !== 'boss' && currentRole !== 'acc') return;
             const startDate = document.getElementById('dash-start-date').value; 
             const endDate = document.getElementById('dash-end-date').value;
             if(!startDate || !endDate) return;
 
             let rangeQuoteTotal = 0, rangePaidTotal = 0, rangeUnpaidTotal = 0;
-            const cashflowTbody = document.getElementById('cashflow-list'); 
+            const cashflowTbody = document.getElementById('cashflow-list') || document.createElement('tbody'); 
             cashflowTbody.innerHTML = '';
             
             const labels = [], dataPaid = [];
@@ -822,7 +798,6 @@ function filterDashboard() {
             filterDashboard(); 
         }
 
-        // --- 🔄 共用選單切換 ---
         function switchTab(tabId, title) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -831,17 +806,15 @@ function filterDashboard() {
             document.getElementById('topbar-title').innerText = title;
             
             if(tabId === 'quotation') { updateProductDropdown(); updateCustomerDropdown(); }
-            if(tabId === 'purchase') { 
-                const select = document.getElementById('p-product-select'); 
-                // 採購單的選單
-                /* 選單更新邏輯移至 Part 3 */
-                updateSupplierDropdown(); 
-            }
+            if(tabId === 'purchase') { updateSupplierDropdown(); }
             if(tabId === 'quote-history') { renderQuoteHistory(); } 
             if(tabId === 'inquiries') { renderInquiries(); } 
             if(tabId === 'dashboard') { filterDashboard(); }
         }
-        // --- 📦 庫存管理核心 ---
+
+        // ==========================================
+        // 📦 庫存管理核心
+        // ==========================================
         function renderInventory() {
             const thead = document.getElementById('inventory-head');
             let thHTML = `<tr><th>型號</th><th>產品名稱</th>`;
@@ -887,6 +860,11 @@ function filterDashboard() {
                 tbody.innerHTML += trHTML;
             });
             if(inventory.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">雲端沒有任何庫存資料</td></tr>`;
+            
+            // 每次重繪後，若有搜尋關鍵字則自動過濾
+            if(document.getElementById('inventory-search-input')) {
+                searchInventory();
+            }
         }
 
         function addProduct() { 
@@ -896,9 +874,7 @@ function filterDashboard() {
             if(inventory.find(i => i.sku === sku)) return alert('型號已存在！'); 
             
             inventory.push({ 
-                sku: sku, 
-                name: name, 
-                category: document.getElementById('inv-category').value, 
+                sku: sku, name: name, category: document.getElementById('inv-category').value, 
                 cost: parseFloat(document.getElementById('inv-cost').value) || 0, 
                 price: parseFloat(document.getElementById('inv-price').value) || 0, 
                 stock: parseFloat(document.getElementById('inv-stock').value) || 0 
@@ -906,7 +882,9 @@ function filterDashboard() {
             
             renderInventory(); 
             saveToCloud('Inventory', inventory); 
-            document.querySelectorAll('#page-inventory input').forEach(input => input.value = ''); 
+            document.querySelectorAll('#page-inventory input[type="text"]').forEach(input => input.value = ''); 
+            document.getElementById('inv-cost').value = 0;
+            document.getElementById('inv-price').value = 0;
             document.getElementById('inv-stock').value = 0;
         }
 
@@ -929,127 +907,87 @@ function filterDashboard() {
             } 
         }
 
-        // --- 👥 客戶管理核心 ---
-        function renderCustomers() { 
-            const tbody = document.getElementById('customers-list'); 
-            tbody.innerHTML = ''; 
-            customers.forEach((c, index) => { 
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${c.name}</strong></td>
-                        <td>${c.taxid || '-'}</td>
-                        <td>${c.contact || '-'}<br><span style="font-size:12px;color:#666;">${c.tel || ''}</span></td>
-                        <td class="hide-on-mobile"><span style="font-size:13px;">${c.address || '-'}</span></td>
-                        <td class="no-print text-center">
-                            <button class="btn btn-primary btn-sm" onclick="switchTab('quotation', '📝 報價/出貨單系統'); fillQuoteCustomerForm(customers[${index}]);">📝 打單</button> 
-                            <button class="btn btn-outline btn-sm hide-wh" onclick="deleteCustomer(${index})">刪</button>
-                        </td>
-                    </tr>`; 
-            }); 
-            if(customers.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center">雲端沒有客戶資料</td></tr>`;
-        }
+        function searchInventory() {
+            const inputEl = document.getElementById('inventory-search-input');
+            if(!inputEl) return;
+            const keyword = inputEl.value.trim().toUpperCase();
+            const rows = document.getElementById('inventory-list').getElementsByTagName('tr');
+            
+            if (keyword === '') {
+                for (let i = 0; i < rows.length; i++) rows[i].style.display = '';
+                return;
+            }
 
-        function addCustomer() { 
-            const name = document.getElementById('cust-name').value.trim(); 
-            if(!name) return alert('客戶名稱為必填！'); 
-            customers.push({ 
-                name: name, 
-                taxid: document.getElementById('cust-taxid').value.trim(), 
-                contact: document.getElementById('cust-contact').value.trim(), 
-                tel: document.getElementById('cust-tel').value.trim(), 
-                address: document.getElementById('cust-address').value.trim() 
-            }); 
-            renderCustomers(); 
-            saveToCloud('Customers', customers); 
-            document.querySelectorAll('#page-customers input').forEach(input => input.value = '');
-        }
-
-        function deleteCustomer(index) { 
-            if(confirm(`確定刪除？`)) { 
-                customers.splice(index, 1); 
-                renderCustomers(); 
-                saveToCloud('Customers', customers); 
-            } 
-        }
-
-        // --- 🏭 廠商管理核心 ---
-        function renderSuppliers() { 
-            const tbody = document.getElementById('suppliers-list'); 
-            tbody.innerHTML = ''; 
-            suppliers.forEach((s, index) => { 
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${s.name}</strong></td>
-                        <td>${s.contact || '-'}<br><span style="font-size:12px;color:#666;">${s.tel || ''}</span></td>
-                        <td class="hide-on-mobile"><span style="font-size:13px;">${s.address || '-'}</span></td>
-                        <td class="no-print text-center hide-wh">
-                            <button class="btn btn-outline btn-sm" onclick="deleteSupplier(${index})">刪</button>
-                        </td>
-                    </tr>`; 
-            }); 
-            if(suppliers.length === 0) tbody.innerHTML = `<tr><td colspan="4" class="text-center">沒有廠商資料</td></tr>`;
-        }
-
-        function addSupplier() { 
-            const name = document.getElementById('sup-name').value.trim(); 
-            if(!name) return alert('廠商名稱必填！'); 
-            suppliers.push({ 
-                name: name, 
-                contact: document.getElementById('sup-contact').value.trim(), 
-                tel: document.getElementById('sup-tel').value.trim(), 
-                address: document.getElementById('sup-address').value.trim() 
-            }); 
-            renderSuppliers(); 
-            saveToCloud('Suppliers', suppliers); 
-            document.querySelectorAll('#page-suppliers input').forEach(input => input.value = '');
-        }
-
-        function deleteSupplier(index) { 
-            if(confirm(`確定刪除？`)) { 
-                suppliers.splice(index, 1); 
-                renderSuppliers(); 
-                saveToCloud('Suppliers', suppliers); 
-            } 
-        }
-
-        // --- 📩 詢價單核心 ---
-        function renderInquiries() { 
-            const tbody = document.getElementById('inquiries-list'); 
-            tbody.innerHTML = ''; 
-            inquiries.forEach((item, index) => { 
-                const statusHtml = item.status === '已處理' ? '<span class="badge badge-paid">✅ 已處理</span>' : '<span class="badge badge-new">⚠️ 未處理</span>';
-                const btnTxt = item.status === '已處理' ? '標為未處理' : '標為已處理';
-                tbody.innerHTML += `
-                    <tr style="${item.status === '已處理' ? 'opacity:0.6;' : ''}">
-                        <td style="font-size:13px; color:#666;">${item.date}</td>
-                        <td><strong>${item.name}</strong></td>
-                        <td>${item.tel}</td>
-                        <td style="white-space: normal;">${item.content}</td>
-                        <td class="text-center">${statusHtml}</td>
-                        <td class="no-print text-center">
-                            <button class="btn btn-outline btn-sm" onclick="toggleInquiry(${index})">${btnTxt}</button> 
-                            <button class="btn btn-danger btn-sm" style="margin-left:5px;" onclick="deleteInquiry(${index})">刪</button>
-                        </td>
-                    </tr>`; 
-            }); 
-            if(inquiries.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">沒有詢價單</td></tr>`;
-        }
-
-        function toggleInquiry(index) {
-            inquiries[index].status = inquiries[index].status === '未處理' ? '已處理' : '未處理'; 
-            renderInquiries(); 
-            saveToCloud('Inquiries', inquiries);
-        }
-
-        function deleteInquiry(index) {
-            if(confirm('確定刪除這筆詢價？')) {
-                inquiries.splice(index, 1); 
-                renderInquiries(); 
-                saveToCloud('Inquiries', inquiries);
+            for (let i = 0; i < rows.length; i++) {
+                const item = inventory[i]; 
+                if (!item) continue;
+                let isMatch = false;
+                
+                if (item.sku.toUpperCase().includes(keyword) || item.name.toUpperCase().includes(keyword)) {
+                    isMatch = true;
+                } else {
+                    const mappedRecords = modelMappings.filter(m => m.internalSku.toUpperCase() === item.sku.toUpperCase());
+                    if (mappedRecords.some(m => m.supplierSku.toUpperCase().includes(keyword))) {
+                        isMatch = true; 
+                    }
+                }
+                rows[i].style.display = isMatch ? '' : 'none';
             }
         }
 
-        // --- 🛒 採購與進貨核心 ---
+        // ==========================================
+        // 🔍 型號對照字典核心
+        // ==========================================
+        function renderMapping() {
+            const tbody = document.getElementById('mapping-list');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            modelMappings.forEach((m, index) => {
+                tbody.innerHTML += `<tr>
+                    <td><strong>${m.internalSku}</strong></td>
+                    <td>${m.supplierSku}</td>
+                    <td>${m.name || '-'}</td>
+                    <td class="no-print text-center hide-wh">
+                        <button class="btn btn-danger btn-sm" onclick="deleteMapping(${index})">刪除</button>
+                    </td>
+                </tr>`;
+            });
+            if(modelMappings.length === 0) tbody.innerHTML = `<tr><td colspan="4" class="text-center">沒有字典資料</td></tr>`;
+        }
+
+        function addMapping() {
+            const internal = document.getElementById('map-internal').value.trim().toUpperCase();
+            const supplier = document.getElementById('map-supplier').value.trim().toUpperCase();
+            const name = document.getElementById('map-name').value.trim();
+            if(!internal || !supplier) return alert('內部型號與供應商型號必填！');
+            modelMappings.push({ internalSku: internal, supplierSku: supplier, name: name });
+            renderMapping();
+            saveToCloud('ModelMapping', modelMappings);
+            document.getElementById('map-internal').value = '';
+            document.getElementById('map-supplier').value = '';
+            document.getElementById('map-name').value = '';
+        }
+
+        function deleteMapping(index) {
+            if(confirm('確定刪除此綁定？')) {
+                modelMappings.splice(index, 1);
+                renderMapping();
+                saveToCloud('ModelMapping', modelMappings);
+            }
+        }
+
+        function searchMapping() {
+            const keyword = document.getElementById('mapping-search-input').value.toUpperCase();
+            const rows = document.getElementById('mapping-list').getElementsByTagName('tr');
+            for(let i=0; i<rows.length; i++) {
+                const text = rows[i].innerText.toUpperCase();
+                rows[i].style.display = text.includes(keyword) ? '' : 'none';
+            }
+        }
+
+        // ==========================================
+        // 🛒 採購與進貨核心
+        // ==========================================
         function resetPurchaseFormDate() { 
             const today = new Date(); 
             const d = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`; 
@@ -1063,7 +1001,6 @@ function filterDashboard() {
             this.style.color = this.value === '已到貨' ? 'var(--success)' : 'var(--danger)';
         });
 
-        // 採購單 - 智慧對照功能
         function smartFindProduct() { 
             const input = document.getElementById('p-smart-sku').value.trim().toUpperCase(); 
             if(!input) return; 
@@ -1104,6 +1041,39 @@ function filterDashboard() {
             purchaseItems.splice(index, 1); 
             renderPurchaseItems(); 
         }
+
+        function renderPurchaseItems() {
+            const thead = document.getElementById('purchase-item-head');
+            let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">數量</th>`;
+            if(currentRole !== 'wh') thHTML += `<th class="text-right">進價成本</th><th class="text-right">小計</th>`;
+            thHTML += `<th class="no-print text-center">操作</th></tr>`;
+            if (thead) thead.innerHTML = thHTML;
+
+            const tbody = document.getElementById('purchase-item-list');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            let total = 0;
+
+            purchaseItems.forEach((item, index) => {
+                const itemTotal = item.cost * item.qty;
+                total += itemTotal;
+                let trHTML = `<tr>
+                    <td>${item.sku}</td>
+                    <td>${item.name}</td>
+                    <td class="text-center">${item.qty}</td>`;
+
+                if(currentRole !== 'wh') {
+                    trHTML += `<td class="text-right">$${item.cost.toLocaleString()}</td>
+                               <td class="text-right">$${itemTotal.toLocaleString()}</td>`;
+                }
+                trHTML += `<td class="no-print text-center"><button class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="removePurchaseItem(${index})">X</button></td></tr>`;
+                tbody.innerHTML += trHTML;
+            });
+            if(purchaseItems.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">尚未加入任何採購項目</td></tr>`;
+            currentPurchaseTotal = total;
+            const totalEl = document.getElementById('calc-purchase-total');
+            if(totalEl) totalEl.innerText = `$${total.toLocaleString()}`;
+        }
         
         function clearPurchaseOrder() { 
             if(confirm('確定要清空這張單嗎？')) { 
@@ -1123,12 +1093,8 @@ function filterDashboard() {
             const existingIndex = purchaseHistory.findIndex(p => p.poNo === poNo); 
             const oldStatus = existingIndex > -1 ? purchaseHistory[existingIndex].status : null; 
             const recordData = { 
-                poNo: poNo, 
-                date: document.getElementById('p-date').value, 
-                supName: supName, 
-                items: purchaseItems, 
-                totalAmount: currentPurchaseTotal, 
-                status: status 
+                poNo: poNo, date: document.getElementById('p-date').value, supName: supName, 
+                items: purchaseItems, totalAmount: currentPurchaseTotal, status: status 
             }; 
             
             let invChanged = false; 
@@ -1145,21 +1111,16 @@ function filterDashboard() {
             } 
             if(invChanged) { renderInventory(); saveToCloud('Inventory', inventory); } 
             
-            if (existingIndex > -1) { 
-                purchaseHistory[existingIndex] = recordData; 
-            } else { 
-                purchaseHistory.unshift(recordData); 
-                clearPurchaseOrder(); 
-            } 
+            if (existingIndex > -1) { purchaseHistory[existingIndex] = recordData; } 
+            else { purchaseHistory.unshift(recordData); clearPurchaseOrder(); } 
+            
             renderPurchaseHistory(); 
             saveToCloud('PurchaseOrders', purchaseHistory); 
             alert('採購單儲存成功！'); 
         }
 
         function editPurchaseRecord(index) { 
-            // 💡 加上防呆提示
             alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或增加庫存。若有增減，請至「庫存管理」手動調整！');
-            
             const r = purchaseHistory[index]; 
             document.getElementById('p-sup-name').value = r.supName; 
             document.getElementById('p-po-no').value = r.poNo; 
@@ -1172,37 +1133,6 @@ function filterDashboard() {
             switchTab('purchase', '🛒 採購與進貨'); 
         }
 
-        function editQuoteRecord(index) {
-            // 💡 加上防呆提示
-            alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或扣除庫存。若有增減，請至「庫存管理」手動調整！');
-            
-            const r = quoteHistory[index]; 
-            switchTab('quotation', '📝 報價/出貨單系統');
-            document.getElementById('q-cust-name').value = r.custName; 
-            document.getElementById('q-cust-taxid').value = r.custTaxId; 
-            document.getElementById('q-cust-contact').value = r.custContact; 
-            document.getElementById('q-cust-tel').value = r.custTel; 
-            document.getElementById('q-quote-no').value = r.quoteNo; 
-            document.getElementById('q-quote-date').value = r.date; 
-            document.getElementById('q-invoice').value = r.invoiceNo || ''; 
-            document.getElementById('q-delivery').value = r.deliveryMethod || '';
-            
-            updatePrintView('print-cust-name', r.custName); 
-            updatePrintView('print-cust-taxid', r.custTaxId); 
-            updatePrintView('print-cust-contact', r.custContact); 
-            updatePrintView('print-quote-no', r.quoteNo); 
-            updatePrintView('print-invoice', r.invoiceNo || '未開立'); 
-            updatePrintView('print-delivery', r.deliveryMethod || '未指定'); 
-            updatePrintDate(r.date);
-            
-            quoteItems = typeof r.items === 'string' ? JSON.parse(r.items) : r.items; 
-            document.getElementById('q-discount').value = r.discount || 0; 
-            document.getElementById('q-notes').value = r.notes || ''; 
-            
-            renderQuotation(); 
-            window.scrollTo(0,0);
-        }
-
         function deletePurchaseRecord(index) { 
             if(confirm('刪除單據？(不會自動退回庫存)')) { 
                 purchaseHistory.splice(index, 1); 
@@ -1210,8 +1140,130 @@ function filterDashboard() {
                 saveToCloud('PurchaseOrders', purchaseHistory); 
             } 
         }
-        
-        // --- 📝 報價/出貨單核心 ---
+
+        function renderPurchaseHistory() {
+            const thead = document.getElementById('history-purchase-head');
+            let thHTML = `<tr><th>單據日期</th><th>採購單號</th><th>廠商名稱</th>`;
+            if (currentRole !== 'wh') thHTML += `<th class="text-right">總金額</th>`;
+            thHTML += `<th class="text-center">狀態</th><th class="no-print text-center">操作</th></tr>`;
+            if (thead) thead.innerHTML = thHTML;
+
+            const tbody = document.getElementById('history-purchase-list');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            purchaseHistory.forEach((p, index) => {
+                const statusColor = p.status === '已到貨' ? 'text-success' : 'text-danger';
+                let trHTML = `<tr><td>${p.date}</td><td>${p.poNo}</td><td>${p.supName}</td>`;
+                if (currentRole !== 'wh') trHTML += `<td class="text-right">$${(p.totalAmount || 0).toLocaleString()}</td>`;
+                trHTML += `<td class="text-center font-weight-bold ${statusColor}">${p.status}</td>
+                    <td class="no-print text-center">
+                        <button class="btn btn-outline btn-sm" onclick="editPurchaseRecord(${index})">編輯</button>
+                        <button class="btn btn-danger btn-sm hide-wh" onclick="deletePurchaseRecord(${index})">刪除</button>
+                    </td></tr>`;
+                tbody.innerHTML += trHTML;
+            });
+            if (purchaseHistory.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">沒有歷史採購紀錄</td></tr>`;
+        }
+
+        // ==========================================
+        // 🏭 廠商管理核心
+        // ==========================================
+        function renderSuppliers() { 
+            const tbody = document.getElementById('suppliers-list'); 
+            tbody.innerHTML = ''; 
+            suppliers.forEach((s, index) => { 
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${s.name}</strong></td>
+                        <td>${s.contact || '-'}<br><span style="font-size:12px;color:#666;">${s.tel || ''}</span></td>
+                        <td class="hide-on-mobile"><span style="font-size:13px;">${s.address || '-'}</span></td>
+                        <td class="no-print text-center hide-wh">
+                            <button class="btn btn-outline btn-sm" onclick="deleteSupplier(${index})">刪</button>
+                        </td>
+                    </tr>`; 
+            }); 
+            if(suppliers.length === 0) tbody.innerHTML = `<tr><td colspan="4" class="text-center">沒有廠商資料</td></tr>`;
+        }
+
+        function addSupplier() { 
+            const name = document.getElementById('sup-name').value.trim(); 
+            if(!name) return alert('廠商名稱必填！'); 
+            suppliers.push({ 
+                name: name, contact: document.getElementById('sup-contact').value.trim(), 
+                tel: document.getElementById('sup-tel').value.trim(), address: document.getElementById('sup-address').value.trim() 
+            }); 
+            renderSuppliers(); 
+            saveToCloud('Suppliers', suppliers); 
+            document.querySelectorAll('#page-suppliers input').forEach(input => input.value = '');
+        }
+
+        function deleteSupplier(index) { 
+            if(confirm(`確定刪除？`)) { 
+                suppliers.splice(index, 1); 
+                renderSuppliers(); 
+                saveToCloud('Suppliers', suppliers); 
+            } 
+        }
+
+        // ==========================================
+        // 👥 客戶管理核心
+        // ==========================================
+        function renderCustomers() { 
+            const tbody = document.getElementById('customers-list'); 
+            tbody.innerHTML = ''; 
+            customers.forEach((c, index) => { 
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${c.name}</strong></td>
+                        <td>${c.taxid || '-'}</td>
+                        <td>${c.contact || '-'}<br><span style="font-size:12px;color:#666;">${c.tel || ''}</span></td>
+                        <td class="hide-on-mobile"><span style="font-size:13px;">${c.address || '-'}</span></td>
+                        <td class="no-print text-center">
+                            <button class="btn btn-primary btn-sm" onclick="switchTab('quotation', '📝 報價/出貨單系統'); fillQuoteCustomerForm(customers[${index}]);">📝 打單</button> 
+                            <button class="btn btn-outline btn-sm hide-wh" onclick="deleteCustomer(${index})">刪</button>
+                        </td>
+                    </tr>`; 
+            }); 
+            if(customers.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center">雲端沒有客戶資料</td></tr>`;
+        }
+
+        function addCustomer() { 
+            const name = document.getElementById('cust-name').value.trim(); 
+            if(!name) return alert('客戶名稱為必填！'); 
+            customers.push({ 
+                name: name, taxid: document.getElementById('cust-taxid').value.trim(), 
+                contact: document.getElementById('cust-contact').value.trim(), 
+                tel: document.getElementById('cust-tel').value.trim(), address: document.getElementById('cust-address').value.trim() 
+            }); 
+            renderCustomers(); 
+            saveToCloud('Customers', customers); 
+            document.querySelectorAll('#page-customers input').forEach(input => input.value = '');
+        }
+
+        function deleteCustomer(index) { 
+            if(confirm(`確定刪除？`)) { 
+                customers.splice(index, 1); 
+                renderCustomers(); 
+                saveToCloud('Customers', customers); 
+            } 
+        }
+
+        function fillQuoteCustomerForm(cust) {
+            document.getElementById('q-cust-name').value = cust.name || '';
+            document.getElementById('q-cust-taxid').value = cust.taxid || '';
+            document.getElementById('q-cust-contact').value = cust.contact || '';
+            document.getElementById('q-cust-tel').value = cust.tel || '';
+            document.getElementById('q-delivery').value = cust.address || '';
+            
+            updatePrintView('print-cust-name', cust.name);
+            updatePrintView('print-cust-taxid', cust.taxid);
+            updatePrintView('print-cust-contact', cust.contact);
+            updatePrintView('print-delivery', cust.address);
+        }
+
+        // ==========================================
+        // 📝 報價/出貨單核心
+        // ==========================================
         function updateCustomerDropdown() { 
             const select = document.getElementById('q-quick-customer'); 
             select.innerHTML = '<option value="">💡 從雲端客戶庫快速帶入...</option>'; 
@@ -1227,15 +1279,7 @@ function filterDashboard() {
         function autoFillCustomerFromSelect() { 
             const index = document.getElementById('q-quick-customer').value; 
             if(index === "") return; 
-            document.getElementById('q-cust-name').value = customers[index].name || ''; 
-            document.getElementById('q-cust-taxid').value = customers[index].taxid || ''; 
-            document.getElementById('q-cust-contact').value = customers[index].contact || ''; 
-            document.getElementById('q-cust-tel').value = customers[index].tel || ''; 
-            document.getElementById('q-delivery').value = customers[index].address || ''; 
-            updatePrintView('print-cust-name', customers[index].name); 
-            updatePrintView('print-cust-taxid', customers[index].taxid); 
-            updatePrintView('print-cust-contact', customers[index].contact); 
-            updatePrintView('print-delivery', customers[index].address); 
+            fillQuoteCustomerForm(customers[index]);
             document.getElementById('q-quick-customer').value = ""; 
         }
 
@@ -1315,23 +1359,16 @@ function filterDashboard() {
                 subtotal += itemTotal; 
                 let trHTML = `<tr>
                     <td class="text-center hide-on-mobile">${index + 1}</td>
-                    <td>${item.sku}</td>
-                    <td>${item.name}</td>
-                    <td class="text-center">${item.qty}</td>`;
+                    <td>${item.sku}</td><td>${item.name}</td><td class="text-center">${item.qty}</td>`;
                 
                 if(currentRole !== 'wh') {
-                    trHTML += `
-                        <td class="text-right">$${item.price.toLocaleString()}</td>
-                        <td class="text-right">$${itemTotal.toLocaleString()}</td>`;
+                    trHTML += `<td class="text-right">$${item.price.toLocaleString()}</td><td class="text-right">$${itemTotal.toLocaleString()}</td>`;
                 }
-                
                 trHTML += `<td class="no-print text-center"><button class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="removeQuoteItem(${index})">X</button></td></tr>`; 
                 tbody.innerHTML += trHTML;
             }); 
             
-            if(quoteItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center">尚未加入任何報價項目</td></tr>`;
-            }
+            if(quoteItems.length === 0) tbody.innerHTML = `<tr><td colspan="7" class="text-center">尚未加入任何報價項目</td></tr>`;
 
             const discount = parseFloat(document.getElementById('q-discount').value) || 0; 
             const tax = Math.round((subtotal - discount) * 0.05); 
@@ -1343,7 +1380,7 @@ function filterDashboard() {
             document.getElementById('calc-total').innerText = `$${currentQuoteTotal.toLocaleString()}`; 
         }
 
-  function printQuotation() { 
+        function printQuotation() { 
             if(quoteItems.length === 0) return alert('明細不能為空'); 
             
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); 
@@ -1354,50 +1391,30 @@ function filterDashboard() {
                 const pe = document.getElementById('page-quotation'); 
                 pe.style.boxShadow = 'none'; 
                 pe.style.border = 'none'; 
-                
-                // 🔹 加上這行：強制套用高對比黑字白底模式
                 pe.classList.add('pdf-mode');
                 
                 const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
 
                 html2pdf().set({
-                    margin: 10, 
-                    filename: filename, 
-                    image: {type: 'jpeg', quality: 1}, // 提高品質
-                    html2canvas: {
-                        scale: 2, 
-                        useCORS: true, 
-                        backgroundColor: '#ffffff', // 🔹 強制白底，避免 iOS 變透明灰
-                        letterRendering: true       // 🔹 改善 iOS 字體渲染
-                    }, 
+                    margin: 10, filename: filename, image: {type: 'jpeg', quality: 1},
+                    html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' }, 
                     jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'}
                 }).from(pe).output('blob').then(function(pdfBlob) {
-                    // 🔹 產出後移除高對比模式
                     pe.classList.remove('pdf-mode');
-                    
                     document.querySelectorAll('.no-print').forEach(el => el.style.display = ''); 
                     document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none'); 
-                    pe.style.boxShadow = ''; 
-                    pe.style.border = '';
+                    pe.style.boxShadow = ''; pe.style.border = '';
 
                     const file = new File([pdfBlob], filename, { type: 'application/pdf' });
 
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share({
-                            files: [file],
-                            title: filename,
-                            text: '請查閱您的報價/銷貨單'
-                        }).catch(err => console.log('使用者取消分享或分享失敗', err));
+                        navigator.share({ files: [file], title: filename, text: '請查閱您的報價/銷貨單' }).catch(err => console.log('使用者取消分享或分享失敗', err));
                     } else {
                         const url = window.URL.createObjectURL(pdfBlob);
                         const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = filename;
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        document.body.removeChild(a);
+                        a.style.display = 'none'; a.href = url; a.download = filename;
+                        document.body.appendChild(a); a.click();
+                        window.URL.revokeObjectURL(url); document.body.removeChild(a);
                     }
                 }); 
             } else { 
@@ -1415,13 +1432,8 @@ function filterDashboard() {
             document.getElementById('print-date').innerText = d.replace(/-/g,'/'); 
         }
 
-        function updatePrintView(elementId, value) { 
-            document.getElementById(elementId).innerText = value || '_________________'; 
-        }
-
-        function updatePrintDate(val) { 
-            document.getElementById('print-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; 
-        }
+        function updatePrintView(elementId, value) { document.getElementById(elementId).innerText = value || '_________________'; }
+        function updatePrintDate(val) { document.getElementById('print-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; }
 
         function saveQuotationToHistory() {
             const custName = document.getElementById('q-cust-name').value.trim(); 
@@ -1430,18 +1442,12 @@ function filterDashboard() {
             
             const existingIndex = quoteHistory.findIndex(q => q.quoteNo === quoteNo);
             const recordData = { 
-                quoteNo: quoteNo, 
-                date: document.getElementById('q-quote-date').value, 
-                custName: custName, 
-                custTaxId: document.getElementById('q-cust-taxid').value, 
-                custContact: document.getElementById('q-cust-contact').value, 
-                custTel: document.getElementById('q-cust-tel').value, 
-                invoiceNo: document.getElementById('q-invoice').value, 
-                deliveryMethod: document.getElementById('q-delivery').value,
-                items: quoteItems, 
-                discount: parseFloat(document.getElementById('q-discount').value) || 0, 
-                notes: document.getElementById('q-notes').value, 
-                totalAmount: currentQuoteTotal, 
+                quoteNo: quoteNo, date: document.getElementById('q-quote-date').value, 
+                custName: custName, custTaxId: document.getElementById('q-cust-taxid').value, 
+                custContact: document.getElementById('q-cust-contact').value, custTel: document.getElementById('q-cust-tel').value, 
+                invoiceNo: document.getElementById('q-invoice').value, deliveryMethod: document.getElementById('q-delivery').value,
+                items: quoteItems, discount: parseFloat(document.getElementById('q-discount').value) || 0, 
+                notes: document.getElementById('q-notes').value, totalAmount: currentQuoteTotal, 
                 paidAmount: (existingIndex > -1 ? quoteHistory[existingIndex].paidAmount : 0), 
                 status: (existingIndex > -1 ? quoteHistory[existingIndex].status : 'unpaid') 
             };
@@ -1455,19 +1461,17 @@ function filterDashboard() {
                 saveToCloud('Inventory', inventory);
             }
 
-            if (existingIndex > -1) { 
-                quoteHistory[existingIndex] = recordData; 
-            } else { 
-                quoteHistory.unshift(recordData); 
-            }
+            if (existingIndex > -1) { quoteHistory[existingIndex] = recordData; } 
+            else { quoteHistory.unshift(recordData); }
             
             renderQuoteHistory(); 
-if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
+            if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
             saveToCloud('Quotes', quoteHistory); 
             alert('單據儲存成功！');
         }
 
         function editQuoteRecord(index) {
+            alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或扣除庫存。若有增減，請至「庫存管理」手動調整！');
             const r = quoteHistory[index]; 
             switchTab('quotation', '📝 報價/出貨單系統');
             document.getElementById('q-cust-name').value = r.custName; 
@@ -1499,181 +1503,51 @@ if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
             if(confirm(`確定要刪除這筆單據？(不會自動回復庫存)`)) { 
                 quoteHistory.splice(index, 1); 
                 renderQuoteHistory(); 
-if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
+                if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
                 saveToCloud('Quotes', quoteHistory); 
             } 
         }
-// ==========================================
-// 🛠️ 補齊缺失的畫面渲染與邏輯函數
-// ==========================================
 
-// 1. 採購單 - 渲染明細列表
-function renderPurchaseItems() {
-    const thead = document.getElementById('purchase-item-head');
-    let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">數量</th>`;
-    if(currentRole !== 'wh') thHTML += `<th class="text-right">進價成本</th><th class="text-right">小計</th>`;
-    thHTML += `<th class="no-print text-center">操作</th></tr>`;
-    if (thead) thead.innerHTML = thHTML;
+        function renderQuoteHistory() {
+            const tbody = document.getElementById('history-quote-list');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            quoteHistory.forEach((q, index) => {
+                const outstanding = q.totalAmount - q.paidAmount;
+                let statusHtml = '';
+                if(q.status === 'paid') statusHtml = '<span class="badge badge-paid">✅ 已結清</span>';
+                else if(q.status === 'partial') statusHtml = '<span class="badge badge-partial">⚠️ 部分收款</span>';
+                else statusHtml = '<span class="badge badge-unpaid">❌ 未收款</span>';
 
-    const tbody = document.getElementById('purchase-item-list');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    let total = 0;
-
-    purchaseItems.forEach((item, index) => {
-        const itemTotal = item.cost * item.qty;
-        total += itemTotal;
-        let trHTML = `<tr>
-            <td>${item.sku}</td>
-            <td>${item.name}</td>
-            <td class="text-center">${item.qty}</td>`;
-
-        if(currentRole !== 'wh') {
-            trHTML += `<td class="text-right">$${item.cost.toLocaleString()}</td>
-                       <td class="text-right">$${itemTotal.toLocaleString()}</td>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${q.date}</td>
+                        <td>${q.quoteNo}<br><span style="font-size:12px;color:#666;">發票: ${q.invoiceNo || '未開'}</span></td>
+                        <td><strong>${q.custName}</strong></td>
+                        <td class="text-right">$${q.totalAmount.toLocaleString()}</td>
+                        <td class="text-right text-success">$${q.paidAmount.toLocaleString()}</td>
+                        <td class="text-right text-danger">$${outstanding.toLocaleString()}</td>
+                        <td class="text-center">${statusHtml}</td>
+                        <td class="no-print text-center">
+                            <button class="btn btn-success btn-sm" onclick="recordPayment(${index})">💰 收款</button>
+                            <button class="btn btn-outline btn-sm" onclick="editQuoteRecord(${index})">📝 編輯</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteQuoteRecord(${index})">刪</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(quoteHistory.length === 0) tbody.innerHTML = `<tr><td colspan="8" class="text-center">沒有歷史報價/銷貨紀錄</td></tr>`;
         }
 
-        trHTML += `<td class="no-print text-center"><button class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="removePurchaseItem(${index})">X</button></td></tr>`;
-        tbody.innerHTML += trHTML;
-    });
-
-    if(purchaseItems.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">尚未加入任何採購項目</td></tr>`;
-
-    currentPurchaseTotal = total;
-    const totalEl = document.getElementById('calc-purchase-total');
-    if(totalEl) totalEl.innerText = `$${total.toLocaleString()}`;
-}
-
-// 2. 採購單 - 渲染歷史紀錄
-function renderPurchaseHistory() {
-    const thead = document.getElementById('history-purchase-head');
-    let thHTML = `<tr><th>單據日期</th><th>採購單號</th><th>廠商名稱</th>`;
-    if (currentRole !== 'wh') thHTML += `<th class="text-right">總金額</th>`;
-    thHTML += `<th class="text-center">狀態</th><th class="no-print text-center">操作</th></tr>`;
-    if (thead) thead.innerHTML = thHTML;
-
-    const tbody = document.getElementById('history-purchase-list');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    purchaseHistory.forEach((p, index) => {
-        const statusColor = p.status === '已到貨' ? 'text-success' : 'text-danger';
-        let trHTML = `<tr>
-            <td>${p.date}</td><td>${p.poNo}</td><td>${p.supName}</td>`;
-        if (currentRole !== 'wh') trHTML += `<td class="text-right">$${(p.totalAmount || 0).toLocaleString()}</td>`;
-        trHTML += `<td class="text-center font-weight-bold ${statusColor}">${p.status}</td>
-            <td class="no-print text-center">
-                <button class="btn btn-outline btn-sm" onclick="editPurchaseRecord(${index})">編輯</button>
-                <button class="btn btn-danger btn-sm hide-wh" onclick="deletePurchaseRecord(${index})">刪除</button>
-            </td></tr>`;
-        tbody.innerHTML += trHTML;
-    });
-    if (purchaseHistory.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">沒有歷史採購紀錄</td></tr>`;
-}
-
-// 3. 報價單 - 渲染歷史單據與帳款
-function renderQuoteHistory() {
-    const tbody = document.getElementById('history-quote-list');
-    if(!tbody) return;
-    tbody.innerHTML = '';
-    quoteHistory.forEach((q, index) => {
-        const outstanding = q.totalAmount - q.paidAmount;
-        let statusHtml = '';
-        if(q.status === 'paid') statusHtml = '<span class="badge badge-paid">✅ 已結清</span>';
-        else if(q.status === 'partial') statusHtml = '<span class="badge badge-partial">⚠️ 部分收款</span>';
-        else statusHtml = '<span class="badge badge-unpaid">❌ 未收款</span>';
-
-        tbody.innerHTML += `
-            <tr>
-                <td>${q.date}</td>
-                <td>${q.quoteNo}<br><span style="font-size:12px;color:#666;">發票: ${q.invoiceNo || '未開'}</span></td>
-                <td><strong>${q.custName}</strong></td>
-                <td class="text-right">$${q.totalAmount.toLocaleString()}</td>
-                <td class="text-right text-success">$${q.paidAmount.toLocaleString()}</td>
-                <td class="text-right text-danger">$${outstanding.toLocaleString()}</td>
-                <td class="text-center">${statusHtml}</td>
-                <td class="no-print text-center">
-                    <button class="btn btn-success btn-sm" onclick="recordPayment(${index})">💰 收款</button>
-                    <button class="btn btn-outline btn-sm" onclick="editQuoteRecord(${index})">📝 編輯</button>
-                    <button class="btn btn-danger btn-sm" onclick="deleteQuoteRecord(${index})">刪</button>
-                </td>
-            </tr>
-        `;
-    });
-    if(quoteHistory.length === 0) tbody.innerHTML = `<tr><td colspan="8" class="text-center">沒有歷史報價/銷貨紀錄</td></tr>`;
-}
-
-// 4. 型號對照字典 - 渲染與邏輯 (預防字典頁面也卡住)
-function renderMapping() {
-    const tbody = document.getElementById('mapping-list');
-    if(!tbody) return;
-    tbody.innerHTML = '';
-    modelMappings.forEach((m, index) => {
-        tbody.innerHTML += `<tr>
-            <td><strong>${m.internalSku}</strong></td>
-            <td>${m.supplierSku}</td>
-            <td>${m.name || '-'}</td>
-            <td class="no-print text-center hide-wh">
-                <button class="btn btn-danger btn-sm" onclick="deleteMapping(${index})">刪除</button>
-            </td>
-        </tr>`;
-    });
-    if(modelMappings.length === 0) tbody.innerHTML = `<tr><td colspan="4" class="text-center">沒有字典資料</td></tr>`;
-}
-
-function addMapping() {
-    const internal = document.getElementById('map-internal').value.trim().toUpperCase();
-    const supplier = document.getElementById('map-supplier').value.trim().toUpperCase();
-    const name = document.getElementById('map-name').value.trim();
-    if(!internal || !supplier) return alert('內部型號與供應商型號必填！');
-    modelMappings.push({ internalSku: internal, supplierSku: supplier, name: name });
-    renderMapping();
-    saveToCloud('ModelMapping', modelMappings);
-    document.getElementById('map-internal').value = '';
-    document.getElementById('map-supplier').value = '';
-    document.getElementById('map-name').value = '';
-}
-
-function deleteMapping(index) {
-    if(confirm('確定刪除此綁定？')) {
-        modelMappings.splice(index, 1);
-        renderMapping();
-        saveToCloud('ModelMapping', modelMappings);
-    }
-}
-
-function searchMapping() {
-    const keyword = document.getElementById('mapping-search-input').value.toUpperCase();
-    const rows = document.getElementById('mapping-list').getElementsByTagName('tr');
-    for(let i=0; i<rows.length; i++) {
-        const text = rows[i].innerText.toUpperCase();
-        rows[i].style.display = text.includes(keyword) ? '' : 'none';
-    }
-}
-        // 5. 客戶管理 - 點擊「打單」時自動帶入資料的函數
-function fillQuoteCustomerForm(cust) {
-    document.getElementById('q-cust-name').value = cust.name || '';
-    document.getElementById('q-cust-taxid').value = cust.taxid || '';
-    document.getElementById('q-cust-contact').value = cust.contact || '';
-    document.getElementById('q-cust-tel').value = cust.tel || '';
-    document.getElementById('q-delivery').value = cust.address || '';
-    
-    // 同步更新列印畫面的預覽文字
-    updatePrintView('print-cust-name', cust.name);
-    updatePrintView('print-cust-taxid', cust.taxid);
-    updatePrintView('print-cust-contact', cust.contact);
-    updatePrintView('print-delivery', cust.address);
-}
-        // --- 💰 AR/AP 部分收款功能 (被誤刪的函數，已幫你加強千分位顯示) ---
         function recordPayment(index) {
             const q = quoteHistory[index];
             const outstanding = q.totalAmount - q.paidAmount;
             if(outstanding <= 0) return alert('此單據已結清！');
 
-            // 加入了 toLocaleString() 讓彈出視窗的金額更易讀
             const amtStr = prompt(`單號：${q.quoteNo}\n總計：$${q.totalAmount.toLocaleString()}\n已收：$${q.paidAmount.toLocaleString()}\n尚欠：$${outstanding.toLocaleString()}\n\n請輸入本次收到的金額：`, outstanding);
             
-            if(amtStr === null) return; // 使用者按取消
-            const amt = parseFloat(amtStr.replace(/,/g, '')); // 容錯處理：防呆使用者輸入逗號
+            if(amtStr === null) return; 
+            const amt = parseFloat(amtStr.replace(/,/g, '')); 
             if(isNaN(amt) || amt <= 0) return alert('請輸入有效的金額！');
 
             q.paidAmount += amt;
@@ -1687,6 +1561,45 @@ function fillQuoteCustomerForm(cust) {
             renderQuoteHistory();
             if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
             saveToCloud('Quotes', quoteHistory);
+        }
+
+        // ==========================================
+        // 📩 詢價單核心
+        // ==========================================
+        function renderInquiries() { 
+            const tbody = document.getElementById('inquiries-list'); 
+            tbody.innerHTML = ''; 
+            inquiries.forEach((item, index) => { 
+                const statusHtml = item.status === '已處理' ? '<span class="badge badge-paid">✅ 已處理</span>' : '<span class="badge badge-new">⚠️ 未處理</span>';
+                const btnTxt = item.status === '已處理' ? '標為未處理' : '標為已處理';
+                tbody.innerHTML += `
+                    <tr style="${item.status === '已處理' ? 'opacity:0.6;' : ''}">
+                        <td style="font-size:13px; color:#666;">${item.date}</td>
+                        <td><strong>${item.name}</strong></td>
+                        <td>${item.tel}</td>
+                        <td style="white-space: normal;">${item.content}</td>
+                        <td class="text-center">${statusHtml}</td>
+                        <td class="no-print text-center">
+                            <button class="btn btn-outline btn-sm" onclick="toggleInquiry(${index})">${btnTxt}</button> 
+                            <button class="btn btn-danger btn-sm" style="margin-left:5px;" onclick="deleteInquiry(${index})">刪</button>
+                        </td>
+                    </tr>`; 
+            }); 
+            if(inquiries.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">沒有詢價單</td></tr>`;
+        }
+
+        function toggleInquiry(index) {
+            inquiries[index].status = inquiries[index].status === '未處理' ? '已處理' : '未處理'; 
+            renderInquiries(); 
+            saveToCloud('Inquiries', inquiries);
+        }
+
+        function deleteInquiry(index) {
+            if(confirm('確定刪除這筆詢價？')) {
+                inquiries.splice(index, 1); 
+                renderInquiries(); 
+                saveToCloud('Inquiries', inquiries);
+            }
         }
     </script>
 </body>
