@@ -348,8 +348,58 @@
             }
             .zoom-hint::after { content: " (支援雙指縮放與拖曳)"; }
         }
-        @media (min-width: 769px) {
+@media (min-width: 769px) {
              .zoom-hint::after { content: " (可使用滑鼠滾輪縮放，按住拖曳)"; }
+        }
+
+        /* ==========================================
+           ★ 平板專用：漢堡選單樣式 (769px ~ 1024px)
+           ========================================== */
+        .tablet-menu-toggle {
+            display: none; /* 預設隱藏，手機與電腦不顯示 */
+            position: fixed;
+            left: 20px;
+            top: 110px;
+            z-index: 9001;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4);
+            transition: 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .show-floating-ui .tablet-menu-toggle {
+            opacity: 1;
+            visibility: visible;
+        }
+        .tablet-menu-toggle:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* 當螢幕為平板尺寸時的覆寫 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .side-nav {
+                transform: translateX(-150%) !important; /* 預設隱藏在畫面左外側 */
+                top: 165px !important; /* 選單位置稍微下移，避開按鈕 */
+                opacity: 0 !important;
+                visibility: hidden !important;
+                transition: transform 0.4s ease, opacity 0.4s ease !important;
+            }
+            .side-nav.tablet-open {
+                transform: translateX(0) !important; /* 點擊後滑入 */
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            .tablet-menu-toggle {
+                display: block !important; /* 顯示漢堡按鈕 */
+            }
         }
     </style>
 </head>
@@ -531,8 +581,9 @@
         </div>
     </footer>
 
+    <button id="tabletMenuBtn" class="tablet-menu-toggle" onclick="toggleTabletMenu()">☰ 產品分類</button>
     <nav id="side-menu" class="side-nav"></nav>
-
+    
     <div class="floating-contact-bar">
         <button class="float-btn btn-top" onclick="scrollToTop()" title="回到最上方">
             <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
@@ -1007,13 +1058,18 @@ async function submitForm(e) {
             `;
         }
 
-        function switchPage(id) {
+    function switchPage(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
             
+            const sm = document.getElementById('side-menu');
+            const tabletBtn = document.getElementById('tabletMenuBtn');
+            sm.classList.remove('tablet-open'); // 確保切換頁面時，選單是收起的狀態
+            
             if(id === 'search') {
                 document.getElementById('page-search').classList.add('active');
-                document.getElementById('side-menu').style.display = 'none';
+                sm.style.display = 'none';
+                if(tabletBtn) tabletBtn.style.display = 'none';
                 window.scrollTo(0,0);
                 return;
             }
@@ -1021,12 +1077,13 @@ async function submitForm(e) {
             document.getElementById('page-' + id).classList.add('active');
             if(document.getElementById('nav-' + id)) document.getElementById('nav-' + id).classList.add('active');
             
-            const sm = document.getElementById('side-menu');
             sm.innerHTML = '';
             if(id === 'home') {
                 sm.style.display = 'none';
+                if(tabletBtn) tabletBtn.style.display = 'none';
             } else {
                 sm.style.display = 'flex';
+                if(tabletBtn) tabletBtn.style.display = ''; // 恢復 CSS 控制
                 
                 let targetCats = [];
                 if (id === 'mech') targetCats = mechCats;
@@ -1339,6 +1396,19 @@ async function submitForm(e) {
                 if (validPages.includes(targetPage)) {
                     switchPage(targetPage);
                 }
+            }
+        });
+        // ==========================================
+        // ★ 平板漢堡選單專用邏輯
+        // ==========================================
+        function toggleTabletMenu() {
+            document.getElementById('side-menu').classList.toggle('tablet-open');
+        }
+        
+        // 平板模式下，點擊任一分類後自動收起選單，讓出畫面空間
+        document.getElementById('side-menu').addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && window.innerWidth >= 769 && window.innerWidth <= 1024) {
+                this.classList.remove('tablet-open');
             }
         });
     </script>
