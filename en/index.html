@@ -347,8 +347,57 @@
             }
             .zoom-hint::after { content: " (Pinch to zoom and drag)"; }
         }
-        @media (min-width: 769px) {
-             .zoom-hint::after { content: " (Use mouse wheel to zoom, click and drag to move)"; }
+@media (min-width: 769px) {
+             .zoom-hint::after { content: " (Scroll to zoom, drag to pan)"; } /* 順便幫你把放大提示改成英文 */
+        }
+
+        /* ==========================================
+           ★ Tablet: Hamburger Menu (769px ~ 1024px)
+           ========================================== */
+        .tablet-menu-toggle {
+            display: none; 
+            position: fixed;
+            left: 20px;
+            top: 110px;
+            z-index: 9001;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4);
+            transition: 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .show-floating-ui .tablet-menu-toggle {
+            opacity: 1;
+            visibility: visible;
+        }
+        .tablet-menu-toggle:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .side-nav {
+                transform: translateX(-150%) !important; 
+                top: 165px !important; 
+                opacity: 0 !important;
+                visibility: hidden !important;
+                transition: transform 0.4s ease, opacity 0.4s ease !important;
+            }
+            .side-nav.tablet-open {
+                transform: translateX(0) !important; 
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            .tablet-menu-toggle {
+                display: block !important; 
+            }
         }
     </style>
 </head>
@@ -531,8 +580,9 @@
         </div>
     </footer>
 
+    <button id="tabletMenuBtn" class="tablet-menu-toggle" onclick="toggleTabletMenu()">☰ Categories</button>
     <nav id="side-menu" class="side-nav"></nav>
-
+    
     <div class="floating-contact-bar">
         <button class="float-btn btn-top" onclick="scrollToTop()" title="Back to Top">
             <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
@@ -998,13 +1048,18 @@ async function submitForm(e) {
             `;
         }
 
-        function switchPage(id) {
+ function switchPage(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
             
+            const sm = document.getElementById('side-menu');
+            const tabletBtn = document.getElementById('tabletMenuBtn');
+            sm.classList.remove('tablet-open'); 
+            
             if(id === 'search') {
                 document.getElementById('page-search').classList.add('active');
-                document.getElementById('side-menu').style.display = 'none';
+                sm.style.display = 'none';
+                if(tabletBtn) tabletBtn.style.display = 'none';
                 window.scrollTo(0,0);
                 return;
             }
@@ -1012,12 +1067,13 @@ async function submitForm(e) {
             document.getElementById('page-' + id).classList.add('active');
             if(document.getElementById('nav-' + id)) document.getElementById('nav-' + id).classList.add('active');
             
-            const sm = document.getElementById('side-menu');
             sm.innerHTML = '';
             if(id === 'home') {
                 sm.style.display = 'none';
+                if(tabletBtn) tabletBtn.style.display = 'none';
             } else {
                 sm.style.display = 'flex';
+                if(tabletBtn) tabletBtn.style.display = ''; 
                 
                 let targetCats = [];
                 if (id === 'mech') targetCats = mechCats;
@@ -1321,6 +1377,18 @@ async function submitForm(e) {
                 if (validPages.includes(targetPage)) {
                     switchPage(targetPage);
                 }
+            }
+        });
+        // ==========================================
+        // ★ Tablet Menu Toggle Logic
+        // ==========================================
+        function toggleTabletMenu() {
+            document.getElementById('side-menu').classList.toggle('tablet-open');
+        }
+        
+        document.getElementById('side-menu').addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && window.innerWidth >= 769 && window.innerWidth <= 1024) {
+                this.classList.remove('tablet-open');
             }
         });
     </script>
