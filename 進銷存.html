@@ -727,33 +727,39 @@ function generateStatementPDF() {
             });
             document.getElementById('stmt-total-due').innerText = `$${totalDue.toLocaleString()}`;
 
-const pe = document.getElementById('statement-print-area');
             const filename = `${custName}_${monthStr}對帳單.pdf`;
             
             document.getElementById('loader-text').innerText = '🖨️ 正在產生對帳單 PDF，請稍候...';
             document.getElementById('cloud-loader').style.display = 'flex';
 
-            // 🟢 關鍵：產出前直接強制鎖死 800px 電腦寬度
-            pe.style.display = 'block';
-            pe.style.width = '800px';
-            pe.style.maxWidth = '800px';
-            pe.style.padding = '40px';
-            pe.style.color = '#000';
+            // 🟢 創建藏在 Loading 畫面背後的「純淨 800px A4 分身」
+            const printContainer = document.createElement('div');
+            printContainer.id = "temp-print-wrap";
+            printContainer.innerHTML = document.getElementById('statement-print-area').innerHTML;
+            printContainer.style.cssText = "width: 800px !important; padding: 40px !important; background: white !important; position: absolute !important; top: 0 !important; left: 0 !important; z-index: 9998 !important; overflow: visible !important; height: auto !important; display: block !important;";
+            
+            const style = document.createElement('style');
+            style.innerHTML = `
+                #temp-print-wrap * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; }
+                #temp-print-wrap .text-danger, #temp-print-wrap .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                #temp-print-wrap table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 20px !important; }
+                #temp-print-wrap th, #temp-print-wrap td { border: 1px solid #000 !important; padding: 10px !important; text-align: left; white-space: normal !important; }
+                #temp-print-wrap th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                #temp-print-wrap .quote-meta { display: flex !important; justify-content: space-between !important; margin-bottom: 15px !important; flex-direction: row !important; }
+                #temp-print-wrap .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
+                #temp-print-wrap tr { page-break-inside: avoid !important; }
+            `;
+            printContainer.appendChild(style);
+            document.body.appendChild(printContainer);
 
             html2pdf().set({
                 margin: 10, 
                 filename: filename, 
                 image: {type:'jpeg', quality: 1}, 
-                // 🟢 關鍵：加上 width: 800，確保截圖畫布也是 800px
-                html2canvas: { scale: 2, useCORS: true, windowWidth: 800, width: 800, scrollY: 0 }, 
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 800, scrollY: 0 }, 
                 jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
-            }).from(pe).output('blob').then(function(pdfBlob) {
-                // 🟢 產出後立刻把畫面復原
-                pe.style.width = '';
-                pe.style.maxWidth = '';
-                pe.style.display = 'none';
-                pe.style.color = '';
-
+            }).from(printContainer).output('blob').then(function(pdfBlob) {
+                document.body.removeChild(printContainer); // 🟢 印完立刻銷毀分身
                 document.getElementById('cloud-loader').style.display = 'none';
                 document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
                 
@@ -779,38 +785,46 @@ const pe = document.getElementById('statement-print-area');
                 document.getElementById('q-notes-print-div').innerText = document.getElementById('q-notes').value;
             }
 
+            const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-if(isMobile) {
-                const pe = document.getElementById('quotation-print-area') || document.getElementById('page-quotation');
-                const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
-                
+            if(isMobile) {
                 document.getElementById('loader-text').innerText = '🖨️ 正在產生報價單 PDF，請稍候...';
                 document.getElementById('cloud-loader').style.display = 'flex';
 
-                document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block');
+                // 🟢 創建藏在 Loading 畫面背後的「純淨 800px A4 分身」
+                const printContainer = document.createElement('div');
+                printContainer.id = "temp-print-wrap";
+                printContainer.innerHTML = document.getElementById('page-quotation').innerHTML;
+                printContainer.style.cssText = "width: 800px !important; padding: 40px !important; background: white !important; position: absolute !important; top: 0 !important; left: 0 !important; z-index: 9998 !important; overflow: visible !important; height: auto !important; display: block !important;";
+                
+                printContainer.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+                printContainer.querySelectorAll('.print-only').forEach(el => el.style.display = 'block');
 
-                // 🟢 關鍵：產出前直接強制鎖死 800px 電腦寬度
-                pe.style.width = '800px';
-                pe.style.maxWidth = '800px';
-                pe.style.background = '#fff';
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    #temp-print-wrap * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; opacity: 1 !important; visibility: visible !important; }
+                    #temp-print-wrap .text-danger, #temp-print-wrap .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                    #temp-print-wrap table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 10px !important; }
+                    #temp-print-wrap th, #temp-print-wrap td { border: 1px solid #000 !important; padding: 10px !important; text-align: left; white-space: normal !important; }
+                    #temp-print-wrap th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    #temp-print-wrap .quote-meta { display: flex !important; justify-content: space-between !important; margin-bottom: 15px !important; flex-direction: row !important; }
+                    #temp-print-wrap .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
+                    #temp-print-wrap textarea { display: none !important; }
+                    #temp-print-wrap .print-notes-div { display: block !important; border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; text-align: left !important; }
+                    #temp-print-wrap tr { page-break-inside: avoid !important; }
+                `;
+                printContainer.appendChild(style);
+                document.body.appendChild(printContainer);
 
                 html2pdf().set({
                     margin: 10,
                     filename: filename,
                     image: { type: 'jpeg', quality: 1 },
-                    // 🟢 關鍵：加上 width: 800
-                    html2canvas: { scale: 2, useCORS: true, windowWidth: 800, width: 800, scrollY: 0 },
+                    html2canvas: { scale: 2, useCORS: true, windowWidth: 800, scrollY: 0 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                }).from(pe).output('blob').then(function(pdfBlob) {
-                    // 🟢 產出後立刻把畫面復原
-                    pe.style.width = '';
-                    pe.style.maxWidth = '';
-                    pe.style.background = '';
-                    
-                    document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-                    document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none');
+                }).from(printContainer).output('blob').then(function(pdfBlob) {
+                    document.body.removeChild(printContainer); // 🟢 印完立刻銷毀分身
 
                     document.getElementById('cloud-loader').style.display = 'none';
                     document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
