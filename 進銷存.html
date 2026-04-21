@@ -170,7 +170,7 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <h2>⚙️ 銀鑫 ERP 4.0 企業版</h2>
+            <h2>⚙️ 銀鑫 ERP 4.1 企業版</h2>
             <div class="login-hints">
                 <strong>🔐 權限分級說明：</strong><br>
                 老闆權限：機密<br>
@@ -1597,8 +1597,7 @@ html2pdf().set({
                     }
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            })
-                }).from(pe).output('blob').then(function(pdfBlob) {
+        }).from(pe).output('blob').then(function(pdfBlob) {
                     document.getElementById('cloud-loader').style.display = 'none';
                     document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
                     downloadOrSharePDF(pdfBlob, filename);
