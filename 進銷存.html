@@ -798,6 +798,9 @@ function filterDashboard() {
             let rangeCostTotal = 0; // 新增：總成本
             let rangeGrossProfit = 0; // 新增：毛利
 
+            const cashflowTbody = document.getElementById('cashflow-list') || document.createElement('tbody'); 
+            cashflowTbody.innerHTML = '';
+
             const labels = [], dataPaid = [];
             const sortedQuotes = [...quoteHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
             const rangeQuotes = sortedQuotes.filter(q => q.date >= startDate && q.date <= endDate);
@@ -820,6 +823,9 @@ function filterDashboard() {
 
                 if(q.paidAmount > 0) {
                     rangePaidTotal += q.paidAmount;
+                    const invoiceText = q.invoiceNo ? ` / 發票:${q.invoiceNo}` : '';
+                    cashflowTbody.innerHTML += `<tr><td>${q.date}</td><td>${q.quoteNo}${invoiceText}</td><td>${q.custName}</td><td class="text-right text-success">$${q.paidAmount.toLocaleString()}</td></tr>`;
+                    
                     const monthLabel = q.date.substring(0, 7);
                     const existingIndex = labels.indexOf(monthLabel);
                     if(existingIndex > -1) dataPaid[existingIndex] += q.paidAmount; 
@@ -827,6 +833,8 @@ function filterDashboard() {
                 }
                 rangeUnpaidTotal += (qTotal - q.paidAmount);
             });
+
+            if(cashflowTbody.innerHTML === '') cashflowTbody.innerHTML = '<tr><td colspan="4" class="text-center">該期間無已收款之流水紀錄</td></tr>';
 
             // 🟢 計算預估毛利與毛利率
             rangeGrossProfit = rangeQuoteTotal - rangeCostTotal;
@@ -836,7 +844,7 @@ function filterDashboard() {
             document.getElementById('dash-range-paid').innerText = `$${rangePaidTotal.toLocaleString()}`; 
             document.getElementById('dash-range-unpaid').innerText = `$${rangeUnpaidTotal.toLocaleString()}`;
 
-            // 🟢 渲染成本與毛利數值
+            // 🟢 渲染成本與毛利數值 (如果 HTML 有這兩個格子的話)
             if(document.getElementById('dash-range-cost')) {
                 document.getElementById('dash-range-cost').innerText = `$${rangeCostTotal.toLocaleString()}`;
             }
