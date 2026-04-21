@@ -1454,7 +1454,7 @@
             document.getElementById('calc-total').innerText = `$${currentQuoteTotal.toLocaleString()}`; 
         }
 
-        function printQuotation() {
+      function printQuotation() {
             if(quoteItems.length === 0) return alert('明細不能為空');
             
             if(document.getElementById('q-notes-print-div')) {
@@ -1483,9 +1483,10 @@
                         x: 0,            // 🟢 綁死 X 座標，解決偏左/偏右不置中
                         y: 0,            // 🟢 綁死 Y 座標
                         onclone: function(clonedDoc) {
-                            const printArea = clonedDoc.getElementById('statement-print-area') || clonedDoc.getElementById('quotation-print-area') || clonedDoc.getElementById('page-quotation');
+                            // 🟢 【關鍵修復】這裡只能抓報價單區塊，絕對不能抓到對帳單 (statement-print-area)
+                            const printArea = clonedDoc.getElementById('quotation-print-area') || clonedDoc.getElementById('page-quotation');
                             
-                            // 🟢 徹底切斷繼承的高度，強制設為 auto，解決多出 2 頁白紙
+                            // 🟢 徹底切斷繼承的高度，強制設為 auto
                             clonedDoc.documentElement.style.cssText = "width: 800px !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important;";
                             clonedDoc.body.style.cssText = "width: 800px !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; overflow: hidden !important;";
                             
@@ -1517,6 +1518,12 @@
                     document.getElementById('cloud-loader').style.display = 'none';
                     document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
                     downloadOrSharePDF(pdfBlob, filename);
+                }).catch(function(err) {
+                    // 🟢 【防禦機制】如果有任何錯誤，解鎖畫面並跳出警告，不會再無限 Loading
+                    console.error("PDF 產生失敗:", err);
+                    document.getElementById('cloud-loader').style.display = 'none';
+                    document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
+                    alert("⚠️ 產生 PDF 時發生錯誤，請稍後再試！");
                 });
             } else {
                 window.print();
