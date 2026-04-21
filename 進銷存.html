@@ -641,7 +641,7 @@
             }
         }
 
-        async function init() {
+       async function init() {
             if(CLOUD_API_URL === "請把你的網址貼在這裡") { 
                 document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>⚠️ 請設定 CLOUD_API_URL</h2>"; 
                 return; 
@@ -660,9 +660,19 @@
                     q.paidAmount = Number(q.paidAmount) || 0; 
                     q.totalAmount = Number(q.totalAmount) || 0; 
                     
-                    // 🟢 核心修復：將 Google Sheets 回傳的日期統一轉換為 YYYY-MM-DD 格式
-                    if (q.date && typeof q.date === 'string') {
-                        q.date = q.date.replace(/\//g, '-').substring(0, 10);
+                    // 🟢 終極防呆機制：修復 Google 雲端掉日期的問題
+                    if (!q.date || q.date.toString().trim() === '') {
+                        // 如果日期是空的，直接從單號 (如 YX20260421-949) 拆出 2026-04-21 補上
+                        if (q.quoteNo && q.quoteNo.match(/^YX\d{8}/)) {
+                            let d = q.quoteNo.substring(2, 10);
+                            q.date = `${d.substring(0,4)}-${d.substring(4,6)}-${d.substring(6,8)}`;
+                        } else {
+                            // 最後防線：如果連單號都不符規則，給當天日期
+                            q.date = new Date().toISOString().split('T')[0];
+                        }
+                    } else {
+                        // 如果有日期，確保它是乾淨的 YYYY-MM-DD
+                        q.date = q.date.toString().split('T')[0].replace(/\//g, '-').substring(0, 10);
                     }
                 });
 
