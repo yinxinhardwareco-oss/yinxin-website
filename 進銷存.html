@@ -260,48 +260,58 @@
             <div id="sync-status-indicator" class="sync-status syncing">⏳ 連線中</div>
         </div>
         
-        <div class="page-container">
+<div class="page-container">
 
+            <!-- ⚠️ 儀表板頁面外框開始 -->
             <div id="page-dashboard" class="page">
+                
+                <!-- 日期篩選器 -->
                 <div class="control-panel highlight-bg no-print" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
                     <strong>🔍 篩選區間：</strong>
                     <input type="date" id="dash-start-date" style="width: 150px;"><span>至</span><input type="date" id="dash-end-date" style="width: 150px;">
                     <button class="btn btn-primary" onclick="filterDashboard()">查詢區間數據</button>
                     <button class="btn btn-outline" onclick="resetDashboardFilter()">重置 (顯示今年)</button>
                 </div>
-<div class="dashboard-grid">
-    <div class="data-card highlight">
-        <div class="title">📅 期間總營收(報價)</div>
-        <div class="value" id="dash-range-quote">$0</div>
-    </div>
-    
-    <div class="data-card">
-        <div class="title">🛒 期間銷貨總成本</div>
-        <div class="value" style="color: #64748b;" id="dash-range-cost">$0</div>
-    </div>
-    
-    <div class="data-card profit" style="border-color: #10b981; background: #ecfdf5;">
-        <div class="title" style="color: #059669;">📈 預估毛利 (產品淨利)</div>
-        <div class="value" id="dash-range-profit">$0</div>
-        <div style="font-size: 13px; font-weight: bold; color: #10b981; margin-top: 5px;" id="dash-range-margin">毛利率 0%</div>
-    </div>
-    
-    <div class="data-card profit">
-        <div class="title">💰 期間實際收款</div>
-        <div class="value" id="dash-range-paid">$0</div>
-    </div>
-    
-    <div class="data-card">
-        <div class="title">⚠️ 期間尚欠(未收)款項</div>
-        <div class="value text-danger" id="dash-range-unpaid">$0</div>
-    </div>
-</div>
+
+                <!-- 只有一組排版乾淨的 5 個數據卡片 -->
+                <div class="dashboard-grid">
+                    <div class="data-card highlight">
+                        <div class="title">📅 期間總營收(報價)</div>
+                        <div class="value" id="dash-range-quote">$0</div>
+                    </div>
+                    
+                    <div class="data-card">
+                        <div class="title">🛒 期間銷貨總成本</div>
+                        <div class="value" style="color: #64748b;" id="dash-range-cost">$0</div>
+                    </div>
+                    
+                    <div class="data-card profit" style="border-color: #10b981; background: #ecfdf5;">
+                        <div class="title" style="color: #059669;">📈 預估毛利 (產品淨利)</div>
+                        <div class="value" id="dash-range-profit">$0</div>
+                        <div style="font-size: 13px; font-weight: bold; color: #10b981; margin-top: 5px;" id="dash-range-margin">毛利率 0%</div>
+                    </div>
+                    
+                    <div class="data-card profit">
+                        <div class="title">💰 期間實際收款</div>
+                        <div class="value" id="dash-range-paid">$0</div>
+                    </div>
+                    
+                    <div class="data-card">
+                        <div class="title">⚠️ 期間尚欠(未收)款項</div>
+                        <div class="value text-danger" id="dash-range-unpaid">$0</div>
+                    </div>
+                </div>
+
+                <!-- 走勢圖 -->
                 <div class="control-panel">
                     <h3>年度營收走勢圖 (依實際收款)</h3>
                     <div style="position: relative; height: 300px; width: 100%;"><canvas id="revenueChart"></canvas></div>
                 </div>
-            </div>
 
+            </div> 
+            <!-- 儀表板頁面外框結束 -->
+
+            <!-- 下面接著原本的字典頁面 -->
             <div id="page-mapping" class="page">
                 <div class="control-panel no-print hide-wh">
                     <h3>建立型號綁定</h3>
@@ -788,9 +798,6 @@ function filterDashboard() {
             let rangeCostTotal = 0; // 新增：總成本
             let rangeGrossProfit = 0; // 新增：毛利
 
-            const cashflowTbody = document.getElementById('cashflow-list') || document.createElement('tbody'); 
-            cashflowTbody.innerHTML = '';
-
             const labels = [], dataPaid = [];
             const sortedQuotes = [...quoteHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
             const rangeQuotes = sortedQuotes.filter(q => q.date >= startDate && q.date <= endDate);
@@ -813,9 +820,6 @@ function filterDashboard() {
 
                 if(q.paidAmount > 0) {
                     rangePaidTotal += q.paidAmount;
-                    const invoiceText = q.invoiceNo ? ` / 發票:${q.invoiceNo}` : '';
-                    cashflowTbody.innerHTML += `<tr><td>${q.date}</td><td>${q.quoteNo}${invoiceText}</td><td>${q.custName}</td><td class="text-right text-success">$${q.paidAmount.toLocaleString()}</td></tr>`;
-                    
                     const monthLabel = q.date.substring(0, 7);
                     const existingIndex = labels.indexOf(monthLabel);
                     if(existingIndex > -1) dataPaid[existingIndex] += q.paidAmount; 
@@ -823,8 +827,6 @@ function filterDashboard() {
                 }
                 rangeUnpaidTotal += (qTotal - q.paidAmount);
             });
-
-            if(cashflowTbody.innerHTML === '') cashflowTbody.innerHTML = '<tr><td colspan="4" class="text-center">該期間無已收款之流水紀錄</td></tr>';
 
             // 🟢 計算預估毛利與毛利率
             rangeGrossProfit = rangeQuoteTotal - rangeCostTotal;
@@ -834,7 +836,7 @@ function filterDashboard() {
             document.getElementById('dash-range-paid').innerText = `$${rangePaidTotal.toLocaleString()}`; 
             document.getElementById('dash-range-unpaid').innerText = `$${rangeUnpaidTotal.toLocaleString()}`;
 
-            // 🟢 渲染成本與毛利數值 (如果 HTML 有這兩個格子的話)
+            // 🟢 渲染成本與毛利數值
             if(document.getElementById('dash-range-cost')) {
                 document.getElementById('dash-range-cost').innerText = `$${rangeCostTotal.toLocaleString()}`;
             }
