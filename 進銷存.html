@@ -698,7 +698,7 @@
         // ==========================================
         // 🟢 PDF 列印核心修改區 (解決反白與跑版)
         // ==========================================
-        function generateStatementPDF() {
+function generateStatementPDF() {
             const custName = document.getElementById('stmt-customer').value;
             const monthStr = document.getElementById('stmt-month-select').value; 
             if(!custName || !monthStr) return alert("請先選擇「客戶」與「對帳月份」！");
@@ -730,30 +730,39 @@
             const pe = document.getElementById('statement-print-area');
             const filename = `${custName}_${monthStr}對帳單.pdf`;
             
-            document.getElementById('loader-text').innerText = '🖨️ 正在產生高品質 PDF，請稍候...';
+            document.getElementById('loader-text').innerText = '🖨️ 正在產生對帳單 PDF，請稍候...';
             document.getElementById('cloud-loader').style.display = 'flex';
 
             html2pdf().set({
-                margin: 10, 
+                margin: 5, 
                 filename: filename, 
                 image: {type:'jpeg', quality: 1}, 
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
                     windowWidth: 800,
-                    width: 800,
-                    backgroundColor: '#ffffff',
+                    scrollY: 0,
                     onclone: function(clonedDoc) {
-                        // 強制把分身頁面改成桌機版大小並改色，解決 iOS 裁切與反白
+                        const printArea = clonedDoc.getElementById('statement-print-area');
+                        // 🟢 殺手鐧：刪除所有會干擾的元素，確保只有 1 頁 (或是剛好滿版的頁數)
+                        clonedDoc.body.style.cssText = "background: #fff; padding: 0; margin: 0; height: auto; overflow: visible;";
+                        clonedDoc.body.innerHTML = ''; 
+                        clonedDoc.body.appendChild(printArea);
+
+                        printArea.style.cssText = "width: 800px !important; margin: 0 auto !important; padding: 30px !important; background: #fff !important; box-sizing: border-box !important; display: block !important; position: static !important; height: auto !important;";
+                        
                         const style = clonedDoc.createElement('style');
                         style.innerHTML = `
-                            body { width: 800px !important; background: #fff !important; overflow: visible !important; }
-                            #statement-print-area { display: block !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 800px !important; padding: 40px !important; background: #fff !important; }
-                            #statement-print-area * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; opacity: 1 !important; }
-                            #statement-print-area .text-danger, #statement-print-area .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                            * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; }
+                            .text-danger, .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
                             table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 20px !important; }
-                            th, td { border: 1px solid #000 !important; padding: 10px !important; white-space: normal !important; text-align: left; }
+                            th, td { border: 1px solid #000 !important; padding: 10px !important; text-align: left; white-space: normal !important; }
                             th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                            .quote-meta { display: flex !important; justify-content: space-between !important; margin-bottom: 15px !important; flex-direction: row !important; }
+                            .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
+                            /* 🟢 確保多明細換頁時，表格不會被從中間切斷 */
+                            tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+                            thead { display: table-header-group !important; }
                         `;
                         clonedDoc.head.appendChild(style);
                     }
@@ -762,14 +771,25 @@
             }).from(pe).output('blob').then(function(pdfBlob) {
                 document.getElementById('cloud-loader').style.display = 'none';
                 document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
-                downloadOrSharePDF(pdfBlob, filename);
+                
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+                if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({ files: [file], title: filename }).catch(err => console.log('分享失敗', err));
+                } else {
+                    const url = window.URL.createObjectURL(pdfBlob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none'; a.href = url; a.download = filename;
+                    document.body.appendChild(a); a.click();
+                    window.URL.revokeObjectURL(url); document.body.removeChild(a);
+                }
             });
         }
 
         function printQuotation() {
             if(quoteItems.length === 0) return alert('明細不能為空');
             
-            // 同步 textarea 到 div 避免破圖
             if(document.getElementById('q-notes-print-div')) {
                 document.getElementById('q-notes-print-div').innerText = document.getElementById('q-notes').value;
             }
@@ -777,39 +797,46 @@
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if(isMobile) {
-                const pe = document.getElementById('quotation-print-area');
+                const pe = document.getElementById('quotation-print-area') || document.getElementById('page-quotation');
                 const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
                 
-                document.getElementById('loader-text').innerText = '🖨️ 正在產生高品質 PDF，請稍候...';
+                document.getElementById('loader-text').innerText = '🖨️ 正在產生報價單 PDF，請稍候...';
                 document.getElementById('cloud-loader').style.display = 'flex';
 
                 html2pdf().set({
-                    margin: 10,
+                    margin: 5,
                     filename: filename,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
                         windowWidth: 800,
-                        width: 800,
-                        backgroundColor: '#ffffff',
+                        scrollY: 0,
                         onclone: function(clonedDoc) {
-                            // 強制把分身頁面改成桌機版大小並改色，解決 iOS 裁切與反白
+                            const printArea = clonedDoc.getElementById('quotation-print-area') || clonedDoc.getElementById('page-quotation');
+                            // 🟢 殺手鐧：刪除所有會干擾的元素，確保只有 1 頁
+                            clonedDoc.body.style.cssText = "background: #fff; padding: 0; margin: 0; height: auto; overflow: visible;";
+                            clonedDoc.body.innerHTML = ''; 
+                            clonedDoc.body.appendChild(printArea);
+
+                            printArea.style.cssText = "width: 800px !important; margin: 0 auto !important; padding: 30px !important; background: #fff !important; border: none !important; box-shadow: none !important; display: block !important; position: static !important; height: auto !important;";
+                            
                             const style = clonedDoc.createElement('style');
                             style.innerHTML = `
-                                body { width: 800px !important; background: #fff !important; overflow: visible !important; }
-                                #quotation-print-area { display: block !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 800px !important; padding: 40px !important; background: #fff !important; border: none !important; box-shadow: none !important; }
-                                #quotation-print-area * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; opacity: 1 !important; visibility: visible !important; }
-                                #quotation-print-area .text-danger, #quotation-print-area .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                                * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; visibility: visible !important; opacity: 1 !important; }
+                                .text-danger, .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
                                 .no-print { display: none !important; }
                                 .print-only { display: block !important; }
-                                .quote-meta { display: flex !important; justify-content: space-between !important; flex-direction: row !important; margin-bottom: 15px !important; }
+                                .quote-meta { display: flex !important; justify-content: space-between !important; margin-bottom: 15px !important; flex-direction: row !important; }
                                 .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
                                 table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; }
-                                th, td { border: 1px solid #000 !important; padding: 10px !important; white-space: normal !important; text-align: left; }
+                                th, td { border: 1px solid #000 !important; padding: 10px !important; text-align: left; white-space: normal !important; }
                                 th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                                 textarea { display: none !important; }
-                                .print-notes-div { display: block !important; border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; }
+                                .print-notes-div { display: block !important; border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; text-align: left !important; }
+                                /* 🟢 確保多明細換頁時，表格不會被從中間切斷 */
+                                tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+                                thead { display: table-header-group !important; }
                             `;
                             clonedDoc.head.appendChild(style);
                         }
@@ -818,7 +845,17 @@
                 }).from(pe).output('blob').then(function(pdfBlob) {
                     document.getElementById('cloud-loader').style.display = 'none';
                     document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
-                    downloadOrSharePDF(pdfBlob, filename);
+                    
+                    const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({ files: [file], title: filename }).catch(err => console.log('分享失敗', err));
+                    } else {
+                        const url = window.URL.createObjectURL(pdfBlob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none'; a.href = url; a.download = filename;
+                        document.body.appendChild(a); a.click();
+                        window.URL.revokeObjectURL(url); document.body.removeChild(a);
+                    }
                 });
             } else {
                 window.print();
