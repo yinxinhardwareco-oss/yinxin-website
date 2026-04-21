@@ -269,11 +269,33 @@
                     <button class="btn btn-primary" onclick="filterDashboard()">查詢區間數據</button>
                     <button class="btn btn-outline" onclick="resetDashboardFilter()">重置 (顯示今年)</button>
                 </div>
-                <div class="dashboard-grid">
-                    <div class="data-card highlight"><div class="title">📅 期間報價總額</div><div class="value" id="dash-range-quote">$0</div></div>
-                    <div class="data-card profit"><div class="title">💰 期間實際收款</div><div class="value" id="dash-range-paid">$0</div></div>
-                    <div class="data-card"><div class="title">⚠️ 期間尚欠(未收)款項</div><div class="value text-danger" id="dash-range-unpaid">$0</div></div>
-                </div>
+<div class="dashboard-grid">
+    <div class="data-card highlight">
+        <div class="title">📅 期間總營收(報價)</div>
+        <div class="value" id="dash-range-quote">$0</div>
+    </div>
+    
+    <div class="data-card">
+        <div class="title">🛒 期間銷貨總成本</div>
+        <div class="value" style="color: #64748b;" id="dash-range-cost">$0</div>
+    </div>
+    
+    <div class="data-card profit" style="border-color: #10b981; background: #ecfdf5;">
+        <div class="title" style="color: #059669;">📈 預估毛利 (產品淨利)</div>
+        <div class="value" id="dash-range-profit">$0</div>
+        <div style="font-size: 13px; font-weight: bold; color: #10b981; margin-top: 5px;" id="dash-range-margin">毛利率 0%</div>
+    </div>
+    
+    <div class="data-card profit">
+        <div class="title">💰 期間實際收款</div>
+        <div class="value" id="dash-range-paid">$0</div>
+    </div>
+    
+    <div class="data-card">
+        <div class="title">⚠️ 期間尚欠(未收)款項</div>
+        <div class="value text-danger" id="dash-range-unpaid">$0</div>
+    </div>
+</div>
                 <div class="control-panel">
                     <h3>年度營收走勢圖 (依實際收款)</h3>
                     <div style="position: relative; height: 300px; width: 100%;"><canvas id="revenueChart"></canvas></div>
@@ -746,16 +768,19 @@
             });
         }
 
-        function filterDashboard() {
+function filterDashboard() {
             if(currentRole !== 'boss' && currentRole !== 'acc') return;
             const startDate = document.getElementById('dash-start-date').value; 
             const endDate = document.getElementById('dash-end-date').value;
             if(!startDate || !endDate) return;
 
             let rangeQuoteTotal = 0, rangePaidTotal = 0, rangeUnpaidTotal = 0;
+            let rangeCostTotal = 0; // 新增：總成本
+            let rangeGrossProfit = 0; // 新增：毛利
+
             const cashflowTbody = document.getElementById('cashflow-list') || document.createElement('tbody'); 
             cashflowTbody.innerHTML = '';
-            
+
             const labels = [], dataPaid = [];
             const sortedQuotes = [...quoteHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
             const rangeQuotes = sortedQuotes.filter(q => q.date >= startDate && q.date <= endDate);
@@ -764,6 +789,18 @@
                 const qTotal = Number(q.totalAmount) || 0; 
                 rangeQuoteTotal += qTotal;
                 
+                // 🟢 計算此單的成本：抓取單據內賣出的產品，對照庫存的進貨成本
+                let quoteCost = 0;
+                let items = typeof q.items === 'string' ? JSON.parse(q.items) : q.items;
+                if(items && items.length > 0) {
+                    items.forEach(item => {
+                        const invItem = inventory.find(i => i.sku === item.sku);
+                        const cost = invItem ? Number(invItem.cost) : 0;
+                        quoteCost += cost * Number(item.qty);
+                    });
+                }
+                rangeCostTotal += quoteCost;
+
                 if(q.paidAmount > 0) {
                     rangePaidTotal += q.paidAmount;
                     const invoiceText = q.invoiceNo ? ` / 發票:${q.invoiceNo}` : '';
@@ -778,10 +815,23 @@
             });
 
             if(cashflowTbody.innerHTML === '') cashflowTbody.innerHTML = '<tr><td colspan="4" class="text-center">該期間無已收款之流水紀錄</td></tr>';
-            
+
+            // 🟢 計算預估毛利與毛利率
+            rangeGrossProfit = rangeQuoteTotal - rangeCostTotal;
+            const grossMargin = rangeQuoteTotal > 0 ? ((rangeGrossProfit / rangeQuoteTotal) * 100).toFixed(1) : 0;
+
             document.getElementById('dash-range-quote').innerText = `$${rangeQuoteTotal.toLocaleString()}`; 
             document.getElementById('dash-range-paid').innerText = `$${rangePaidTotal.toLocaleString()}`; 
             document.getElementById('dash-range-unpaid').innerText = `$${rangeUnpaidTotal.toLocaleString()}`;
+
+            // 🟢 渲染成本與毛利數值 (如果 HTML 有這兩個格子的話)
+            if(document.getElementById('dash-range-cost')) {
+                document.getElementById('dash-range-cost').innerText = `$${rangeCostTotal.toLocaleString()}`;
+            }
+            if(document.getElementById('dash-range-profit')) {
+                document.getElementById('dash-range-profit').innerText = `$${rangeGrossProfit.toLocaleString()}`;
+                document.getElementById('dash-range-margin').innerText = `毛利率 ${grossMargin}%`;
+            }
 
             const ctx = document.getElementById('revenueChart').getContext('2d');
             if (revenueChartInstance) revenueChartInstance.destroy(); 
@@ -790,7 +840,7 @@
                 data: { 
                     labels: labels.length>0 ? labels : ['無資料'], 
                     datasets: [{ 
-                        label: '實際收款金額 (已收)', 
+                        label: '實際收款金額 (現金流)', 
                         data: dataPaid.length>0 ? dataPaid : [0], 
                         backgroundColor: 'rgba(58, 109, 194, 0.8)',
                         borderColor: '#2a5296', borderWidth: 1
