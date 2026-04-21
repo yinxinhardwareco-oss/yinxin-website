@@ -170,7 +170,7 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <h2>⚙️ 銀鑫 ERP 4.1 企業版</h2>
+            <h2>⚙️ 銀鑫 ERP 4.0 企業版</h2>
             <div class="login-hints">
                 <strong>🔐 權限分級說明：</strong><br>
                 老闆權限：機密<br>
@@ -695,10 +695,7 @@
             }
         }
 
-        // ==========================================
-        // 🟢 PDF 列印核心修改區 (解決反白與跑版)
-        // ==========================================
-function generateStatementPDF() {
+        function generateStatementPDF() {
             const custName = document.getElementById('stmt-customer').value;
             const monthStr = document.getElementById('stmt-month-select').value; 
             if(!custName || !monthStr) return alert("請先選擇「客戶」與「對帳月份」！");
@@ -789,87 +786,6 @@ function generateStatementPDF() {
                 }
             });
         }
-
-        function printQuotation() {
-            if(quoteItems.length === 0) return alert('明細不能為空');
-            
-            if(document.getElementById('q-notes-print-div')) {
-                document.getElementById('q-notes-print-div').innerText = document.getElementById('q-notes').value;
-            }
-
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
-
-            if(isMobile) {
-                const pe = document.getElementById('quotation-print-area') || document.getElementById('page-quotation');
-                
-                document.getElementById('loader-text').innerText = '🖨️ 正在產生報價單 PDF，請稍候...';
-                document.getElementById('cloud-loader').style.display = 'flex';
-
-                document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block');
-
-                html2pdf().set({
-                    margin: 10,
-                    filename: filename,
-                    image: { type: 'jpeg', quality: 1 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true, 
-                        windowWidth: 800, 
-                        width: 800,
-                        x: 0,
-                        y: 0,
-                        scrollY: 0,
-                        onclone: function(clonedDoc) {
-                            const printArea = clonedDoc.getElementById('quotation-print-area') || clonedDoc.getElementById('page-quotation');
-                            clonedDoc.body.style.cssText = "width: 800px !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; overflow: hidden !important;";
-                            clonedDoc.body.innerHTML = ''; 
-                            clonedDoc.body.appendChild(printArea);
-
-                            printArea.style.cssText = "width: 800px !important; margin: 0 !important; padding: 30px !important; background: #fff !important; display: block !important; position: relative !important; height: auto !important; border: none !important; box-shadow: none !important;";
-                            
-                            const style = clonedDoc.createElement('style');
-                            style.innerHTML = `
-                                * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; visibility: visible !important; opacity: 1 !important; }
-                                .text-danger, .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
-                                .no-print, textarea { display: none !important; }
-                                .print-only, .print-notes-div { display: block !important; }
-                                .quote-meta { display: flex !important; justify-content: space-between !important; flex-direction: row !important; margin-bottom: 15px !important; }
-                                .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
-                                table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 15px !important; }
-                                th, td { border: 1px solid #000 !important; padding: 10px !important; text-align: left; white-space: normal !important; }
-                                th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                                tr { page-break-inside: avoid !important; }
-                                .print-notes-div { border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; text-align: left !important; }
-                            `;
-                            clonedDoc.head.appendChild(style);
-                        }
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                }).from(pe).output('blob').then(function(pdfBlob) {
-                    document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-                    document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none');
-                    
-                    document.getElementById('cloud-loader').style.display = 'none';
-                    document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
-                    
-                    const file = new File([pdfBlob], filename, { type: 'application/pdf' });
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share({ files: [file], title: filename }).catch(err => console.log('分享失敗', err));
-                    } else {
-                        const url = window.URL.createObjectURL(pdfBlob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none'; a.href = url; a.download = filename;
-                        document.body.appendChild(a); a.click();
-                        window.URL.revokeObjectURL(url); document.body.removeChild(a);
-                    }
-                });
-            } else {
-                window.print();
-            }
-        }
-
 
         function filterDashboard() {
             if(currentRole !== 'boss' && currentRole !== 'acc') return;
@@ -1554,50 +1470,50 @@ function generateStatementPDF() {
                 document.getElementById('loader-text').innerText = '🖨️ 正在產生高品質 PDF，請稍候...';
                 document.getElementById('cloud-loader').style.display = 'flex';
 
-html2pdf().set({
-                margin: 10,
-                filename: filename,
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    windowWidth: 800, 
-                    width: 800,      // 🟢 綁死畫布寬度
-                    scrollY: 0,
-                    x: 0,            // 🟢 綁死 X 座標，解決偏左/偏右不置中
-                    y: 0,            // 🟢 綁死 Y 座標
-                    onclone: function(clonedDoc) {
-                        const printArea = clonedDoc.getElementById('statement-print-area') || clonedDoc.getElementById('quotation-print-area') || clonedDoc.getElementById('page-quotation');
-                        
-                        // 🟢 徹底切斷繼承的高度，強制設為 auto，解決多出 2 頁白紙
-                        clonedDoc.documentElement.style.cssText = "width: 800px !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important;";
-                        clonedDoc.body.style.cssText = "width: 800px !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; overflow: hidden !important;";
-                        
-                        clonedDoc.body.innerHTML = ''; 
-                        clonedDoc.body.appendChild(printArea);
+                html2pdf().set({
+                    margin: 10,
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        windowWidth: 800, 
+                        width: 800,      // 🟢 綁死畫布寬度
+                        scrollY: 0,
+                        x: 0,            // 🟢 綁死 X 座標，解決偏左/偏右不置中
+                        y: 0,            // 🟢 綁死 Y 座標
+                        onclone: function(clonedDoc) {
+                            const printArea = clonedDoc.getElementById('statement-print-area') || clonedDoc.getElementById('quotation-print-area') || clonedDoc.getElementById('page-quotation');
+                            
+                            // 🟢 徹底切斷繼承的高度，強制設為 auto，解決多出 2 頁白紙
+                            clonedDoc.documentElement.style.cssText = "width: 800px !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important;";
+                            clonedDoc.body.style.cssText = "width: 800px !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; overflow: hidden !important;";
+                            
+                            clonedDoc.body.innerHTML = ''; 
+                            clonedDoc.body.appendChild(printArea);
 
-                        // 🟢 拿掉 margin: auto，讓它直接貼齊畫布左上角
-                        printArea.style.cssText = "width: 800px !important; margin: 0 !important; padding: 30px !important; background: #fff !important; display: block !important; position: relative !important; height: auto !important;";
-                        
-                        const style = clonedDoc.createElement('style');
-                        style.innerHTML = `
-                            * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; visibility: visible !important; opacity: 1 !important; }
-                            .text-danger, .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
-                            .no-print, textarea { display: none !important; }
-                            .print-only, .print-notes-div { display: block !important; }
-                            .quote-meta { display: flex !important; justify-content: space-between !important; margin-bottom: 15px !important; flex-direction: row !important; }
-                            .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
-                            table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 15px !important; }
-                            th, td { border: 1px solid #000 !important; padding: 10px !important; text-align: left; white-space: normal !important; }
-                            th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                            tr { page-break-inside: avoid !important; }
-                            .print-notes-div { border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; text-align: left !important; }
-                        `;
-                        clonedDoc.head.appendChild(style);
-                    }
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(pe).output('blob').then(function(pdfBlob) {
+                            // 🟢 拿掉 margin: auto，讓它直接貼齊畫布左上角
+                            printArea.style.cssText = "width: 800px !important; margin: 0 !important; padding: 30px !important; background: #fff !important; display: block !important; position: relative !important; height: auto !important;";
+                            
+                            const style = clonedDoc.createElement('style');
+                            style.innerHTML = `
+                                * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; visibility: visible !important; opacity: 1 !important; }
+                                .text-danger, .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                                .no-print, textarea { display: none !important; }
+                                .print-only, .print-notes-div { display: block !important; }
+                                .quote-meta { display: flex !important; justify-content: space-between !important; margin-bottom: 15px !important; flex-direction: row !important; }
+                                .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
+                                table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 15px !important; }
+                                th, td { border: 1px solid #000 !important; padding: 10px !important; text-align: left; white-space: normal !important; }
+                                th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                tr { page-break-inside: avoid !important; }
+                                .print-notes-div { border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; text-align: left !important; }
+                            `;
+                            clonedDoc.head.appendChild(style);
+                        }
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(pe).output('blob').then(function(pdfBlob) {
                     document.getElementById('cloud-loader').style.display = 'none';
                     document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
                     downloadOrSharePDF(pdfBlob, filename);
