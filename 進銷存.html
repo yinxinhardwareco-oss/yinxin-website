@@ -469,7 +469,9 @@
                     <button class="btn btn-info" style="font-size: 16px;" onclick="saveQuotationToHistory()">☁️ 儲存至雲端</button>
                     <button class="btn btn-success" style="font-size: 16px;" onclick="printQuotation()">🖨️ 列印/轉PDF</button>
                 </div>
-            </div> <div id="page-quote-history" class="page">
+            </div> 
+            
+            <div id="page-quote-history" class="page">
                 <div class="control-panel no-print" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                     <div>
                         <h3 style="margin-bottom: 5px; border-left: none; padding-left: 0;">📂 歷史單據與帳款管理</h3>
@@ -617,7 +619,56 @@
             }
         }
 
- async function init() {
+        async function init() {
+            if(CLOUD_API_URL === "請把你的網址貼在這裡") { 
+                document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>⚠️ 請設定 CLOUD_API_URL</h2>"; 
+                return; 
+            }
+
+            try {
+                const [invData, custData, quotesData, inqData, supData, poData, mapData] = await Promise.all([
+                    fetchFromCloud('Inventory'), fetchFromCloud('Customers'), fetchFromCloud('Quotes'),
+                    fetchFromCloud('Inquiries'), fetchFromCloud('Suppliers'), fetchFromCloud('PurchaseOrders'), fetchFromCloud('ModelMapping')
+                ]);
+                
+                inventory = invData; customers = custData; quoteHistory = quotesData;
+                inquiries = inqData; suppliers = supData; purchaseHistory = poData; modelMappings = mapData;
+
+                quoteHistory.forEach(q => { 
+                    q.paidAmount = Number(q.paidAmount) || 0; 
+                    q.totalAmount = Number(q.totalAmount) || 0; 
+                    
+                    // 🟢 核心修復：將 Google Sheets 回傳的日期統一轉換為 YYYY-MM-DD 格式
+                    if (q.date && typeof q.date === 'string') {
+                        q.date = q.date.replace(/\//g, '-').substring(0, 10);
+                    }
+                });
+
+                document.getElementById('cloud-loader').style.display = 'none'; 
+                setSyncStatus('synced');
+                
+                const year = new Date().getFullYear();
+                document.getElementById('dash-start-date').value = `${year}-01-01`; 
+                document.getElementById('dash-end-date').value = `${year}-12-31`;
+
+                renderInventory(); renderCustomers(); renderQuoteHistory(); renderInquiries(); 
+                renderSuppliers(); renderPurchaseHistory(); renderMapping();
+                
+                updateProductDropdown(); updateCustomerDropdown(); updateSupplierDropdown();
+                resetQuotationFormDate(); resetPurchaseFormDate();
+                
+                if(currentRole === 'boss' || currentRole === 'acc') filterDashboard(); 
+                
+                let startTab = currentRole === 'wh' ? 'inventory' : (currentRole === 'sales' ? 'quotation' : 'dashboard');
+                let startTitle = currentRole === 'wh' ? '📦 產品庫存' : (currentRole === 'sales' ? '📝 開立單據' : '📈 營收儀表板');
+                switchTab(startTab, startTitle);
+
+                checkLowStockAlert();
+            } catch (error) { 
+                document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>❌ 無法連線到伺服器，請重新整理。</h2>"; 
+            }
+        }
+
         function checkLowStockAlert() {
             const lowStockItems = inventory.filter(item => item.stock < 5);
             if (lowStockItems.length > 0) {
@@ -1465,7 +1516,7 @@
             } 
         }
 
-function renderQuoteHistory() {
+        function renderQuoteHistory() {
             const tbody = document.getElementById('history-quote-list');
             if(!tbody) return;
             tbody.innerHTML = '';
