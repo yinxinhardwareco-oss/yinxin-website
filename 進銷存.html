@@ -116,7 +116,7 @@
         .stock-input-group { display: flex; align-items: center; gap: 5px; }
         .stock-input-group input { width: 70px; padding: 6px; text-align: center; }
 
-        /* 🖨️ 列印模式 (報價單) */
+        /* 🖨️ 列印模式 */
         .print-only { display: none; }
         .quote-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
         .quote-header h1 { font-weight: 900; color: #000; font-size: 32px; letter-spacing: 2px; margin-bottom: 5px; }
@@ -124,12 +124,12 @@
         .quote-meta { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; line-height: 1.6; }
         .total-area { display: flex; flex-direction: column; align-items: flex-end; margin-top: 15px; font-size: 15px; line-height: 1.6; }
         .total-area .final-total { font-size: 20px; font-weight: 900; border-bottom: 4px double #000; padding-bottom: 2px; margin-top: 5px; }
-
-        /* 🖨️ 月結對帳單專屬排版 */
+        
         #statement-print-area { display: none; padding: 40px; background: #fff; }
         .statement-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .statement-table th, .statement-table td { border: 1px solid #000; padding: 8px; font-size: 14px; }
         .statement-table th { background: #f0f0f0; }
+        .print-notes-div { display: none; }
 
         /* RWD 手機版 */
         @media (max-width: 768px) {
@@ -147,7 +147,7 @@
             .hide-on-mobile { display: none; }
         }
 
-        /* 列印樣式覆寫 */
+        /* 桌機實體列印樣式 */
         @media print {
             body * { visibility: hidden; }
             #page-quotation.active, #page-quotation.active * { visibility: visible; }
@@ -164,39 +164,6 @@
         #cloud-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-   
-        /* 🛠️ PDF 手機版強制轉為 A4 桌面排版 (解決右側裁切與全白問題) */
-        body.is-printing {
-            height: auto !important;
-            overflow: visible !important;
-            display: block !important;
-        }
-        body.is-printing .sidebar, body.is-printing .topbar {
-            display: none !important;
-        }
-        body.is-printing .main-content {
-            overflow: visible !important;
-            padding: 0 !important;
-        }
-        .pdf-export-format {
-            width: 800px !important;
-            min-width: 800px !important;
-            max-width: 800px !important;
-            background-color: #ffffff !important;
-            padding: 40px !important;
-            margin: 0 auto !important;
-            box-sizing: border-box !important;
-            position: relative !important;
-        }
-        .pdf-export-format * { color: #000 !important; -webkit-text-fill-color: #000 !important; }
-        .pdf-export-format .text-danger { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
-        .pdf-export-format .quote-meta { display: flex !important; flex-direction: row !important; justify-content: space-between !important; }
-        .pdf-export-format table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 15px !important; }
-        .pdf-export-format th, .pdf-export-format td { border: 1px solid #000 !important; padding: 10px !important; white-space: normal !important; text-align: left !important; }
-        .pdf-export-format th { background-color: #f0f0f0 !important; font-weight: bold !important;}
-        .pdf-export-format textarea { display: none !important; }
-        .pdf-export-format .print-notes-div { display: block !important; min-height: 80px; border: 1.5px solid #000; padding: 10px; white-space: pre-wrap; margin-top: 5px; text-align: left !important; }
-        .print-notes-div { display: none; } 
     </style>
 </head>
 <body>
@@ -218,7 +185,7 @@
 
     <div id="cloud-loader">
         <div class="spinner"></div>
-        <h2 style="color: var(--primary-dark);">☁️ 正在與 Google 雲端同步資料...</h2>
+        <h2 id="loader-text" style="color: var(--primary-dark);">☁️ 正在與 Google 雲端同步資料...</h2>
     </div>
 
     <div id="statement-print-area">
@@ -287,23 +254,19 @@
                         <div class="title">📅 期間總營收(報價)</div>
                         <div class="value" id="dash-range-quote">$0</div>
                     </div>
-                    
                     <div class="data-card">
                         <div class="title">🛒 期間銷貨總成本</div>
                         <div class="value" style="color: #64748b;" id="dash-range-cost">$0</div>
                     </div>
-                    
                     <div class="data-card profit" style="border-color: #10b981; background: #ecfdf5;">
                         <div class="title" style="color: #059669;">📈 預估毛利 (產品淨利)</div>
                         <div class="value" id="dash-range-profit">$0</div>
                         <div style="font-size: 13px; font-weight: bold; color: #10b981; margin-top: 5px;" id="dash-range-margin">毛利率 0%</div>
                     </div>
-                    
                     <div class="data-card profit">
                         <div class="title">💰 期間實際收款</div>
                         <div class="value" id="dash-range-paid">$0</div>
                     </div>
-                    
                     <div class="data-card">
                         <div class="title">⚠️ 期間尚欠(未收)款項</div>
                         <div class="value text-danger" id="dash-range-unpaid">$0</div>
@@ -350,7 +313,6 @@
                         <button class="btn btn-success" style="height: 42px;" onclick="addProduct()">➕ 新增建檔</button>
                     </div>
                 </div>
-
                 <div class="control-panel highlight-bg no-print">
                     <h3>🔍 庫存快速檢索 (自動轉換新舊型號)</h3>
                     <div class="form-row">
@@ -359,7 +321,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="table-responsive">
                     <table>
                         <thead id="inventory-head"></thead>
@@ -367,6 +328,7 @@
                     </table>
                 </div>
             </div>
+            
             <div id="page-purchase" class="page">
                 <div class="control-panel no-print">
                     <h3 style="display: flex; justify-content: space-between; align-items: center;">
@@ -447,56 +409,58 @@
             </div>
 
             <div id="page-quotation" class="page">
-                <div class="quote-header print-only">
-                    <h1>銀鑫有限公司</h1><p>彰化縣伸港鄉定興路124號 | TEL: (04)852-1867 | FAX: (04)852-1945</p><div class="quote-title">銷貨 / 報價單</div>
-                </div>
-                <div class="quote-meta print-only">
-                    <div><p><strong>客戶名稱：</strong> <span id="print-cust-name"></span></p><p><strong>統一編號：</strong> <span id="print-cust-taxid"></span></p><p><strong>聯 絡 人 ：</strong> <span id="print-cust-contact"></span></p><p><strong>送貨地址：</strong> <span id="print-delivery"></span></p></div>
-                    <div style="text-align: right;"><p><strong>單據號碼：</strong> <span id="print-quote-no"></span></p><p><strong>單據日期：</strong> <span id="print-date"></span></p><p><strong>發票號碼：</strong> <span id="print-invoice">未開立</span></p></div>
-                </div>
+                <div id="quotation-print-area">
+                    <div class="quote-header print-only">
+                        <h1>銀鑫有限公司</h1><p>彰化縣伸港鄉定興路124號 | TEL: (04)852-1867 | FAX: (04)852-1945</p><div class="quote-title">銷貨 / 報價單</div>
+                    </div>
+                    <div class="quote-meta print-only">
+                        <div><p><strong>客戶名稱：</strong> <span id="print-cust-name"></span></p><p><strong>統一編號：</strong> <span id="print-cust-taxid"></span></p><p><strong>聯 絡 人 ：</strong> <span id="print-cust-contact"></span></p><p><strong>送貨地址：</strong> <span id="print-delivery"></span></p></div>
+                        <div style="text-align: right;"><p><strong>單據號碼：</strong> <span id="print-quote-no"></span></p><p><strong>單據日期：</strong> <span id="print-date"></span></p><p><strong>發票號碼：</strong> <span id="print-invoice">未開立</span></p></div>
+                    </div>
 
-                <div class="control-panel no-print">
-                    <h3 style="display: flex; justify-content: space-between; align-items: center;">單據基本設定 <select id="q-quick-customer" onchange="autoFillCustomerFromSelect()" style="width: 200px; border: none; background: #eff6ff; font-weight: bold; color: var(--primary-dark);"><option value="">💡 從客戶庫帶入...</option></select></h3>
-                    <div class="form-row">
-                        <div class="form-group large"><label>客戶名稱</label><input type="text" id="q-cust-name" oninput="updatePrintView('print-cust-name', this.value)"></div>
-                        <div class="form-group"><label>統一編號</label><input type="text" id="q-cust-taxid" oninput="updatePrintView('print-cust-taxid', this.value)"></div>
-                        <div class="form-group"><label>聯絡人</label><input type="text" id="q-cust-contact" oninput="updatePrintView('print-cust-contact', this.value)"></div>
-                        <div class="form-group"><label>聯絡電話</label><input type="text" id="q-cust-tel"></div>
+                    <div class="control-panel no-print">
+                        <h3 style="display: flex; justify-content: space-between; align-items: center;">單據基本設定 <select id="q-quick-customer" onchange="autoFillCustomerFromSelect()" style="width: 200px; border: none; background: #eff6ff; font-weight: bold; color: var(--primary-dark);"><option value="">💡 從客戶庫帶入...</option></select></h3>
+                        <div class="form-row">
+                            <div class="form-group large"><label>客戶名稱</label><input type="text" id="q-cust-name" oninput="updatePrintView('print-cust-name', this.value)"></div>
+                            <div class="form-group"><label>統一編號</label><input type="text" id="q-cust-taxid" oninput="updatePrintView('print-cust-taxid', this.value)"></div>
+                            <div class="form-group"><label>聯絡人</label><input type="text" id="q-cust-contact" oninput="updatePrintView('print-cust-contact', this.value)"></div>
+                            <div class="form-group"><label>聯絡電話</label><input type="text" id="q-cust-tel"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>單據號碼</label><input type="text" id="q-quote-no" oninput="updatePrintView('print-quote-no', this.value)"></div>
+                            <div class="form-group"><label>單據日期</label><input type="date" id="q-quote-date" onchange="updatePrintDate(this.value)"></div>
+                            <div class="form-group"><label>發票號碼</label><input type="text" id="q-invoice" oninput="updatePrintView('print-invoice', this.value)"></div>
+                            <div class="form-group large"><label>送貨地址 / 方式</label><input type="text" id="q-delivery" oninput="updatePrintView('print-delivery', this.value)"></div>
+                        </div>
+                        <h3 style="margin-top: 25px;">加入明細項目</h3>
+                        <div class="form-row">
+                            <div class="form-group large"><label>選擇庫存產品</label><select id="q-product-select" onchange="autoFillPrice()"></select></div>
+                            <div class="form-group small"><label>數量</label><input type="number" id="q-qty" value="1" min="1"></div>
+                            <div class="form-group hide-wh"><label>單價 (可修改)</label><input type="number" id="q-override-price" placeholder="自動帶入銷價"></div>
+                            <button class="btn btn-primary" style="height: 42px;" onclick="addQuoteItem()">➕ 加入明細</button>
+                        </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>單據號碼</label><input type="text" id="q-quote-no" oninput="updatePrintView('print-quote-no', this.value)"></div>
-                        <div class="form-group"><label>單據日期</label><input type="date" id="q-quote-date" onchange="updatePrintDate(this.value)"></div>
-                        <div class="form-group"><label>發票號碼</label><input type="text" id="q-invoice" oninput="updatePrintView('print-invoice', this.value)"></div>
-                        <div class="form-group large"><label>送貨地址 / 方式</label><input type="text" id="q-delivery" oninput="updatePrintView('print-delivery', this.value)"></div>
-                    </div>
-                    <h3 style="margin-top: 25px;">加入明細項目</h3>
-                    <div class="form-row">
-                        <div class="form-group large"><label>選擇庫存產品</label><select id="q-product-select" onchange="autoFillPrice()"></select></div>
-                        <div class="form-group small"><label>數量</label><input type="number" id="q-qty" value="1" min="1"></div>
-                        <div class="form-group hide-wh"><label>單價 (可修改)</label><input type="number" id="q-override-price" placeholder="自動帶入銷價"></div>
-                        <button class="btn btn-primary" style="height: 42px;" onclick="addQuoteItem()">➕ 加入明細</button>
-                    </div>
-                </div>
 
-                <div class="table-responsive">
-                    <table>
-                        <thead id="quotation-head"></thead>
-                        <tbody id="quotation-list"></tbody>
-                    </table>
-                </div>
-                
-                <div class="total-area hide-wh">
-                    <div style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px;"><span>小計：</span> <span id="calc-subtotal">$0</span></div>
-                    <div class="no-print" style="width: 300px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;"><span style="color:var(--danger); font-weight:bold;">折讓金額：</span><input type="number" id="q-discount" value="0" style="width: 100px; text-align: right; padding: 5px;" oninput="renderQuotation()"></div>
-                    <div class="print-only" style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px; color:var(--danger);"><span>折讓：</span> <span id="calc-discount-print">-$0</span></div>
-                    <div style="width: 300px; display: flex; justify-content: space-between;"><span>營業稅 (5%)：</span> <span id="calc-tax">$0</span></div>
-                    <div style="width: 300px; display: flex; justify-content: space-between;" class="final-total"><span>總計金額：</span> <span id="calc-total">$0</span></div>
-                </div>
-                
-                <div class="quote-notes-print" style="padding-bottom: 20px; page-break-inside: avoid;">
-                    <strong>備註：</strong><br>
-                    <textarea id="q-notes" rows="4" style="width: 100%; box-sizing: border-box; display: block; border: 1.5px solid #000; resize: none;" placeholder="交期、匯款帳號等備註..."></textarea>
-                    <div id="q-notes-print-div" class="print-notes-div"></div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead id="quotation-head"></thead>
+                            <tbody id="quotation-list"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="total-area hide-wh">
+                        <div style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px;"><span>小計：</span> <span id="calc-subtotal">$0</span></div>
+                        <div class="no-print" style="width: 300px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;"><span style="color:var(--danger); font-weight:bold;">折讓金額：</span><input type="number" id="q-discount" value="0" style="width: 100px; text-align: right; padding: 5px;" oninput="renderQuotation()"></div>
+                        <div class="print-only" style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px; color:var(--danger) !important;"><span>折讓：</span> <span id="calc-discount-print">-$0</span></div>
+                        <div style="width: 300px; display: flex; justify-content: space-between;"><span>營業稅 (5%)：</span> <span id="calc-tax">$0</span></div>
+                        <div style="width: 300px; display: flex; justify-content: space-between;" class="final-total"><span>總計金額：</span> <span id="calc-total">$0</span></div>
+                    </div>
+                    
+                    <div class="quote-notes-print" style="padding-bottom: 20px; page-break-inside: avoid;">
+                        <strong>備註：</strong><br>
+                        <textarea id="q-notes" rows="4" style="width: 100%; box-sizing: border-box; display: block; border: 1.5px solid #000; resize: none;" placeholder="交期、匯款帳號等備註..."></textarea>
+                        <div id="q-notes-print-div" class="print-notes-div"></div>
+                    </div>
                 </div>
 
                 <div class="no-print" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
@@ -548,9 +512,6 @@
         </div>
     </div>
     <script>
-        // ==========================================
-        // 🔒 你的專屬設定區
-        // ==========================================
         const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
         const SYSTEM_PASSWORD_HASH = "2f2bdf8f7e9774d91b0fb4f570efaed37c209f560b65172e2fa7874f5d22c794"; 
 
@@ -719,6 +680,24 @@
             }
         }
 
+        // --- 共用的手機 PDF 匯出函式 ---
+        function downloadOrSharePDF(pdfBlob, filename) {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+            if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({ files: [file], title: filename, text: '請查閱單據檔案' }).catch(err => console.log('分享失敗', err));
+            } else {
+                const url = window.URL.createObjectURL(pdfBlob);
+                const a = document.createElement('a');
+                a.style.display = 'none'; a.href = url; a.download = filename;
+                document.body.appendChild(a); a.click();
+                window.URL.revokeObjectURL(url); document.body.removeChild(a);
+            }
+        }
+
+        // ==========================================
+        // 🟢 PDF 列印核心修改區 (解決反白與跑版)
+        // ==========================================
         function generateStatementPDF() {
             const custName = document.getElementById('stmt-customer').value;
             const monthStr = document.getElementById('stmt-month-select').value; 
@@ -749,47 +728,103 @@
             document.getElementById('stmt-total-due').innerText = `$${totalDue.toLocaleString()}`;
 
             const pe = document.getElementById('statement-print-area');
-            
-            // 🟢 加上列印專用 class
-            document.body.classList.add('is-printing');
-            pe.classList.add('active', 'pdf-mode', 'pdf-export-format'); 
-            window.scrollTo(0, 0); // 強制滾回頂部
-            
             const filename = `${custName}_${monthStr}對帳單.pdf`;
+            
+            document.getElementById('loader-text').innerText = '🖨️ 正在產生高品質 PDF，請稍候...';
+            document.getElementById('cloud-loader').style.display = 'flex';
 
             html2pdf().set({
                 margin: 10, 
                 filename: filename, 
                 image: {type:'jpeg', quality: 1}, 
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 800, scrollY: 0 }, 
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    windowWidth: 800,
+                    width: 800,
+                    backgroundColor: '#ffffff',
+                    onclone: function(clonedDoc) {
+                        // 強制把分身頁面改成桌機版大小並改色，解決 iOS 裁切與反白
+                        const style = clonedDoc.createElement('style');
+                        style.innerHTML = `
+                            body { width: 800px !important; background: #fff !important; overflow: visible !important; }
+                            #statement-print-area { display: block !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 800px !important; padding: 40px !important; background: #fff !important; }
+                            #statement-print-area * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; opacity: 1 !important; }
+                            #statement-print-area .text-danger, #statement-print-area .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                            table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; margin-top: 20px !important; }
+                            th, td { border: 1px solid #000 !important; padding: 10px !important; white-space: normal !important; text-align: left; }
+                            th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        `;
+                        clonedDoc.head.appendChild(style);
+                    }
+                }, 
                 jsPDF: {unit:'mm', format:'a4', orientation:'portrait'}
             }).from(pe).output('blob').then(function(pdfBlob) {
-                // 🟢 移除列印專用 class
-                document.body.classList.remove('is-printing');
-                pe.classList.remove('active', 'pdf-mode', 'pdf-export-format'); 
-
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                const file = new File([pdfBlob], filename, { type: 'application/pdf' });
-
-                if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    navigator.share({
-                        files: [file],
-                        title: filename,
-                        text: '請查閱您的月結對帳單'
-                    }).catch(err => console.log('使用者取消分享或分享失敗', err));
-                } else {
-                    const url = window.URL.createObjectURL(pdfBlob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                }
+                document.getElementById('cloud-loader').style.display = 'none';
+                document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
+                downloadOrSharePDF(pdfBlob, filename);
             });
         }
+
+        function printQuotation() {
+            if(quoteItems.length === 0) return alert('明細不能為空');
+            
+            // 同步 textarea 到 div 避免破圖
+            if(document.getElementById('q-notes-print-div')) {
+                document.getElementById('q-notes-print-div').innerText = document.getElementById('q-notes').value;
+            }
+
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if(isMobile) {
+                const pe = document.getElementById('quotation-print-area');
+                const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
+                
+                document.getElementById('loader-text').innerText = '🖨️ 正在產生高品質 PDF，請稍候...';
+                document.getElementById('cloud-loader').style.display = 'flex';
+
+                html2pdf().set({
+                    margin: 10,
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        windowWidth: 800,
+                        width: 800,
+                        backgroundColor: '#ffffff',
+                        onclone: function(clonedDoc) {
+                            // 強制把分身頁面改成桌機版大小並改色，解決 iOS 裁切與反白
+                            const style = clonedDoc.createElement('style');
+                            style.innerHTML = `
+                                body { width: 800px !important; background: #fff !important; overflow: visible !important; }
+                                #quotation-print-area { display: block !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 800px !important; padding: 40px !important; background: #fff !important; border: none !important; box-shadow: none !important; }
+                                #quotation-print-area * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; opacity: 1 !important; visibility: visible !important; }
+                                #quotation-print-area .text-danger, #quotation-print-area .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                                .no-print { display: none !important; }
+                                .print-only { display: block !important; }
+                                .quote-meta { display: flex !important; justify-content: space-between !important; flex-direction: row !important; margin-bottom: 15px !important; }
+                                .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
+                                table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; }
+                                th, td { border: 1px solid #000 !important; padding: 10px !important; white-space: normal !important; text-align: left; }
+                                th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                textarea { display: none !important; }
+                                .print-notes-div { display: block !important; border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; }
+                            `;
+                            clonedDoc.head.appendChild(style);
+                        }
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(pe).output('blob').then(function(pdfBlob) {
+                    document.getElementById('cloud-loader').style.display = 'none';
+                    document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
+                    downloadOrSharePDF(pdfBlob, filename);
+                });
+            } else {
+                window.print();
+            }
+        }
+
 
         function filterDashboard() {
             if(currentRole !== 'boss' && currentRole !== 'acc') return;
@@ -1460,47 +1495,55 @@
 
         function printQuotation() {
             if(quoteItems.length === 0) return alert('明細不能為空');
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if(document.getElementById('q-notes-print-div')) {
                 document.getElementById('q-notes-print-div').innerText = document.getElementById('q-notes').value;
             }
 
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
             if(isMobile) {
-                document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block');
-                const pe = document.getElementById('page-quotation');
-                
-                // 🟢 加上列印專用 class
-                document.body.classList.add('is-printing');
-                pe.classList.add('pdf-export-format');
-                window.scrollTo(0, 0); // 強制滾回頂部，避免截圖空白
-                
+                const pe = document.getElementById('quotation-print-area') || document.getElementById('page-quotation');
                 const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
+                
+                document.getElementById('loader-text').innerText = '🖨️ 正在產生高品質 PDF，請稍候...';
+                document.getElementById('cloud-loader').style.display = 'flex';
 
                 html2pdf().set({
                     margin: 10,
                     filename: filename,
                     image: { type: 'jpeg', quality: 1 },
-                    html2canvas: { scale: 2, useCORS: true, windowWidth: 800, scrollY: 0 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        windowWidth: 800,
+                        width: 800,
+                        backgroundColor: '#ffffff',
+                        onclone: function(clonedDoc) {
+                            const style = clonedDoc.createElement('style');
+                            style.innerHTML = `
+                                body { width: 800px !important; background: #fff !important; overflow: visible !important; }
+                                #quotation-print-area, #page-quotation { display: block !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 800px !important; padding: 40px !important; background: #fff !important; border: none !important; box-shadow: none !important; }
+                                #quotation-print-area *, #page-quotation * { color: #000 !important; -webkit-text-fill-color: #000 !important; font-family: 'Noto Sans TC', sans-serif !important; opacity: 1 !important; visibility: visible !important; }
+                                .text-danger, .text-danger * { color: #dc2626 !important; -webkit-text-fill-color: #dc2626 !important; }
+                                .no-print { display: none !important; }
+                                .print-only { display: block !important; }
+                                .quote-meta { display: flex !important; justify-content: space-between !important; flex-direction: row !important; margin-bottom: 15px !important; }
+                                .total-area { display: flex !important; flex-direction: column !important; align-items: flex-end !important; margin-top: 20px !important; }
+                                table { width: 100% !important; border-collapse: collapse !important; border: 2px solid #000 !important; }
+                                th, td { border: 1px solid #000 !important; padding: 10px !important; white-space: normal !important; text-align: left; }
+                                th { background-color: #f0f0f0 !important; font-weight: bold !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                textarea { display: none !important; }
+                                .print-notes-div { display: block !important; border: 1.5px solid #000 !important; min-height: 80px !important; padding: 10px !important; white-space: pre-wrap !important; margin-top: 5px !important; }
+                            `;
+                            clonedDoc.head.appendChild(style);
+                        }
+                    },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 }).from(pe).output('blob').then(function(pdfBlob) {
-                    // 🟢 移除列印專用 class
-                    document.body.classList.remove('is-printing');
-                    pe.classList.remove('pdf-export-format');
-                    document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-                    document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none');
-
-                    const file = new File([pdfBlob], filename, { type: 'application/pdf' });
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share({ files: [file], title: filename, text: '請查閱您的報價/銷貨單' }).catch(err => console.log('分享失敗', err));
-                    } else {
-                        const url = window.URL.createObjectURL(pdfBlob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none'; a.href = url; a.download = filename;
-                        document.body.appendChild(a); a.click();
-                        window.URL.revokeObjectURL(url); document.body.removeChild(a);
-                    }
+                    document.getElementById('cloud-loader').style.display = 'none';
+                    document.getElementById('loader-text').innerText = '☁️ 正在與 Google 雲端同步資料...';
+                    downloadOrSharePDF(pdfBlob, filename);
                 });
             } else {
                 window.print();
