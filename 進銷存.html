@@ -617,51 +617,7 @@
             }
         }
 
-        async function init() {
-            if(CLOUD_API_URL === "請把你的網址貼在這裡") { 
-                document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>⚠️ 請設定 CLOUD_API_URL</h2>"; 
-                return; 
-            }
-
-            try {
-                const [invData, custData, quotesData, inqData, supData, poData, mapData] = await Promise.all([
-                    fetchFromCloud('Inventory'), fetchFromCloud('Customers'), fetchFromCloud('Quotes'),
-                    fetchFromCloud('Inquiries'), fetchFromCloud('Suppliers'), fetchFromCloud('PurchaseOrders'), fetchFromCloud('ModelMapping')
-                ]);
-                
-                inventory = invData; customers = custData; quoteHistory = quotesData;
-                inquiries = inqData; suppliers = supData; purchaseHistory = poData; modelMappings = mapData;
-
-                quoteHistory.forEach(q => { 
-                    q.paidAmount = Number(q.paidAmount) || 0; 
-                    q.totalAmount = Number(q.totalAmount) || 0; 
-                });
-
-                document.getElementById('cloud-loader').style.display = 'none'; 
-                setSyncStatus('synced');
-                
-                const year = new Date().getFullYear();
-                document.getElementById('dash-start-date').value = `${year}-01-01`; 
-                document.getElementById('dash-end-date').value = `${year}-12-31`;
-
-                renderInventory(); renderCustomers(); renderQuoteHistory(); renderInquiries(); 
-                renderSuppliers(); renderPurchaseHistory(); renderMapping();
-                
-                updateProductDropdown(); updateCustomerDropdown(); updateSupplierDropdown();
-                resetQuotationFormDate(); resetPurchaseFormDate();
-                
-                if(currentRole === 'boss' || currentRole === 'acc') filterDashboard(); 
-                
-                let startTab = currentRole === 'wh' ? 'inventory' : (currentRole === 'sales' ? 'quotation' : 'dashboard');
-                let startTitle = currentRole === 'wh' ? '📦 產品庫存' : (currentRole === 'sales' ? '📝 開立單據' : '📈 營收儀表板');
-                switchTab(startTab, startTitle);
-
-                checkLowStockAlert();
-            } catch (error) { 
-                document.getElementById('cloud-loader').innerHTML = "<h2 style='color:red'>❌ 無法連線到伺服器，請重新整理。</h2>"; 
-            }
-        }
-
+ async function init() {
         function checkLowStockAlert() {
             const lowStockItems = inventory.filter(item => item.stock < 5);
             if (lowStockItems.length > 0) {
@@ -1509,7 +1465,7 @@
             } 
         }
 
-        function renderQuoteHistory() {
+function renderQuoteHistory() {
             const tbody = document.getElementById('history-quote-list');
             if(!tbody) return;
             tbody.innerHTML = '';
@@ -1538,6 +1494,16 @@
                 `;
             });
             if(quoteHistory.length === 0) tbody.innerHTML = `<tr><td colspan="8" class="text-center">沒有歷史報價/銷貨紀錄</td></tr>`;
+
+            // 🟢 核心修復：動態生成「產出對帳單」的客戶下拉選單
+            const stmtSelect = document.getElementById('stmt-customer');
+            if (stmtSelect) {
+                stmtSelect.innerHTML = '<option value="">-- 選擇客戶 --</option>';
+                const uniqueCustomers = [...new Set(quoteHistory.map(q => q.custName))].filter(Boolean);
+                uniqueCustomers.forEach(name => {
+                    stmtSelect.innerHTML += `<option value="${name}">${name}</option>`;
+                });
+            }
         }
 
         function recordPayment(index) {
