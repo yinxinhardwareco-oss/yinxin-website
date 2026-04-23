@@ -116,7 +116,7 @@
         .stock-input-group { display: flex; align-items: center; gap: 5px; }
         .stock-input-group input { width: 70px; padding: 6px; text-align: center; }
 
-        /* 🖨️ 列印模式 (報價單) */
+        /* 🖨️ 列印模式 */
         .print-only { display: none; }
         .quote-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
         .quote-header h1 { font-weight: 900; color: #000; font-size: 32px; letter-spacing: 2px; margin-bottom: 5px; }
@@ -147,22 +147,20 @@
             .hide-on-mobile { display: none; }
         }
 
-/* 🖨️ 列印樣式覆寫 (修復多頁截斷與自動換頁問題) */
+        /* 🖨️ 列印樣式覆寫 */
         @media print {
-            /* 1. 解除系統的鎖定高度，允許無限往下長 */
             body { display: block !important; height: auto !important; overflow: visible !important; background: #fff; }
             .sidebar, .topbar { display: none !important; }
             .main-content { display: block !important; height: auto !important; overflow: visible !important; padding: 0 !important; }
             .page-container { padding: 0 !important; }
             .page { display: none; border: none; box-shadow: none; margin: 0; padding: 0; }
             
-            /* 2. 確保列印區塊是靜態定位，不會黏在畫面上方 */
-            #page-quotation.active, #statement-print-area.active { display: block; position: static !important; }
+            /* 支援採購單、報價單與對帳單的列印 */
+            #page-quotation.active, #statement-print-area.active, #page-purchase.active { display: block; position: static !important; }
             
             .no-print { display: none !important; }
             .print-only { display: block; }
             
-            /* 3. 設定表格自動換頁機制 */
             table { border: 1px solid #000; min-width: 100%; page-break-inside: auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             th, td { border: 1px solid #000 !important; padding: 6px !important; color: #000; }
@@ -170,7 +168,6 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
-        /* 針對 PDF 轉換器追加的不截斷規則 (防止字體被對半切) */
         tr, .total-area, .quote-notes-print { page-break-inside: avoid; }
 
         /* 載入動畫 */
@@ -178,7 +175,7 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
    
-        /* 🛠️ PDF 輸出專用：解決 iPhone Safari 文字變淡白、半透明的問題 */
+        /* 🛠️ PDF 輸出專用 */
         .pdf-mode {
             background-color: #ffffff !important;
             animation: none !important; 
@@ -275,10 +272,7 @@
         
 <div class="page-container">
 
-            <!-- ⚠️ 儀表板頁面外框開始 -->
             <div id="page-dashboard" class="page">
-                
-                <!-- 日期篩選器 -->
                 <div class="control-panel highlight-bg no-print" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
                     <strong>🔍 篩選區間：</strong>
                     <input type="date" id="dash-start-date" style="width: 150px;"><span>至</span><input type="date" id="dash-end-date" style="width: 150px;">
@@ -286,45 +280,35 @@
                     <button class="btn btn-outline" onclick="resetDashboardFilter()">重置 (顯示今年)</button>
                 </div>
 
-                <!-- 只有一組排版乾淨的 5 個數據卡片 -->
                 <div class="dashboard-grid">
                     <div class="data-card highlight">
                         <div class="title">📅 期間總營收(報價)</div>
                         <div class="value" id="dash-range-quote">$0</div>
                     </div>
-                    
                     <div class="data-card">
                         <div class="title">🛒 期間銷貨總成本</div>
                         <div class="value" style="color: #64748b;" id="dash-range-cost">$0</div>
                     </div>
-                    
                     <div class="data-card profit" style="border-color: #10b981; background: #ecfdf5;">
                         <div class="title" style="color: #059669;">📈 預估毛利 (產品淨利)</div>
                         <div class="value" id="dash-range-profit">$0</div>
                         <div style="font-size: 13px; font-weight: bold; color: #10b981; margin-top: 5px;" id="dash-range-margin">毛利率 0%</div>
                     </div>
-                    
                     <div class="data-card profit">
                         <div class="title">💰 期間實際收款</div>
                         <div class="value" id="dash-range-paid">$0</div>
                     </div>
-                    
                     <div class="data-card">
                         <div class="title">⚠️ 期間尚欠(未收)款項</div>
                         <div class="value text-danger" id="dash-range-unpaid">$0</div>
                     </div>
                 </div>
 
-                <!-- 走勢圖 -->
                 <div class="control-panel">
                     <h3>年度營收走勢圖 (依實際收款)</h3>
                     <div style="position: relative; height: 300px; width: 100%;"><canvas id="revenueChart"></canvas></div>
                 </div>
-
             </div> 
-            <!-- 儀表板頁面外框結束 -->
-
-            <!-- 下面接著原本的字典頁面 -->
             <div id="page-mapping" class="page">
                 <div class="control-panel no-print hide-wh">
                     <h3>建立型號綁定</h3>
@@ -377,7 +361,23 @@
                     </table>
                 </div>
             </div>
+
             <div id="page-purchase" class="page">
+                <div class="quote-header print-only">
+                    <h1>銀鑫有限公司</h1>
+                    <p>彰化縣伸港鄉定興路124號 | TEL: (04)852-1867 | FAX: (04)852-1945</p>
+                    <div class="quote-title">採 購 單</div>
+                </div>
+                <div class="quote-meta print-only">
+                    <div>
+                        <p><strong>廠商名稱：</strong> <span id="print-po-sup"></span></p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p><strong>採購單號：</strong> <span id="print-po-no"></span></p>
+                        <p><strong>採購日期：</strong> <span id="print-po-date"></span></p>
+                    </div>
+                </div>
+
                 <div class="control-panel no-print">
                     <h3 style="display: flex; justify-content: space-between; align-items: center;">
                         建立新採購單
@@ -386,21 +386,22 @@
                         </div>
                     </h3>
                     <div class="form-row">
-                        <div class="form-group large"><label>廠商名稱</label><input type="text" id="p-sup-name"></div>
-                        <div class="form-group"><label>採購單號</label><input type="text" id="p-po-no"></div>
-                        <div class="form-group"><label>採購日期</label><input type="date" id="p-date"></div>
+                        <div class="form-group large"><label>廠商名稱</label><input type="text" id="p-sup-name" oninput="updatePrintView('print-po-sup', this.value)"></div>
+                        <div class="form-group"><label>採購單號</label><input type="text" id="p-po-no" oninput="updatePrintView('print-po-no', this.value)"></div>
+                        <div class="form-group"><label>採購日期</label><input type="date" id="p-date" onchange="updatePrintDatePO(this.value)"></div>
                         <div class="form-group small">
                             <label>進貨狀態</label>
                             <select id="p-status" style="font-weight: bold; color: var(--danger);"><option value="未到貨">⏳ 未到貨</option><option value="已到貨">✅ 已到貨 (加庫存)</option></select>
                         </div>
                     </div>
                     
-                    <h3 style="margin-top: 25px;">加入採購項目 (支援字典)</h3>
+                    <h3 style="margin-top: 25px;">加入採購項目 (支援字典與輸入搜尋)</h3>
                     <div class="form-row highlight-bg" style="padding: 10px; border-radius: 8px;">
-                        <div class="form-group large"><label style="color:var(--danger);">🔍 智慧搜尋 (廠商型號/內部型號)</label><input type="text" id="p-smart-sku" placeholder="輸入後按 Enter..." onkeypress="if(event.key==='Enter') smartFindProduct()"></div>
-                        <div class="form-group"><label>轉換後內部型號</label><input type="text" id="p-selected-sku" readonly style="background:#f1f5f9;"></div>
-                    </div>
-                    <div class="form-row">
+                        <div class="form-group large">
+                            <label style="color:var(--danger);">🔍 選擇或搜尋產品</label>
+                            <input type="text" id="p-product-input" list="p-product-list" placeholder="請輸入型號、名稱或從下拉清單選擇..." onchange="autoFillCost()">
+                            <datalist id="p-product-list"></datalist>
+                        </div>
                         <div class="form-group small"><label>採購數量</label><input type="number" id="p-qty" value="1" min="1"></div>
                         <div class="form-group hide-wh"><label>進貨單價 (成本)</label><input type="number" id="p-override-cost" placeholder="自動帶入"></div>
                         <button class="btn btn-primary" style="height: 42px;" onclick="addPurchaseItem()">➕ 加入明細</button>
@@ -418,10 +419,11 @@
                 <div class="no-print" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
                     <button class="btn btn-outline" onclick="clearPurchaseOrder()">🗑️ 清空表單</button>
                     <button class="btn btn-info" style="font-size: 16px;" onclick="savePurchaseOrder()">☁️ 儲存採購單</button>
+                    <button class="btn btn-success" style="font-size: 16px;" onclick="printPurchaseOrder()">🖨️ 列印/轉PDF</button>
                 </div>
-                <hr style="margin: 40px 0; border: 0; border-top: 1px solid var(--border-color);">
-                <h3>📂 歷史採購紀錄</h3>
-                <div class="table-responsive">
+                <hr class="no-print" style="margin: 40px 0; border: 0; border-top: 1px solid var(--border-color);">
+                <h3 class="no-print">📂 歷史採購紀錄</h3>
+                <div class="table-responsive no-print">
                     <table>
                         <thead id="history-purchase-head"></thead>
                         <tbody id="history-purchase-list"></tbody>
@@ -480,8 +482,12 @@
                         <div class="form-group large"><label>送貨地址 / 方式</label><input type="text" id="q-delivery" oninput="updatePrintView('print-delivery', this.value)"></div>
                     </div>
                     <h3 style="margin-top: 25px;">加入明細項目</h3>
-                    <div class="form-row">
-                        <div class="form-group large"><label>選擇庫存產品</label><select id="q-product-select" onchange="autoFillPrice()"></select></div>
+                    <div class="form-row highlight-bg" style="padding: 10px; border-radius: 8px;">
+                        <div class="form-group large">
+                            <label style="color:var(--danger);">🔍 選擇或搜尋庫存產品</label>
+                            <input type="text" id="q-product-input" list="q-product-list" placeholder="請輸入型號、名稱或從下拉清單選擇..." onchange="autoFillPrice()">
+                            <datalist id="q-product-list"></datalist>
+                        </div>
                         <div class="form-group small"><label>數量</label><input type="number" id="q-qty" value="1" min="1"></div>
                         <div class="form-group hide-wh"><label>單價 (可修改)</label><input type="number" id="q-override-price" placeholder="自動帶入銷價"></div>
                         <button class="btn btn-primary" style="height: 42px;" onclick="addQuoteItem()">➕ 加入明細</button>
@@ -685,16 +691,13 @@
                     
                     // 🟢 終極防呆機制：修復 Google 雲端掉日期的問題
                     if (!q.date || q.date.toString().trim() === '') {
-                        // 如果日期是空的，直接從單號 (如 YX20260421-949) 拆出 2026-04-21 補上
                         if (q.quoteNo && q.quoteNo.match(/^YX\d{8}/)) {
                             let d = q.quoteNo.substring(2, 10);
                             q.date = `${d.substring(0,4)}-${d.substring(4,6)}-${d.substring(6,8)}`;
                         } else {
-                            // 最後防線：如果連單號都不符規則，給當天日期
                             q.date = new Date().toISOString().split('T')[0];
                         }
                     } else {
-                        // 如果有日期，確保它是乾淨的 YYYY-MM-DD
                         q.date = q.date.toString().split('T')[0].replace(/\//g, '-').substring(0, 10);
                     }
                 });
@@ -768,17 +771,14 @@ function generateStatementPDF() {
             
             const filename = `${custName}_${monthStr}對帳單.pdf`;
 
-            // 👇 主要是這裡的設定修改了 👇
             html2pdf().set({
-                margin: [10, 10, 15, 10], // 底部留白防貼底
+                margin: [10, 10, 15, 10], 
                 filename: filename, 
                 image: {type:'jpeg', quality: 0.98}, 
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, // 降 scale 防手機閃退
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, 
                 jsPDF: {unit:'mm', format:'a4', orientation:'portrait'},
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // 啟動智慧分頁
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } 
             }).from(pe).output('blob').then(function(pdfBlob) {
-            // 👆 修改區塊結束 👆
-
                 pe.classList.remove('active'); 
                 pe.classList.remove('pdf-mode');
 
@@ -812,8 +812,8 @@ function filterDashboard() {
             if(!startDate || !endDate) return;
 
             let rangeQuoteTotal = 0, rangePaidTotal = 0, rangeUnpaidTotal = 0;
-            let rangeCostTotal = 0; // 新增：總成本
-            let rangeGrossProfit = 0; // 新增：毛利
+            let rangeCostTotal = 0; 
+            let rangeGrossProfit = 0; 
 
             const cashflowTbody = document.getElementById('cashflow-list') || document.createElement('tbody'); 
             cashflowTbody.innerHTML = '';
@@ -826,7 +826,6 @@ function filterDashboard() {
                 const qTotal = Number(q.totalAmount) || 0; 
                 rangeQuoteTotal += qTotal;
                 
-                // 🟢 計算此單的成本：抓取單據內賣出的產品，對照庫存的進貨成本
                 let quoteCost = 0;
                 let items = typeof q.items === 'string' ? JSON.parse(q.items) : q.items;
                 if(items && items.length > 0) {
@@ -840,9 +839,6 @@ function filterDashboard() {
 
                 if(q.paidAmount > 0) {
                     rangePaidTotal += q.paidAmount;
-                    const invoiceText = q.invoiceNo ? ` / 發票:${q.invoiceNo}` : '';
-                    cashflowTbody.innerHTML += `<tr><td>${q.date}</td><td>${q.quoteNo}${invoiceText}</td><td>${q.custName}</td><td class="text-right text-success">$${q.paidAmount.toLocaleString()}</td></tr>`;
-                    
                     const monthLabel = q.date.substring(0, 7);
                     const existingIndex = labels.indexOf(monthLabel);
                     if(existingIndex > -1) dataPaid[existingIndex] += q.paidAmount; 
@@ -851,9 +847,6 @@ function filterDashboard() {
                 rangeUnpaidTotal += (qTotal - q.paidAmount);
             });
 
-            if(cashflowTbody.innerHTML === '') cashflowTbody.innerHTML = '<tr><td colspan="4" class="text-center">該期間無已收款之流水紀錄</td></tr>';
-
-            // 🟢 計算預估毛利與毛利率
             rangeGrossProfit = rangeQuoteTotal - rangeCostTotal;
             const grossMargin = rangeQuoteTotal > 0 ? ((rangeGrossProfit / rangeQuoteTotal) * 100).toFixed(1) : 0;
 
@@ -861,7 +854,6 @@ function filterDashboard() {
             document.getElementById('dash-range-paid').innerText = `$${rangePaidTotal.toLocaleString()}`; 
             document.getElementById('dash-range-unpaid').innerText = `$${rangeUnpaidTotal.toLocaleString()}`;
 
-            // 🟢 渲染成本與毛利數值 (如果 HTML 有這兩個格子的話)
             if(document.getElementById('dash-range-cost')) {
                 document.getElementById('dash-range-cost').innerText = `$${rangeCostTotal.toLocaleString()}`;
             }
@@ -902,7 +894,7 @@ function filterDashboard() {
             document.getElementById('topbar-title').innerText = title;
             
             if(tabId === 'quotation') { updateProductDropdown(); updateCustomerDropdown(); }
-            if(tabId === 'purchase') { updateSupplierDropdown(); }
+            if(tabId === 'purchase') { updateProductDropdown(); updateSupplierDropdown(); }
             if(tabId === 'quote-history') { renderQuoteHistory(); } 
             if(tabId === 'inquiries') { renderInquiries(); } 
             if(tabId === 'dashboard') { filterDashboard(); }
@@ -957,7 +949,6 @@ function filterDashboard() {
             });
             if(inventory.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">雲端沒有任何庫存資料</td></tr>`;
             
-            // 每次重繪後，若有搜尋關鍵字則自動過濾
             if(document.getElementById('inventory-search-input')) {
                 searchInventory();
             }
@@ -982,6 +973,7 @@ function filterDashboard() {
             document.getElementById('inv-cost').value = 0;
             document.getElementById('inv-price').value = 0;
             document.getElementById('inv-stock').value = 0;
+            updateProductDropdown(); // 更新報價與採購單的選單
         }
 
         function adjustStock(index, multiplier) { 
@@ -1000,6 +992,7 @@ function filterDashboard() {
                 inventory.splice(index, 1); 
                 renderInventory(); 
                 saveToCloud('Inventory', inventory); 
+                updateProductDropdown();
             } 
         }
 
@@ -1087,50 +1080,73 @@ function filterDashboard() {
         function resetPurchaseFormDate() { 
             const today = new Date(); 
             const d = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`; 
-            document.getElementById('p-po-no').value = `PO${d.replace(/-/g,'')}-${Math.floor(Math.random()*900)+100}`; 
+            const poNo = `PO${d.replace(/-/g,'')}-${Math.floor(Math.random()*900)+100}`;
+            document.getElementById('p-po-no').value = poNo; 
             document.getElementById('p-date').value = d; 
             document.getElementById('p-status').value = '未到貨'; 
             document.getElementById('p-status').style.color = 'var(--danger)'; 
+
+            updatePrintView('print-po-no', poNo);
+            updatePrintDatePO(d);
         }
 
         document.getElementById('p-status').addEventListener('change', function() {
             this.style.color = this.value === '已到貨' ? 'var(--success)' : 'var(--danger)';
         });
 
-        function smartFindProduct() { 
-            const input = document.getElementById('p-smart-sku').value.trim().toUpperCase(); 
-            if(!input) return; 
-            const mapping = modelMappings.find(m => m.supplierSku.toUpperCase() === input || m.internalSku.toUpperCase() === input); 
-            let targetSku = mapping ? mapping.internalSku : input; 
-            const product = inventory.find(i => i.sku.toUpperCase() === targetSku); 
-            if(product) { 
-                document.getElementById('p-selected-sku').value = product.sku; 
-                document.getElementById('p-override-cost').value = product.cost || 0; 
-            } else { 
-                alert('找不到對應產品！請確認已建檔。'); 
-                document.getElementById('p-selected-sku').value = ''; 
-            } 
+        // 採購單專用：自動帶入成本 (支援輸入型號或從選單點選)
+        function autoFillCost() {
+            let sku = document.getElementById('p-product-input').value.trim().toUpperCase();
+            let product = inventory.find(i => i.sku.toUpperCase() === sku);
+
+            // 若找不到，檢查是否為廠商原廠型號(字典)
+            if (!product) {
+                const mapping = modelMappings.find(m => m.supplierSku.toUpperCase() === sku || m.internalSku.toUpperCase() === sku);
+                if (mapping) {
+                    sku = mapping.internalSku;
+                    product = inventory.find(i => i.sku.toUpperCase() === sku.toUpperCase());
+                    if (product) {
+                        // 轉換成功，自動把輸入框替換為內部型號
+                        document.getElementById('p-product-input').value = product.sku;
+                    }
+                }
+            }
+
+            if (product) {
+                document.getElementById('p-override-cost').value = product.cost || 0;
+            } else {
+                document.getElementById('p-override-cost').value = '';
+            }
         }
 
         function addPurchaseItem() { 
-            const sku = document.getElementById('p-selected-sku').value || document.getElementById('p-smart-sku').value.toUpperCase(); 
+            let sku = document.getElementById('p-product-input').value.trim().toUpperCase(); 
             const qty = parseFloat(document.getElementById('p-qty').value) || 1; 
-            if(!sku) return alert('請輸入型號！'); 
-            const product = inventory.find(i => i.sku.toUpperCase() === sku); 
+            if(!sku) return alert('請輸入或選擇產品！'); 
+            
+            let product = inventory.find(i => i.sku.toUpperCase() === sku); 
+            if (!product) {
+                const mapping = modelMappings.find(m => m.supplierSku.toUpperCase() === sku || m.internalSku.toUpperCase() === sku);
+                if (mapping) {
+                    sku = mapping.internalSku;
+                    product = inventory.find(i => i.sku.toUpperCase() === sku.toUpperCase());
+                }
+            }
             
             const overrideCost = document.getElementById('p-override-cost').value;
             const customCost = overrideCost !== '' ? parseFloat(overrideCost) : (product ? product.cost : 0); 
             
-            const existingIndex = purchaseItems.findIndex(i => i.sku === sku && i.cost === customCost); 
+            const existingIndex = purchaseItems.findIndex(i => i.sku.toUpperCase() === sku && i.cost === customCost); 
             if(existingIndex > -1) { 
                 purchaseItems[existingIndex].qty += qty; 
             } else { 
                 purchaseItems.push({ sku: sku, name: product ? product.name : '未建檔產品', qty: qty, cost: customCost }); 
             } 
             renderPurchaseItems(); 
-            document.getElementById('p-smart-sku').value = ''; 
-            document.getElementById('p-selected-sku').value = ''; 
+            
+            document.getElementById('p-product-input').value = ''; 
             document.getElementById('p-override-cost').value = ''; 
+            document.getElementById('p-qty').value = '1';
         }
 
         function removePurchaseItem(index) { 
@@ -1215,6 +1231,56 @@ function filterDashboard() {
             alert('採購單儲存成功！'); 
         }
 
+        // 新增列印採購單 PDF 功能
+        function printPurchaseOrder() { 
+            if(purchaseItems.length === 0) return alert('採購明細不能為空'); 
+            
+            updatePrintView('print-po-sup', document.getElementById('p-sup-name').value);
+            updatePrintView('print-po-no', document.getElementById('p-po-no').value);
+            updatePrintDatePO(document.getElementById('p-date').value);
+
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); 
+            
+            if(isMobile) { 
+                document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none'); 
+                document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block'); 
+                const pe = document.getElementById('page-purchase'); 
+                pe.style.boxShadow = 'none'; 
+                pe.style.border = 'none'; 
+                pe.classList.add('pdf-mode');
+                
+                const filename = `銀鑫採購單_${document.getElementById('p-po-no').value}.pdf`;
+
+                html2pdf().set({
+                    margin: [10, 10, 15, 10], 
+                    filename: filename, 
+                    image: {type: 'jpeg', quality: 0.98},
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, 
+                    jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } 
+                }).from(pe).output('blob').then(function(pdfBlob) {
+                    pe.classList.remove('pdf-mode');
+                    document.querySelectorAll('.no-print').forEach(el => el.style.display = ''); 
+                    document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none'); 
+                    pe.style.boxShadow = ''; pe.style.border = '';
+
+                    const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({ files: [file], title: filename, text: '請查閱您的採購單' }).catch(err => console.log('分享失敗', err));
+                    } else {
+                        const url = window.URL.createObjectURL(pdfBlob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none'; a.href = url; a.download = filename;
+                        document.body.appendChild(a); a.click();
+                        window.URL.revokeObjectURL(url); document.body.removeChild(a);
+                    }
+                }); 
+            } else { 
+                window.print(); 
+            } 
+        }
+
         function editPurchaseRecord(index) { 
             alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或增加庫存。若有增減，請至「庫存管理」手動調整！');
             const r = purchaseHistory[index]; 
@@ -1225,6 +1291,11 @@ function filterDashboard() {
             document.getElementById('p-status').style.color = r.status === '已到貨' ? 'var(--success)' : 'var(--danger)'; 
             purchaseItems = typeof r.items === 'string' ? JSON.parse(r.items) : r.items; 
             renderPurchaseItems(); 
+            
+            updatePrintView('print-po-sup', r.supName);
+            updatePrintView('print-po-no', r.poNo);
+            updatePrintDatePO(r.date);
+
             window.scrollTo(0,0); 
             switchTab('purchase', '🛒 採購與進貨'); 
         }
@@ -1290,6 +1361,7 @@ function filterDashboard() {
             renderSuppliers(); 
             saveToCloud('Suppliers', suppliers); 
             document.querySelectorAll('#page-suppliers input').forEach(input => input.value = '');
+            updateSupplierDropdown();
         }
 
         function deleteSupplier(index) { 
@@ -1297,6 +1369,7 @@ function filterDashboard() {
                 suppliers.splice(index, 1); 
                 renderSuppliers(); 
                 saveToCloud('Suppliers', suppliers); 
+                updateSupplierDropdown();
             } 
         }
 
@@ -1333,6 +1406,7 @@ function filterDashboard() {
             renderCustomers(); 
             saveToCloud('Customers', customers); 
             document.querySelectorAll('#page-customers input').forEach(input => input.value = '');
+            updateCustomerDropdown();
         }
 
         function deleteCustomer(index) { 
@@ -1340,6 +1414,7 @@ function filterDashboard() {
                 customers.splice(index, 1); 
                 renderCustomers(); 
                 saveToCloud('Customers', customers); 
+                updateCustomerDropdown();
             } 
         }
 
@@ -1357,7 +1432,7 @@ function filterDashboard() {
         }
 
         // ==========================================
-        // 📝 報價/出貨單核心
+        // 📝 報價/出貨單核心 (使用 datalist 實作智慧選單)
         // ==========================================
         function updateCustomerDropdown() { 
             const select = document.getElementById('q-quick-customer'); 
@@ -1382,29 +1457,43 @@ function filterDashboard() {
             const index = document.getElementById('p-quick-supplier').value; 
             if(index === "") return; 
             document.getElementById('p-sup-name').value = suppliers[index].name; 
+            updatePrintView('print-po-sup', suppliers[index].name);
             document.getElementById('p-quick-supplier').value = ""; 
         }
 
+        // 將庫存建立為 datalist 讓 input 可以出現下拉清單與搜尋
         function updateProductDropdown() { 
-            const select = document.getElementById('q-product-select'); 
-            select.innerHTML = '<option value="">-- 請選擇產品 --</option>'; 
-            inventory.forEach(item => { select.innerHTML += `<option value="${item.sku}">[${item.sku}] ${item.name} (庫存:${item.stock})</option>`; }); 
+            const qList = document.getElementById('q-product-list'); 
+            const pList = document.getElementById('p-product-list');
+            let optionsHtml = ''; 
+            inventory.forEach(item => { 
+                optionsHtml += `<option value="${item.sku}">[${item.sku}] ${item.name} (庫存:${item.stock})</option>`; 
+            }); 
+            if(qList) qList.innerHTML = optionsHtml; 
+            if(pList) pList.innerHTML = optionsHtml;
         }
 
+        // 報價單專用：自動帶入價格
         function autoFillPrice() { 
-            const sku = document.getElementById('q-product-select').value; 
+            const sku = document.getElementById('q-product-input').value.trim(); 
             const product = inventory.find(i => i.sku === sku); 
-            document.getElementById('q-override-price').value = product ? product.price : ''; 
+            if (product) {
+                document.getElementById('q-override-price').value = product.price; 
+            } else {
+                document.getElementById('q-override-price').value = '';
+            }
         }
 
         function addQuoteItem() { 
-            const sku = document.getElementById('q-product-select').value; 
-            if(!sku) return alert('請選擇產品！'); 
+            const sku = document.getElementById('q-product-input').value.trim(); 
+            if(!sku) return alert('請輸入或從清單選擇產品！'); 
             const qty = parseFloat(document.getElementById('q-qty').value) || 1; 
             const product = inventory.find(i => i.sku === sku); 
             
+            if (!product) return alert('找不到此型號產品！請確認型號輸入正確。');
+            
             const overridePrice = document.getElementById('q-override-price').value;
-            const price = overridePrice !== '' ? parseFloat(overridePrice) : (product ? product.price : 0); 
+            const price = overridePrice !== '' ? parseFloat(overridePrice) : product.price; 
             
             const existingIndex = quoteItems.findIndex(i => i.sku === sku && i.price === price); 
             if(existingIndex > -1) {
@@ -1413,7 +1502,7 @@ function filterDashboard() {
                 quoteItems.push({ sku: sku, name: product.name, qty: qty, price: price }); 
             }
             renderQuotation(); 
-            document.getElementById('q-product-select').value = ''; 
+            document.getElementById('q-product-input').value = ''; 
             document.getElementById('q-qty').value = '1'; 
             document.getElementById('q-override-price').value = ''; 
         }
@@ -1490,16 +1579,14 @@ function printQuotation() {
                 
                 const filename = `銀鑫單據_${document.getElementById('q-quote-no').value}.pdf`;
 
-                // 👇 主要是這裡的設定修改了 👇
                 html2pdf().set({
-                    margin: [10, 10, 15, 10], // 設定 [上, 右, 下, 左] 的邊界，下方留 15mm 防止貼底
+                    margin: [10, 10, 15, 10], 
                     filename: filename, 
                     image: {type: 'jpeg', quality: 0.98},
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, // scale 降為 2，防手機記憶體不足閃退
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, 
                     jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // 啟動智慧分頁，不會把同一行對半切
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } 
                 }).from(pe).output('blob').then(function(pdfBlob) {
-                // 👆 修改區塊結束 👆
                 
                     pe.classList.remove('pdf-mode');
                     document.querySelectorAll('.no-print').forEach(el => el.style.display = ''); 
@@ -1530,11 +1617,12 @@ function printQuotation() {
             document.getElementById('q-quote-no').value = qNo; 
             document.getElementById('q-quote-date').value = d; 
             updatePrintView('print-quote-no', qNo); 
-            document.getElementById('print-date').innerText = d.replace(/-/g,'/'); 
+            updatePrintDate(d);
         }
 
         function updatePrintView(elementId, value) { document.getElementById(elementId).innerText = value || '_________________'; }
         function updatePrintDate(val) { document.getElementById('print-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; }
+        function updatePrintDatePO(val) { document.getElementById('print-po-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; }
 
         function saveQuotationToHistory() {
             const custName = document.getElementById('q-cust-name').value.trim(); 
@@ -1639,7 +1727,6 @@ function printQuotation() {
             });
             if(quoteHistory.length === 0) tbody.innerHTML = `<tr><td colspan="8" class="text-center">沒有歷史報價/銷貨紀錄</td></tr>`;
 
-            // 🟢 核心修復：動態生成「產出對帳單」的客戶下拉選單
             const stmtSelect = document.getElementById('stmt-customer');
             if (stmtSelect) {
                 stmtSelect.innerHTML = '<option value="">-- 選擇客戶 --</option>';
