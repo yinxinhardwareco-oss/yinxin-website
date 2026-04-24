@@ -900,16 +900,16 @@ function filterDashboard() {
             if(tabId === 'dashboard') { filterDashboard(); }
         }
 
-        // ==========================================
+// ==========================================
         // 📦 庫存管理核心
         // ==========================================
         function renderInventory() {
             const thead = document.getElementById('inventory-head');
             let thHTML = `<tr><th>型號</th><th>產品名稱</th>`;
-            if(currentRole !== 'wh') thHTML += `<th class="hide-on-mobile">進/銷價</th>`;
+            if(currentRole !== 'wh') thHTML += `<th>進/銷價</th>`; // 💡 移除了 hide-on-mobile
             thHTML += `<th class="text-center">目前庫存</th>`;
             if(currentRole !== 'wh') thHTML += `<th class="no-print">快速進銷作業</th>`;
-            if(currentRole !== 'wh') thHTML += `<th class="no-print text-center hide-on-mobile">管理</th>`;
+            if(currentRole !== 'wh') thHTML += `<th class="no-print text-center">管理</th>`; // 💡 移除了 hide-on-mobile
             thHTML += `</tr>`;
             thead.innerHTML = thHTML;
 
@@ -923,9 +923,9 @@ function filterDashboard() {
                 
                 if(currentRole !== 'wh') {
                     if(currentRole === 'sales') {
-                        trHTML += `<td class="hide-on-mobile" style="color: #64748b;">(權限隱藏) / $${item.price}</td>`;
+                        trHTML += `<td style="color: #64748b;">(權限隱藏) / $${item.price}</td>`; // 💡 移除了 hide-on-mobile
                     } else {
-                        trHTML += `<td class="hide-on-mobile" style="color: #64748b;">$${item.cost} / $${item.price}</td>`;
+                        trHTML += `<td style="color: #64748b;">$${item.cost} / $${item.price}</td>`; // 💡 移除了 hide-on-mobile
                     }
                 }
                 
@@ -935,12 +935,12 @@ function filterDashboard() {
                     trHTML += `
                         <td class="no-print">
                             <div class="stock-input-group">
-                                <input type="number" id="adj-${index}" value="1" min="1">
+                                <input type="number" id="adj-${index}" value="1" min="1" style="width: 50px;">
                                 <button class="btn btn-success btn-sm" onclick="adjustStock(${index}, 1)">進</button>
                                 <button class="btn btn-primary btn-sm" onclick="adjustStock(${index}, -1)">銷</button>
                             </div>
                         </td>
-                        <td class="no-print text-center hide-on-mobile">
+                        <td class="no-print text-center">
                             <button class="btn btn-outline btn-sm" onclick="deleteProduct(${index})">刪除</button>
                         </td>`;
                 }
