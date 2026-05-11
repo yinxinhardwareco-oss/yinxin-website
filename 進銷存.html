@@ -772,7 +772,7 @@ function generateStatementPDF() {
             const filename = `${custName}_${monthStr}對帳單.pdf`;
 
             html2pdf().set({
-                margin: [10, 10, 15, 10], 
+                margin: [10, 5, 15, 5], 
                 filename: filename, 
                 image: {type:'jpeg', quality: 0.98}, 
                 html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, 
