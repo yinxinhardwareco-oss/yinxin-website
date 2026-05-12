@@ -530,6 +530,17 @@
             /* 展開時隱藏把手，避免遮擋文字 */
             .side-nav:hover::after { opacity: 0 !important; visibility: hidden !important; }
         }
+        // 綁定電腦版選單的點擊開關 (Click to Toggle)
+        document.getElementById('side-menu').addEventListener('click', function(e) {
+            // 利用 offsetX 判斷：如果點擊位置超過選單本體的寬度，代表點到的是右側外掛的「把手」
+            if (e.offsetX > this.clientWidth) {
+                this.classList.toggle('desktop-open'); // 點一下展開，再點一下收回
+            } 
+            // 如果點擊的是裡面的超連結 <a>，就自動幫使用者收起選單
+            else if (e.target.tagName === 'A') {
+                this.classList.remove('desktop-open');
+            }
+        });
     </style>
 </head>
 
