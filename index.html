@@ -429,9 +429,9 @@
             }
         }
 
-       /* ==========================================================================
+/* ==========================================================================
            2. 平板橫向與電腦版專用 (螢幕寬度 >= 1025px)
-           目標：修正圖三的左側抽屜，加入滾動條，修復白字對比問題
+           目標：滑鼠懸停(Hover)滑出，並修復邊緣瘋狂抖動的 Bug
            ========================================================================== */
         @media (min-width: 1025px) {
             .side-nav {
@@ -447,7 +447,7 @@
                 max-height: 70vh !important;
                 padding: 15px 0 !important;
                 
-                /* 【關鍵修復】平時必須是 visible，才不會把外掛的把手「切掉」 */
+                /* 平時必須是 visible，才不會把外掛的把手「切掉」 */
                 overflow-y: visible !important; 
                 overflow-x: visible !important;
 
@@ -461,16 +461,14 @@
                 z-index: 9000 !important;
             }
 
-            /* 【關鍵修復】只有當滑鼠移入、選單展開時，才允許上下捲動 */
+            /* 當滑鼠移入、選單展開時，才允許上下捲動 */
             .side-nav:hover {
                 overflow-y: auto !important;
             }
 
-            /* 美化滾動條，工業風質感 */
             .side-nav::-webkit-scrollbar { width: 6px; }
             .side-nav::-webkit-scrollbar-thumb { background: rgba(58, 109, 194, 0.4); border-radius: 10px; }
 
-            /* 設定清楚的預設與 Hover 顏色 */
             .side-nav a {
                 display: block !important;
                 white-space: normal !important;
@@ -479,27 +477,26 @@
                 border-radius: 8px !important;
                 border: none !important;
                 background: transparent !important;
-                color: var(--text-dim-on-light) !important; /* 預設深灰色 */
+                color: var(--text-dim-on-light) !important; 
                 font-weight: 900 !important;
                 text-align: center !important;
                 transition: all 0.3s ease !important;
             }
             .side-nav a:hover, 
             .side-nav a.active {
-                background: var(--primary-color) !important; /* 藍底 */
-                color: #ffffff !important; /* 白字 */
+                background: var(--primary-color) !important; 
+                color: #ffffff !important; 
                 transform: translateX(4px) !important;
                 box-shadow: 0 4px 10px rgba(58, 109, 194, 0.25) !important;
             }
             
-            /* 往下捲動時：顯示側邊欄 (含右側把手) */
             body.show-floating-ui .side-nav {
                 transform: translateX(-100%) !important;
                 opacity: 1 !important; 
                 visibility: visible !important;
             }
 
-            /* 「▶ 產品欄」把手設計 */
+            /* 「▶ 產品欄」把手設計 (預設狀態) */
             .side-nav::after {
                 content: '▶ 產品欄';
                 position: absolute !important;
@@ -519,18 +516,26 @@
                 pointer-events: auto !important; 
                 white-space: nowrap !important; 
                 display: block !important;
+                
+                /* 【修復防抖動的關鍵 1】：收合時立刻出現 */
+                opacity: 1 !important;
+                visibility: visible !important;
+                transition: visibility 0s linear 0s, opacity 0.3s ease !important;
             }
 
-            /* 滑鼠移入時，側邊欄完整滑出 */
             body.show-floating-ui .side-nav:hover {
                 transform: translateX(0) !important;
                 box-shadow: 5px 5px 25px rgba(0,0,0,0.15) !important;
             }
             
-            /* 展開時隱藏把手，避免遮擋文字 */
-            .side-nav:hover::after { opacity: 0 !important; visibility: hidden !important; }
+            /* 【修復防抖動的關鍵 2】：展開時，等待 0.4 秒 (等選單滑完) 後再徹底隱藏把手 */
+            .side-nav:hover::after { 
+                opacity: 0 !important; 
+                visibility: hidden !important; 
+                transition: visibility 0s linear 0.4s, opacity 0.3s ease !important;
+            }
         }
-
+    </style>
     </style>
 </head>
 
@@ -1539,17 +1544,6 @@ async function submitForm(e) {
         document.getElementById('side-menu').addEventListener('click', function(e) {
             if (e.target.tagName === 'A' && window.innerWidth >= 769 && window.innerWidth <= 1024) {
                 this.classList.remove('tablet-open');
-            }
-        });
-        // 綁定電腦版選單的點擊開關 (Click to Toggle)
-        document.getElementById('side-menu').addEventListener('click', function(e) {
-            // 利用 offsetX 判斷：如果點擊位置超過選單本體的寬度，代表點到的是右側外掛的「把手」
-            if (e.offsetX > this.clientWidth) {
-                this.classList.toggle('desktop-open'); // 點一下展開，再點一下收回
-            } 
-            // 如果點擊的是裡面的超連結 <a>，就自動幫使用者收起選單
-            else if (e.target.tagName === 'A') {
-                this.classList.remove('desktop-open');
             }
         });
     </script>
