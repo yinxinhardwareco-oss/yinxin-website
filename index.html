@@ -353,16 +353,34 @@
         }
 
 /* ==========================================================================
-           1. 手機與平板專用：底部橫向滑動藥丸選單 (<= 1024px)
-           恢復你截圖裡原本漂亮的 UI，固定在懸浮聯絡按鈕上方
+           1. 手機與平板直向專用 (螢幕寬度 <= 1024px)
+           目標：維持圖一的完美狀態，並修正圖二(平板直向)的聯絡按鈕位置
            ========================================================================== */
         @media (max-width: 1024px) {
-            .tablet-menu-toggle { display: none !important; } /* 隱藏任何多餘的切換按鈕 */
+            /* --- A. 底部橫向聯絡按鈕 (修正圖二問題) --- */
+            .floating-contact-bar { 
+                display: flex !important; 
+                flex-direction: row !important; /* 強制橫向排列 */
+                bottom: 0 !important; 
+                right: 0 !important; 
+                left: 0 !important; 
+                background: rgba(255, 255, 255, 0.98) !important; 
+                padding: 10px 0 15px 0 !important; 
+                justify-content: center !important; 
+                gap: 20px !important; 
+                width: 100% !important; 
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1) !important; 
+                transform: translateY(100px) !important; /* 預設先往下藏 */
+                transition: all 0.5s ease !important;
+            }
+            .float-btn { width: 45px !important; height: 45px !important; }
+            .float-btn svg { width: 22px !important; height: 22px !important; }
 
+            /* --- B. 底部橫向藥丸選單 (維持圖一優良設計) --- */
             .side-nav {
                 position: fixed !important;
                 top: auto !important;
-                bottom: 90px !important; /* 剛好放在聯絡我們四顆按鈕的上方 */
+                bottom: 75px !important; /* 剛好墊在聯絡按鈕上方 */
                 left: 0 !important;
                 right: 0 !important;
                 width: 100% !important;
@@ -373,51 +391,47 @@
                 border-radius: 0 !important;
                 box-shadow: 0 -4px 15px rgba(0,0,0,0.05) !important;
                 justify-content: flex-start !important;
-                -webkit-overflow-scrolling: touch !important; /* 讓手機滑動順暢 */
+                -webkit-overflow-scrolling: touch !important; /* 手機滑動順暢 */
                 z-index: 8900 !important;
-                
-                /* 預設先隱藏，等往下捲動才浮現 */
-                transform: translateY(20px) !important;
+                transform: translateY(100px) !important; /* 預設先往下藏 */
                 opacity: 0 !important;
                 visibility: hidden !important;
                 transition: all 0.4s ease !important;
             }
 
-            /* 網頁往下捲動時，滑入顯示底部選單 */
-            body.show-floating-ui .side-nav {
-                transform: translateY(0) !important;
-                opacity: 1 !important;
-                visibility: visible !important;
-            }
+            /* 隱藏電腦版才有的「產品欄」提示字 */
+            .side-nav::after { display: none !important; content: none !important; }
 
-            /* 選單內的藥丸形狀按鈕樣式 (符合你的截圖) */
+            /* 選單內的藥丸形狀按鈕樣式 */
             .side-nav a {
                 display: inline-block !important;
-                flex-shrink: 0 !important; /* 避免文字被擠壓換行 */
+                flex-shrink: 0 !important; 
                 background: #f8fbff !important;
                 border: 1px solid #e1e8f0 !important;
                 padding: 8px 18px !important;
                 margin-right: 10px !important;
-                border-radius: 30px !important; /* 圓角藥丸狀 */
+                border-radius: 30px !important; 
                 color: var(--text-on-light) !important;
                 font-size: 14px !important;
-                box-shadow: none !important;
-                transform: none !important;
             }
-            
-            .side-nav a:hover {
+            .side-nav a:hover, .side-nav a.active {
                 background: var(--primary-color) !important;
                 color: #fff !important;
                 border-color: var(--primary-color) !important;
             }
 
-            /* 在手機版徹底隱藏電腦版的「產品欄」提示字 */
-            .side-nav::after { display: none !important; content: none !important; }
+            /* 網頁往下捲動時，一起滑出聯絡按鈕與選單 */
+            body.show-floating-ui .side-nav,
+            body.show-floating-ui .floating-contact-bar {
+                transform: translateY(0) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
         }
 
         /* ==========================================================================
-           2. 純電腦版專用：左側抽屜與外掛標籤 (>= 1025px)
-           嚴格限制只在電腦上作用，絕對不干擾手機排版
+           2. 平板橫向與電腦版專用 (螢幕寬度 >= 1025px)
+           目標：修正圖三的左側抽屜，加入滾動條，修復白字對比問題
            ========================================================================== */
         @media (min-width: 1025px) {
             .side-nav {
@@ -429,7 +443,14 @@
                 top: 120px !important;
                 bottom: auto !important;
                 width: 200px !important;
-                transform: translateX(-100%) !important; /* 預設隱藏在畫面外 */
+                
+                /* 【修復無法滾動】限制高度為畫面 70%，超過就出現滾動條 */
+                max-height: 70vh !important;
+                padding: 15px 0 !important;
+                overflow-y: auto !important; 
+                overflow-x: visible !important;
+
+                transform: translateX(-100%) !important; 
                 opacity: 0 !important;
                 visibility: hidden !important;
                 border-radius: 0 15px 15px 0 !important;
@@ -437,16 +458,32 @@
                 background: rgba(255, 255, 255, 0.95) !important;
                 transition: transform 0.4s ease, opacity 0.4s ease !important;
                 z-index: 9000 !important;
-                overflow: visible !important; 
             }
 
+            /* 美化滾動條，工業風質感 */
+            .side-nav::-webkit-scrollbar { width: 6px; }
+            .side-nav::-webkit-scrollbar-thumb { background: rgba(58, 109, 194, 0.4); border-radius: 10px; }
+
+            /* 【修復字體翻白】設定清楚的預設與 Hover 顏色 */
             .side-nav a {
                 display: block !important;
                 white-space: normal !important;
-                margin-right: 0 !important;
-                border-radius: 15px !important;
+                margin: 4px 12px !important;
+                padding: 10px 15px !important;
+                border-radius: 8px !important;
                 border: none !important;
                 background: transparent !important;
+                color: var(--text-dim-on-light) !important; /* 預設深灰色 */
+                font-weight: 900 !important;
+                text-align: center !important;
+                transition: all 0.3s ease !important;
+            }
+            .side-nav a:hover, 
+            .side-nav a.active {
+                background: var(--primary-color) !important; /* 藍底 */
+                color: #ffffff !important; /* 白字 */
+                transform: translateX(4px) !important;
+                box-shadow: 0 4px 10px rgba(58, 109, 194, 0.25) !important;
             }
             
             /* 往下捲動時：顯示側邊欄 (含右側把手) */
@@ -456,7 +493,7 @@
                 visibility: visible !important;
             }
 
-            /* 電腦版左側專用：「▶ 產品欄」把手設計 */
+            /* 「▶ 產品欄」把手設計 */
             .side-nav::after {
                 content: '▶ 產品欄';
                 position: absolute !important;
@@ -474,7 +511,6 @@
                 box-shadow: 4px 2px 10px rgba(0,0,0,0.08) !important; 
                 cursor: pointer !important;
                 pointer-events: auto !important; 
-                transition: opacity 0.3s ease, visibility 0.3s ease !important;
                 white-space: nowrap !important; 
                 display: block !important;
             }
@@ -486,10 +522,7 @@
             }
             
             /* 展開時隱藏把手，避免遮擋文字 */
-            .side-nav:hover::after {
-                opacity: 0 !important; 
-                visibility: hidden !important;
-            }
+            .side-nav:hover::after { opacity: 0 !important; visibility: hidden !important; }
         }
     </style>
 </head>
