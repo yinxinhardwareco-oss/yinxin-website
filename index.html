@@ -352,86 +352,82 @@
              .zoom-hint::after { content: " (可使用滑鼠滾輪縮放，按住拖曳)"; }
         }
 
-        /* ==========================================
-           ★ 平板專用：漢堡選單樣式 (769px ~ 1024px)
-           ========================================== */
-        .tablet-menu-toggle {
-            display: none; /* 預設隱藏，手機與電腦不顯示 */
-            position: fixed;
-            left: 20px;
-            top: 110px;
-            z-index: 9001;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4);
-            transition: 0.3s;
-            opacity: 0;
-            visibility: hidden;
-        }
-        .show-floating-ui .tablet-menu-toggle {
-            opacity: 1;
-            visibility: visible;
-        }
-        .tablet-menu-toggle:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        /* 當螢幕為平板尺寸時的覆寫 */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .side-nav {
-                transform: translateX(-150%) !important; /* 預設隱藏在畫面左外側 */
-                top: 165px !important; /* 選單位置稍微下移，避開按鈕 */
-                opacity: 0 !important;
-                visibility: hidden !important;
-                transition: transform 0.4s ease, opacity 0.4s ease !important;
-            }
-            .side-nav.tablet-open {
-                transform: translateX(0) !important; /* 點擊後滑入 */
-                opacity: 1 !important;
-                visibility: visible !important;
-            }
-            .tablet-menu-toggle {
-                display: block !important; /* 顯示漢堡按鈕 */
-            }
-        }
-        /* =========================================
-           行動裝置/平板專用 (小於等於 768px)
-           ========================================= */
-        @media (max-width: 768px) {
+/* ==========================================================================
+           1. 手機與平板專用樣式 (螢幕寬度 <= 1024px)
+           恢復原版邏輯：預設隱藏，點擊按鈕後才加載 .tablet-open 展開
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            /* 側邊選單本體 */
             .side-nav {
                 left: 0 !important;
                 right: auto !important;
-                transform: translateX(-150%) !important; /* 預設隱藏在畫面左外側 */
-                top: 165px !important; /* 選單位置稍微下移，避開按鈕 */
+                width: 200px !important;
+                transform: translateX(-150%) !important; /* 完全藏在左側外 */
+                top: 165px !important;
                 opacity: 0 !important;
                 visibility: hidden !important;
                 transition: transform 0.4s ease, opacity 0.4s ease !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.15) !important;
+                z-index: 9000 !important;
             }
+
+            /* 當 JS 觸發點擊按鈕時增加的 Class */
             .side-nav.tablet-open {
-                transform: translateX(0) !important; /* 點擊後滑入 */
+                transform: translateX(0) !important;
                 opacity: 1 !important;
                 visibility: visible !important;
             }
+
+            /* 漢堡選單按鈕 */
             .tablet-menu-toggle {
-                display: block !important; /* 顯示漢堡按鈕 */
+                display: block !important; /* 確保在平板/手機顯示 */
+                position: fixed;
+                left: 20px;
+                top: 110px;
+                z-index: 9001;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 30px;
+                font-size: 16px;
+                font-weight: 900;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4);
+                transition: 0.3s;
+                /* 配合你的 JS 捲動顯示邏輯 */
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            /* 當捲動到一定高度時顯示按鈕 */
+            .show-floating-ui .tablet-menu-toggle {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            /* 隱藏電腦版才有的「產品欄」文字提示 */
+            .side-nav::after {
+                display: none !important;
             }
         }
-        /* =========================================
-           電腦版專用：側邊欄滑鼠移入自動展開 (抽屜式) (大於等於 769px)
-           ========================================= */
-        @media (min-width: 769px) {
+
+        /* ==========================================================================
+           2. 電腦版專用樣式 (螢幕寬度 >= 1025px)
+           獨立抽屜邏輯：捲動後露出邊緣，滑鼠移入自動彈出
+           ========================================================================== */
+        @media (min-width: 1025px) {
+            /* 隱藏平板版的按鈕 */
+            .tablet-menu-toggle {
+                display: none !important;
+            }
+
             .side-nav {
-                left: 0; /* 靠左對齊 */
+                left: 0;
                 right: auto;
                 width: 200px;
-                /* 預設狀態：在最上方時完全藏在畫面左外側並隱藏 */
+                /* 預設狀態：在最上方時完全隱藏 */
                 transform: translateX(-150%);
                 opacity: 0;
                 visibility: hidden;
@@ -439,40 +435,41 @@
                 border: 1px solid rgba(58, 109, 194, 0.3);
                 transition: transform 0.4s ease, opacity 0.4s ease;
                 z-index: 9000;
+                background: rgba(255, 255, 255, 0.95);
             }
-            
-            /* 當網頁往下捲動 (觸發 .show-floating-ui) 時，顯示「收合狀態」 */
+
+            /* 捲動後露出 15% 邊緣 */
             body.show-floating-ui .side-nav {
-                transform: translateX(-85%); /* 留出 15% 的邊緣當作把手 */
-                opacity: 0.8; /* 微透明，不干擾視覺 */
+                transform: translateX(-85%);
+                opacity: 0.8;
                 visibility: visible;
             }
 
-            /* 建立視覺提示「▶ 產品欄」，固定在露出的邊緣 */
+            /* 提示文字把手 */
             .side-nav::after {
                 content: '▶ 產品欄';
                 position: absolute;
-                right: 8px; /* 貼近右側邊緣 */
+                right: 8px;
                 top: 50%;
                 transform: translateY(-50%);
                 font-size: 14px;
                 font-weight: 900;
                 color: var(--primary-color);
-                pointer-events: none; /* 讓滑鼠穿透，絕對不會阻擋任何點擊 */
-                transition: opacity 0.3s ease, visibility 0.3s ease;
-                white-space: nowrap; /* 確保文字不折行 */
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                white-space: nowrap;
             }
 
-            /* 當滑鼠移入時，選單完整向右滑出 */
+            /* 滑鼠移入展開 */
             body.show-floating-ui .side-nav:hover {
                 transform: translateX(0);
                 opacity: 1;
                 box-shadow: 5px 5px 25px rgba(0,0,0,0.15);
             }
-            
-            /* 展開時隱藏「產品欄」文字，避免蓋到裡面的超連結 */
+
+            /* 展開時消失文字，不擋點擊 */
             .side-nav:hover::after {
-                opacity: 0; 
+                opacity: 0;
                 visibility: hidden;
             }
         }
