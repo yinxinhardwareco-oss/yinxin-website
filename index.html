@@ -401,6 +401,71 @@
                 display: block !important; /* 顯示漢堡按鈕 */
             }
         }
+        /* =========================================
+           行動裝置/平板專用 (小於等於 768px)
+           ========================================= */
+        @media (max-width: 768px) {
+            .side-nav {
+                left: 0 !important;
+                right: auto !important;
+                transform: translateX(-150%) !important; /* 預設隱藏在畫面左外側 */
+                top: 165px !important; /* 選單位置稍微下移，避開按鈕 */
+                opacity: 0 !important;
+                visibility: hidden !important;
+                transition: transform 0.4s ease, opacity 0.4s ease !important;
+            }
+            .side-nav.tablet-open {
+                transform: translateX(0) !important; /* 點擊後滑入 */
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            .tablet-menu-toggle {
+                display: block !important; /* 顯示漢堡按鈕 */
+            }
+        }
+
+        /* =========================================
+           電腦版專用：側邊欄滑鼠移入自動展開 (抽屜式) (大於等於 769px)
+           ========================================= */
+        @media (min-width: 769px) {
+            .side-nav {
+                left: 0; /* 靠左對齊 */
+                right: auto;
+                width: 200px;
+                transform: translateX(-85%); /* 預設將 85% 的寬度藏在畫面外 */
+                opacity: 0.6; /* 預設些微透明，降低視覺干擾 */
+                border-radius: 0 15px 15px 0; /* 調整圓角，使其貼合左側邊界 */
+                border: 1px solid rgba(58, 109, 194, 0.3); /* 加上微弱的品牌色邊框 */
+                transition: transform 0.4s ease, opacity 0.4s ease;
+                visibility: visible; /* 確保不被上方隱藏 */
+            }
+            
+            /* 建立一個視覺提示，讓使用者知道左側有選單 */
+            .side-nav::after {
+                content: '▶ 選單';
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 13px;
+                font-weight: 900;
+                color: var(--primary-color);
+                pointer-events: none;
+                transition: 0.3s;
+            }
+
+            /* 當滑鼠移入時，選單完整向右滑出 */
+            .side-nav:hover {
+                transform: translateX(0);
+                opacity: 1;
+                box-shadow: 5px 5px 25px rgba(0,0,0,0.15);
+            }
+            
+            /* 展開時隱藏提示字 */
+            .side-nav:hover::after {
+                opacity: 0; 
+            }
+        }
     </style>
 </head>
 
