@@ -429,7 +429,7 @@
             }
         }
 
-        /* ==========================================================================
+       /* ==========================================================================
            2. 平板橫向與電腦版專用 (螢幕寬度 >= 1025px)
            目標：修正圖三的左側抽屜，加入滾動條，修復白字對比問題
            ========================================================================== */
@@ -444,10 +444,11 @@
                 bottom: auto !important;
                 width: 200px !important;
                 
-                /* 【修復無法滾動】限制高度為畫面 70%，超過就出現滾動條 */
                 max-height: 70vh !important;
                 padding: 15px 0 !important;
-                overflow-y: auto !important; 
+                
+                /* 【關鍵修復】平時必須是 visible，才不會把外掛的把手「切掉」 */
+                overflow-y: visible !important; 
                 overflow-x: visible !important;
 
                 transform: translateX(-100%) !important; 
@@ -460,11 +461,16 @@
                 z-index: 9000 !important;
             }
 
+            /* 【關鍵修復】只有當滑鼠移入、選單展開時，才允許上下捲動 */
+            .side-nav:hover {
+                overflow-y: auto !important;
+            }
+
             /* 美化滾動條，工業風質感 */
             .side-nav::-webkit-scrollbar { width: 6px; }
             .side-nav::-webkit-scrollbar-thumb { background: rgba(58, 109, 194, 0.4); border-radius: 10px; }
 
-            /* 【修復字體翻白】設定清楚的預設與 Hover 顏色 */
+            /* 設定清楚的預設與 Hover 顏色 */
             .side-nav a {
                 display: block !important;
                 white-space: normal !important;
