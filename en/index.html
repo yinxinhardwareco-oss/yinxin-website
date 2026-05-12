@@ -399,6 +399,107 @@
                 display: block !important; 
             }
         }
+        /* ==========================================================================
+           2. Tablet Landscape & Desktop (Width >= 1025px)
+           Target: Pure Click-to-Toggle Mode (Most Stable)
+           ========================================================================== */
+        @media (min-width: 1025px) {
+            /* Hide the old pseudo-handle */
+            .side-nav::after { display: none !important; }
+
+            .side-nav {
+                display: flex !important;
+                flex-direction: column !important;
+                position: fixed !important;
+                left: 0 !important; 
+                right: auto !important;
+                top: 120px !important;
+                bottom: auto !important;
+                width: 220px !important; /* Slightly wider for English text */
+                
+                max-height: 70vh !important;
+                padding: 15px 0 !important;
+                
+                /* Keep scrollable */
+                overflow-y: auto !important; 
+                overflow-x: hidden !important;
+
+                transform: translateX(-100%) !important; 
+                opacity: 0 !important;
+                visibility: hidden !important;
+                border-radius: 0 15px 15px 0 !important;
+                border: 1px solid rgba(58, 109, 194, 0.3) !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease !important;
+                z-index: 9000 !important;
+            }
+
+            /* Clicked state for Nav */
+            .side-nav.desktop-open {
+                transform: translateX(0) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                box-shadow: 5px 5px 25px rgba(0,0,0,0.15) !important;
+            }
+
+            .side-nav::-webkit-scrollbar { width: 6px; }
+            .side-nav::-webkit-scrollbar-thumb { background: rgba(58, 109, 194, 0.4); border-radius: 10px; }
+
+            .side-nav a {
+                display: block !important;
+                white-space: normal !important;
+                margin: 4px 12px !important;
+                padding: 10px 15px !important;
+                border-radius: 8px !important;
+                border: none !important;
+                background: transparent !important;
+                color: var(--text-dim-on-light) !important; 
+                font-weight: 900 !important;
+                text-align: center !important;
+                transition: all 0.3s ease !important;
+            }
+            .side-nav a:hover, 
+            .side-nav a.active {
+                background: var(--primary-color) !important; 
+                color: #ffffff !important; 
+                transform: translateX(4px) !important;
+                box-shadow: 0 4px 10px rgba(58, 109, 194, 0.25) !important;
+            }
+
+            /* Physical Toggle Button (Reusing tabletMenuBtn) */
+            .tablet-menu-toggle {
+                display: block !important;
+                position: fixed !important;
+                left: 0 !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                color: var(--primary-color) !important;
+                padding: 15px 12px !important;
+                font-size: 14px !important;
+                font-weight: 900 !important;
+                border: 1px solid rgba(58, 109, 194, 0.3) !important;
+                border-left: none !important;
+                border-radius: 0 10px 10px 0 !important;
+                box-shadow: 4px 2px 10px rgba(0,0,0,0.08) !important;
+                z-index: 9001 !important;
+                cursor: pointer !important;
+                transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+                opacity: 0; 
+                visibility: hidden;
+            }
+
+            body.show-floating-ui .tablet-menu-toggle {
+                opacity: 1; visibility: visible;
+            }
+
+            /* Shift button when open */
+            .tablet-menu-toggle.desktop-open-btn {
+                left: 220px !important; 
+                background: var(--primary-color) !important;
+                color: #ffffff !important;
+            }
+        }
     </style>
 </head>
 
@@ -1389,6 +1490,58 @@ async function submitForm(e) {
         document.getElementById('side-menu').addEventListener('click', function(e) {
             if (e.target.tagName === 'A' && window.innerWidth >= 769 && window.innerWidth <= 1024) {
                 this.classList.remove('tablet-open');
+            }
+        });
+        // ==========================================
+        // ★ Menu Control Logic (Shared across devices)
+        // ==========================================
+        const sideMenu = document.getElementById('side-menu');
+        const tabletBtn = document.getElementById('tabletMenuBtn');
+
+        // 1. Initial State: Set handle text for desktop
+        if(window.innerWidth >= 1025 && tabletBtn) {
+            tabletBtn.innerHTML = '▶ Categories';
+        }
+
+        // 2. Main Toggle Function
+        function toggleTabletMenu() {
+            if(window.innerWidth <= 1024) {
+                // Mobile/Tablet Logic
+                sideMenu.classList.toggle('tablet-open');
+            } else {
+                // Desktop Logic
+                sideMenu.classList.toggle('desktop-open');
+                tabletBtn.classList.toggle('desktop-open-btn');
+                
+                if(sideMenu.classList.contains('desktop-open')) {
+                    tabletBtn.innerHTML = '◀ Close Menu';
+                } else {
+                    tabletBtn.innerHTML = '▶ Categories';
+                }
+            }
+        }
+
+        // 3. Auto-close when clicking outside
+        document.addEventListener('click', function(e) {
+            if (sideMenu && tabletBtn && !sideMenu.contains(e.target) && !tabletBtn.contains(e.target)) {
+                sideMenu.classList.remove('desktop-open');
+                sideMenu.classList.remove('tablet-open');
+                if (tabletBtn) {
+                    tabletBtn.classList.remove('desktop-open-btn');
+                    if(window.innerWidth >= 1025) tabletBtn.innerHTML = '▶ Categories';
+                }
+            }
+        });
+
+        // 4. Auto-close when clicking a link
+        sideMenu.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                sideMenu.classList.remove('desktop-open');
+                sideMenu.classList.remove('tablet-open');
+                if (tabletBtn) {
+                    tabletBtn.classList.remove('desktop-open-btn');
+                    if(window.innerWidth >= 1025) tabletBtn.innerHTML = '▶ Categories';
+                }
             }
         });
     </script>
