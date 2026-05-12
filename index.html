@@ -353,124 +353,142 @@
         }
 
 /* ==========================================================================
-           1. 手機與平板專用樣式 (螢幕寬度 <= 1024px)
-           恢復原版邏輯：預設隱藏，點擊按鈕後才加載 .tablet-open 展開
+           1. 手機與平板專用：底部橫向滑動藥丸選單 (<= 1024px)
+           恢復你截圖裡原本漂亮的 UI，固定在懸浮聯絡按鈕上方
            ========================================================================== */
         @media (max-width: 1024px) {
-            /* 側邊選單本體 */
+            .tablet-menu-toggle { display: none !important; } /* 隱藏任何多餘的切換按鈕 */
+
             .side-nav {
+                position: fixed !important;
+                top: auto !important;
+                bottom: 90px !important; /* 剛好放在聯絡我們四顆按鈕的上方 */
                 left: 0 !important;
-                right: auto !important;
-                width: 200px !important;
-                transform: translateX(-150%) !important; /* 完全藏在左側外 */
-                top: 165px !important;
+                right: 0 !important;
+                width: 100% !important;
+                flex-direction: row !important; /* 橫向排列 */
+                overflow-x: auto !important; /* 允許橫向滑動 */
+                background: rgba(255, 255, 255, 0.98) !important;
+                padding: 10px 15px !important;
+                border-radius: 0 !important;
+                box-shadow: 0 -4px 15px rgba(0,0,0,0.05) !important;
+                justify-content: flex-start !important;
+                -webkit-overflow-scrolling: touch !important; /* 讓手機滑動順暢 */
+                z-index: 8900 !important;
+                
+                /* 預設先隱藏，等往下捲動才浮現 */
+                transform: translateY(20px) !important;
                 opacity: 0 !important;
                 visibility: hidden !important;
-                transition: transform 0.4s ease, opacity 0.4s ease !important;
-                background: rgba(255, 255, 255, 0.95) !important;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.15) !important;
-                z-index: 9000 !important;
+                transition: all 0.4s ease !important;
             }
 
-            /* 當 JS 觸發點擊按鈕時增加的 Class */
-            .side-nav.tablet-open {
-                transform: translateX(0) !important;
+            /* 網頁往下捲動時，滑入顯示底部選單 */
+            body.show-floating-ui .side-nav {
+                transform: translateY(0) !important;
                 opacity: 1 !important;
                 visibility: visible !important;
             }
 
-            /* 漢堡選單按鈕 */
-            .tablet-menu-toggle {
-                display: block !important; /* 確保在平板/手機顯示 */
-                position: fixed;
-                left: 20px;
-                top: 110px;
-                z-index: 9001;
-                background-color: var(--primary-color);
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 30px;
-                font-size: 16px;
-                font-weight: 900;
-                cursor: pointer;
-                box-shadow: 0 4px 15px rgba(58, 109, 194, 0.4);
-                transition: 0.3s;
-                /* 配合你的 JS 捲動顯示邏輯 */
-                opacity: 0;
-                visibility: hidden;
+            /* 選單內的藥丸形狀按鈕樣式 (符合你的截圖) */
+            .side-nav a {
+                display: inline-block !important;
+                flex-shrink: 0 !important; /* 避免文字被擠壓換行 */
+                background: #f8fbff !important;
+                border: 1px solid #e1e8f0 !important;
+                padding: 8px 18px !important;
+                margin-right: 10px !important;
+                border-radius: 30px !important; /* 圓角藥丸狀 */
+                color: var(--text-on-light) !important;
+                font-size: 14px !important;
+                box-shadow: none !important;
+                transform: none !important;
+            }
+            
+            .side-nav a:hover {
+                background: var(--primary-color) !important;
+                color: #fff !important;
+                border-color: var(--primary-color) !important;
             }
 
-            /* 當捲動到一定高度時顯示按鈕 */
-            .show-floating-ui .tablet-menu-toggle {
-                opacity: 1 !important;
-                visibility: visible !important;
-            }
-
-            /* 隱藏電腦版才有的「產品欄」文字提示 */
-            .side-nav::after {
-                display: none !important;
-            }
+            /* 在手機版徹底隱藏電腦版的「產品欄」提示字 */
+            .side-nav::after { display: none !important; content: none !important; }
         }
 
         /* ==========================================================================
-           2. 電腦版專用樣式 (螢幕寬度 >= 1025px)
-           獨立抽屜邏輯：捲動後露出邊緣，滑鼠移入自動彈出
+           2. 純電腦版專用：左側抽屜與外掛標籤 (>= 1025px)
+           嚴格限制只在電腦上作用，絕對不干擾手機排版
            ========================================================================== */
         @media (min-width: 1025px) {
-            /* 隱藏平板版的按鈕 */
-            .tablet-menu-toggle {
-                display: none !important;
-            }
-
             .side-nav {
-                left: 0;
-                right: auto;
-                width: 200px;
-                /* 預設狀態：在最上方時完全隱藏 */
-                transform: translateX(-150%);
-                opacity: 0;
-                visibility: hidden;
-                border-radius: 0 15px 15px 0;
-                border: 1px solid rgba(58, 109, 194, 0.3);
-                transition: transform 0.4s ease, opacity 0.4s ease;
-                z-index: 9000;
-                background: rgba(255, 255, 255, 0.95);
+                display: flex !important;
+                flex-direction: column !important;
+                position: fixed !important;
+                left: 0 !important; 
+                right: auto !important;
+                top: 120px !important;
+                bottom: auto !important;
+                width: 200px !important;
+                transform: translateX(-100%) !important; /* 預設隱藏在畫面外 */
+                opacity: 0 !important;
+                visibility: hidden !important;
+                border-radius: 0 15px 15px 0 !important;
+                border: 1px solid rgba(58, 109, 194, 0.3) !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                transition: transform 0.4s ease, opacity 0.4s ease !important;
+                z-index: 9000 !important;
+                overflow: visible !important; 
             }
 
-            /* 捲動後露出 15% 邊緣 */
+            .side-nav a {
+                display: block !important;
+                white-space: normal !important;
+                margin-right: 0 !important;
+                border-radius: 15px !important;
+                border: none !important;
+                background: transparent !important;
+            }
+            
+            /* 往下捲動時：顯示側邊欄 (含右側把手) */
             body.show-floating-ui .side-nav {
-                transform: translateX(-85%);
-                opacity: 0.8;
-                visibility: visible;
+                transform: translateX(-100%) !important;
+                opacity: 1 !important; 
+                visibility: visible !important;
             }
 
-            /* 提示文字把手 */
+            /* 電腦版左側專用：「▶ 產品欄」把手設計 */
             .side-nav::after {
                 content: '▶ 產品欄';
-                position: absolute;
-                right: 8px;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 14px;
-                font-weight: 900;
-                color: var(--primary-color);
-                pointer-events: none;
-                transition: opacity 0.3s ease;
-                white-space: nowrap;
+                position: absolute !important;
+                left: 100% !important; 
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                padding: 12px 10px !important;
+                font-size: 15px !important;
+                font-weight: 900 !important;
+                color: var(--primary-color) !important;
+                border: 1px solid rgba(58, 109, 194, 0.3) !important;
+                border-left: none !important; 
+                border-radius: 0 10px 10px 0 !important; 
+                box-shadow: 4px 2px 10px rgba(0,0,0,0.08) !important; 
+                cursor: pointer !important;
+                pointer-events: auto !important; 
+                transition: opacity 0.3s ease, visibility 0.3s ease !important;
+                white-space: nowrap !important; 
+                display: block !important;
             }
 
-            /* 滑鼠移入展開 */
+            /* 滑鼠移入時，側邊欄完整滑出 */
             body.show-floating-ui .side-nav:hover {
-                transform: translateX(0);
-                opacity: 1;
-                box-shadow: 5px 5px 25px rgba(0,0,0,0.15);
+                transform: translateX(0) !important;
+                box-shadow: 5px 5px 25px rgba(0,0,0,0.15) !important;
             }
-
-            /* 展開時消失文字，不擋點擊 */
+            
+            /* 展開時隱藏把手，避免遮擋文字 */
             .side-nav:hover::after {
-                opacity: 0;
-                visibility: hidden;
+                opacity: 0 !important; 
+                visibility: hidden !important;
             }
         }
     </style>
