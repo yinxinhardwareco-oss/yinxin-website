@@ -423,7 +423,6 @@
                 display: block !important; /* 顯示漢堡按鈕 */
             }
         }
-
         /* =========================================
            電腦版專用：側邊欄滑鼠移入自動展開 (抽屜式) (大於等於 769px)
            ========================================= */
@@ -432,38 +431,49 @@
                 left: 0; /* 靠左對齊 */
                 right: auto;
                 width: 200px;
-                transform: translateX(-85%); /* 預設將 85% 的寬度藏在畫面外 */
-                opacity: 0.6; /* 預設些微透明，降低視覺干擾 */
-                border-radius: 0 15px 15px 0; /* 調整圓角，使其貼合左側邊界 */
-                border: 1px solid rgba(58, 109, 194, 0.3); /* 加上微弱的品牌色邊框 */
+                /* 預設狀態：在最上方時完全藏在畫面左外側並隱藏 */
+                transform: translateX(-150%);
+                opacity: 0;
+                visibility: hidden;
+                border-radius: 0 15px 15px 0;
+                border: 1px solid rgba(58, 109, 194, 0.3);
                 transition: transform 0.4s ease, opacity 0.4s ease;
-                visibility: visible; /* 確保不被上方隱藏 */
+                z-index: 9000;
             }
             
-            /* 建立一個視覺提示，讓使用者知道左側有選單 */
+            /* 當網頁往下捲動 (觸發 .show-floating-ui) 時，顯示「收合狀態」 */
+            body.show-floating-ui .side-nav {
+                transform: translateX(-85%); /* 留出 15% 的邊緣當作把手 */
+                opacity: 0.8; /* 微透明，不干擾視覺 */
+                visibility: visible;
+            }
+
+            /* 建立視覺提示「▶ 產品欄」，固定在露出的邊緣 */
             .side-nav::after {
-                content: '▶ 選單';
+                content: '▶ 產品欄';
                 position: absolute;
-                right: 10px;
+                right: 8px; /* 貼近右側邊緣 */
                 top: 50%;
                 transform: translateY(-50%);
-                font-size: 13px;
+                font-size: 14px;
                 font-weight: 900;
                 color: var(--primary-color);
-                pointer-events: none;
-                transition: 0.3s;
+                pointer-events: none; /* 讓滑鼠穿透，絕對不會阻擋任何點擊 */
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+                white-space: nowrap; /* 確保文字不折行 */
             }
 
             /* 當滑鼠移入時，選單完整向右滑出 */
-            .side-nav:hover {
+            body.show-floating-ui .side-nav:hover {
                 transform: translateX(0);
                 opacity: 1;
                 box-shadow: 5px 5px 25px rgba(0,0,0,0.15);
             }
             
-            /* 展開時隱藏提示字 */
+            /* 展開時隱藏「產品欄」文字，避免蓋到裡面的超連結 */
             .side-nav:hover::after {
                 opacity: 0; 
+                visibility: hidden;
             }
         }
     </style>
