@@ -532,6 +532,105 @@
                 color: #ffffff !important;
             }
         }
+/* ==========================================================================
+           首頁動態圖片跑馬燈 (Image Marquee)
+           ========================================================================== */
+        .marquee-section {
+            padding: 60px 0;
+            overflow: hidden;
+            background: #f8fbff;
+            border-top: 1px dashed rgba(58, 109, 194, 0.3);
+        }
+        .marquee-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary-dark);
+            margin-bottom: 40px;
+        }
+        .marquee-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* 上下行距 */
+        }
+        .marquee-row {
+            display: flex;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            overflow: hidden;
+        }
+        .marquee-content {
+            display: flex;
+            gap: 25px;
+            width: max-content;
+            padding: 10px 0;
+        }
+        
+        /* 單一產品卡片設定 */
+        .marquee-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 220px; /* 固定寬度讓輪播整齊 */
+            height: 200px;
+            background: #ffffff;
+            border: 1px solid #e1e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .marquee-item img {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            transition: 0.3s;
+        }
+        .marquee-item span {
+            margin-top: 15px;
+            font-weight: 900;
+            font-size: 16px;
+            color: var(--text-dim-on-light);
+            transition: 0.3s;
+        }
+        
+        /* 滑鼠懸停效果：框線變色、圖片微放大、文字變藍 */
+        .marquee-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--hover-glow-light);
+            transform: translateY(-5px);
+        }
+        .marquee-item:hover img {
+            transform: scale(1.1);
+        }
+        .marquee-item:hover span {
+            color: var(--primary-color);
+        }
+
+        /* 跑馬燈動畫 */
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+
+        /* 速度調整 (數字越小越快) */
+        .marquee-row.left .marquee-content { animation: scrollLeft 40s linear infinite; }
+        .marquee-row.right .marquee-content { animation: scrollRight 40s linear infinite; }
+        
+        /* 滑鼠移入暫停，方便點擊 */
+        .marquee-row:hover .marquee-content { animation-play-state: paused; }
+
+        /* 手機版縮小尺寸 */
+        @media (max-width: 768px) {
+            .marquee-section { padding: 40px 0; }
+            .marquee-title { font-size: 22px; margin-bottom: 20px; }
+            .marquee-item { width: 160px; height: 160px; }
+            .marquee-item img { width: 90px; height: 90px; }
+            .marquee-item span { font-size: 14px; margin-top: 10px; }
+        }
     </style>
 </head>
 
@@ -589,6 +688,71 @@
               </div>
             </div>
         </section>
+<!-- 首頁圖片跑馬燈區塊 開始 -->
+        <section class="marquee-section">
+            <div class="container">
+                <h2 class="marquee-title">熱銷產品快速導覽</h2>
+            </div>
+            <div class="marquee-container">
+                
+                <!-- 第一行：向左跑 -->
+                <div class="marquee-row left">
+                    <div class="marquee-content js-marquee-track">
+                        <!-- onclick="goToProduct('分頁ID', '目標區塊ID')" -->
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-a')">
+                            <img src="a/a1.png" onerror="this.src='logo.png'"><span>平面把手</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('elec', 'elec-sec-sw-a')">
+                            <img src="sw-a/sw-a1.png" onerror="this.src='logo.png'"><span>大燈開關</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-f')">
+                            <img src="f/f1.png" onerror="this.src='logo.png'"><span>工業鉸鏈</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('elec', 'elec-sec-sw-e')">
+                            <img src="sw-e/sw-e1.png" onerror="this.src='logo.png'"><span>點火啟動開關</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-g')">
+                            <img src="g/g7.png" onerror="this.src='logo.png'"><span>高精密圓頭鎖</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('elec', 'elec-sec-sw-h')">
+                            <img src="sw-h/sw-h1.png" onerror="this.src='logo.png'"><span>防水搖頭開關</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-h')">
+                            <img src="h/h1.png" onerror="this.src='logo.png'"><span>工業搭扣</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第二行：向右跑 -->
+                <div class="marquee-row right">
+                    <div class="marquee-content js-marquee-track">
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-i')">
+                            <img src="i/i1.png" onerror="this.src='logo.png'"><span>萬向底盤腳座</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('elec', 'elec-sec-sw-b')">
+                            <img src="sw-b/sw-b1.png" onerror="this.src='logo.png'"><span>工作燈</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-m')">
+                            <img src="m/m1.png" onerror="this.src='logo.png'"><span>鋁擠型專區</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('elec', 'elec-sec-sw-f')">
+                            <img src="sw-f/sw-f1.png" onerror="this.src='logo.png'"><span>堆高機配件</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-c')">
+                            <img src="c/c1.png" onerror="this.src='logo.png'"><span>五金配件</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('elec', 'elec-sec-sw-g')">
+                            <img src="sw-g/sw-g1.png" onerror="this.src='logo.png'"><span>推拉開關</span>
+                        </div>
+                        <div class="marquee-item" onclick="goToProduct('mech', 'mech-sec-l')">
+                            <img src="l/l1.png" onerror="this.src='logo.png'"><span>不鏽鋼五金</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- 首頁圖片跑馬燈區塊 結束 -->
     </main>
 
     <main id="page-mech" class="page-content">
@@ -1587,6 +1751,48 @@ async function submitForm(e) {
                     if(window.innerWidth >= 1025) tabletBtn.innerHTML = '▶ 產品欄';
                 }
             }
+        });
+// ==========================================================================
+        // ★ 核心功能：跨頁面跳轉與定位 (SPA Routing & Smooth Scroll)
+        // ==========================================================================
+        function goToProduct(pageId, sectionId) {
+            // 1. 切換分頁 (呼叫原本的函式)
+            switchPage(pageId);
+            
+            // 2. 延遲 100 毫秒，等 DOM 渲染完畢後再計算位置滾動
+            setTimeout(() => {
+                const targetElement = document.getElementById(sectionId);
+                if (targetElement) {
+                    // 扣除 Header 高度，避免標題被上方導覽列擋住
+                    const headerOffset = 100; 
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                    
+                    // 3. 給目標區塊一個背景高亮，提示使用者已經跳轉到這裡
+                    targetElement.style.transition = "background-color 0.5s ease";
+                    targetElement.style.backgroundColor = "rgba(58, 109, 194, 0.15)";
+                    setTimeout(() => {
+                        targetElement.style.backgroundColor = "transparent";
+                    }, 1500);
+                }
+            }, 100); 
+        }
+
+        // ==========================================================================
+        // 跑馬燈無縫無限循環邏輯
+        // ==========================================================================
+        window.addEventListener('DOMContentLoaded', () => {
+            const marqueeTracks = document.querySelectorAll('.js-marquee-track');
+            marqueeTracks.forEach(track => {
+                // 將內容完整複製一份接在後方，配合 CSS 的 translateX(-50%) 達到無限循環
+                const cloneContent = track.innerHTML;
+                track.innerHTML += cloneContent;
+            });
         });
     </script>
 </body>
