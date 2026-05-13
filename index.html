@@ -8,7 +8,7 @@
 
     <meta name="description" content="銀鑫有限公司位在彰化伸港，專業供應高品質工業五金與電控配件。現貨供應：點火啟動開關、工業鉸鏈(丁雙)、防水搖頭開關、堆高機配件與精密鑄造件。規格齊全，油封及油壓相關零件之買賣，販售產品種類多元，包括油壓油封、空壓油封、防塵油封、鐵氟龍墊片、O型環等產品，以最齊全的產品及專業的知識來解決顧客的問題。">
 
-    <meta name="keywords" content="銀鑫有限公司, 工業五金, 彰化五金, 骨架旋轉油封, 白鐵把手, 五金配件, 冷凍把手, 取手, 鉸鍊,NOK,VALQUA,Hallite,SAKAGAMI,五金把手,O型環,橡膠,鐵氟龍,電木,耐磨環, 圓頭鎖, 搭扣, 腳座, 檔片, 槍形把手, 大燈開關, 工作燈, 防水開關, 啟接開關, 堆高機配件, 搖頭開關, 調光開關, 伸港五金行, 堆高機, 機械, 工業, 電控, 精密, 油封, 防漏, 老化, 橡膠, 家電, 電風扇, 遙控風扇, DC馬達風扇, 彰化油封, 油封, O型環, 電木, 耐磨片, 鐵氟龍, 機械零件, NOK,VALQUA,Hallite,SAKAGAMI阪上,骨架旋轉油封,橡膠, 堆高機, 怪手, 吊車, 山貓, 高空車, 機械, 工業, 油壓">
+    <meta name="keywords" content="銀鑫有限公司, 工業五金, 彰化五金, 骨架旋轉油封, 白鐵把手, 五金配件, 冷凍把手, 取手, 鉸鍊,NOK,VALQUA,Hallite,SAKAGAMI,五金把手,O型環,橡膠,鐵氟龍,電木,耐磨環, 圓頭鎖, 搭扣, 腳座, 檔片, 槍形把手, 大燈開關, 工作燈, 防水開關, 啟接開關, 堆高機配件, 搖頭開關, 調光開關, 伸港五金行, 堆高機, 怪手, 吊車, 山貓, 高空車, 機械, 工業, 油壓">
 
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="shortcut icon" href="logo.png">
@@ -105,19 +105,6 @@
         .home-btn-group { margin-top: 150px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
         .hero-btn { background-color: var(--primary-color); color: #ffffff; padding: 18px 45px; font-size: 20px; border-radius: 6px; font-weight: 900; cursor: pointer; border: none; box-shadow: 0 10px 25px rgba(58, 109, 194, 0.4); transition: 0.3s; }
         .hero-btn:hover { background-color: var(--primary-dark); transform: translateY(-3px); }
-
-        /* 產品展示設計 */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px; margin-top: 40px; }
-        .product-card { background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #e1e8f0; transition: 0.4s; cursor: pointer; position: relative; }
-        .product-card::before, .product-card::after { content: ''; position: absolute; width: 20px; height: 20px; border-color: var(--primary-color); transition: 0.4s; opacity: 0.3; }
-        .product-card::before { top: 0; left: 0; border-top: 3px solid; border-left: 3px solid; }
-        .product-card::after { bottom: 0; right: 0; border-bottom: 3px solid; border-right: 3px solid; }
-        .product-card:hover::before, .product-card:hover::after { width: 100%; height: 100%; opacity: 1; border-width: 1px; z-index: 10; }
-        .product-card:hover { transform: translateY(-10px); box-shadow: var(--hover-glow-light); }
-        .card-img { height: 260px; padding: 30px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f0f0f0; background: #fff; }
-        .card-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .card-content { padding: 25px; text-align: center; }
-        .card-content h3 { font-size: 22px; font-weight: 900; color: #222; }
 
         .detail-section { padding: 80px 0; border-top: 1px dashed rgba(58, 109, 194, 0.3); }
         .detail-header { margin-bottom: 40px; border-left: 6px solid var(--primary-color); padding-left: 20px; }
@@ -709,7 +696,6 @@
                <a onclick="switchPage('home')">首頁</a> > <span>五金配件</span>
             </div>
         </section>
-        <div class="container"><div id="mech-grid" class="product-grid"></div></div>
         <div id="mech-detail" class="container"></div>
     </main>
 
@@ -724,7 +710,6 @@
                 <a onclick="switchPage('home')">首頁</a> > <span>電控開關</span>
             </div>
         </section>
-        <div class="container"><div id="elec-grid" class="product-grid"></div></div>
         <div id="elec-detail" class="container"></div>
     </main>
 
@@ -739,7 +724,6 @@
                 <a onclick="switchPage('home')">首頁</a> > <span>油封</span>
             </div>
         </section>
-        <div class="container"><div id="oil-grid" class="product-grid"></div></div>
         <div id="oil-detail" class="container"></div>
     </main>
 
@@ -753,7 +737,6 @@
                 <a onclick="switchPage('home')">首頁</a> > <span>油封修理包</span>
             </div>
         </section>
-        <div class="container"><div id="air-grid" class="product-grid"></div></div>
         <div id="air-detail" class="container"></div>
     </main>
 
@@ -1222,63 +1205,51 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-// ==========================================
-// 🌟 請把剛才複製的最新 GAS 網址貼到下面這裡
-const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
-// ==========================================
+        const CLOUD_API_URL = "https://script.google.com/macros/s/AKfycbxXX2i0KxaBLxpQR5OQmpoflAWuArNXvvRW0Jecm1bOeYfRCgwz8MfhpYQ-kcFAF0Fd/exec";
 
-async function submitForm(e) {
-    e.preventDefault();
-    
-    // 取得按鈕元件，用來做載入中的視覺效果
-    const submitBtn = e.target.querySelector('button') || e.target.querySelector('.submit-btn');
-    
-    // 抓取網頁表單上的內容
-    const company = document.getElementById('companyName').value.trim();
-    const contact = document.getElementById('contactName').value.trim();
-    const email = document.getElementById('contactEmail').value.trim();
-    const details = document.getElementById('inquiryDetails').value.trim();
+        async function submitForm(e) {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button') || e.target.querySelector('.submit-btn');
+            
+            const company = document.getElementById('companyName').value.trim();
+            const contact = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const details = document.getElementById('inquiryDetails').value.trim();
 
-    // 防呆檢查
-    if(!company || !contact || !email || !details) {
-        return alert("請填寫完整資訊後再送出，謝謝！");
-    }
+            if(!company || !contact || !email || !details) {
+                return alert("請填寫完整資訊後再送出，謝謝！");
+            }
 
-    // 變更按鈕狀態，防止重複點擊
-    submitBtn.disabled = true;
-    submitBtn.innerText = "⏳ 傳送中，請稍候...";
+            submitBtn.disabled = true;
+            submitBtn.innerText = "⏳ 傳送中，請稍候...";
 
-    try {
-        // 🚀 發送到最新的 GAS 後台觸發「存入試算表」與「寄送 Gmail」
-        await fetch(CLOUD_API_URL, {
-            method: 'POST',
-            mode: 'no-cors', // 使用 no-cors 確保發送不被瀏覽器攔截
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                sheet: "NewInquiry", // 這個標籤會觸發 GAS 裡的新版 Email 與寫入引擎
-                data: {
-                    name: `${company} / ${contact}`,
-                    tel: email, 
-                    content: details
-                }
-            })
-        });
+            try {
+                await fetch(CLOUD_API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        sheet: "NewInquiry",
+                        data: {
+                            name: `${company} / ${contact}`,
+                            tel: email, 
+                            content: details
+                        }
+                    })
+                });
 
-        // 成功後的提示
-        alert("✅ 謝謝您！我們已收到您的詢價資訊。\n系統已自動同步至銀鑫後台，並通知相關專人處理。");
-        
-        // 清空表單
-        document.getElementById('contactForm').reset();
+                alert("✅ 謝謝您！我們已收到您的詢價資訊。\n系統已自動同步至銀鑫後台，並通知相關專人處理。");
+                document.getElementById('contactForm').reset();
 
-    } catch (err) {
-        console.error(err);
-        alert("❌ 傳送失敗！請檢查網路，或直接撥打 (04)852-1867 與我們聯絡。");
-    } finally {
-        // 恢復按鈕狀態
-        submitBtn.disabled = false;
-        submitBtn.innerText = "送出詢價單";
-    }
-}
+            } catch (err) {
+                console.error(err);
+                alert("❌ 傳送失敗！請檢查網路，或直接撥打 (04)852-1867 與我們聯絡。");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "送出詢價單";
+            }
+        }
 
         function buildItemCard(id, desc, imgSrc, folder) {
             const isAdded = quoteCart.some(item => item.id === id);
@@ -1298,13 +1269,13 @@ async function submitForm(e) {
             `;
         }
 
-    function switchPage(id) {
+        function switchPage(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
             
             const sm = document.getElementById('side-menu');
             const tabletBtn = document.getElementById('tabletMenuBtn');
-            sm.classList.remove('tablet-open'); // 確保切換頁面時，選單是收起的狀態
+            sm.classList.remove('tablet-open'); 
             
             if(id === 'search') {
                 document.getElementById('page-search').classList.add('active');
@@ -1323,7 +1294,7 @@ async function submitForm(e) {
                 if(tabletBtn) tabletBtn.style.display = 'none';
             } else {
                 sm.style.display = 'flex';
-                if(tabletBtn) tabletBtn.style.display = ''; // 恢復 CSS 控制
+                if(tabletBtn) tabletBtn.style.display = ''; 
                 
                 let targetCats = [];
                 if (id === 'mech') targetCats = mechCats;
@@ -1339,7 +1310,7 @@ async function submitForm(e) {
         }
 
         // ==========================================
-        // MODIFIED: 圖片縮放與拖曳邏輯 (Zoom & Pan) - 修復版
+        // 圖片縮放與拖曳邏輯
         // ==========================================
         let scale = 1;
         let panning = false;
@@ -1376,9 +1347,7 @@ async function submitForm(e) {
         }
 
         function closeModal(e) {
-            // 如果是在拖曳後放開，不觸發關閉
             if(e && (e.target === imgContainer || e.target === modalImg) && isDragging) return;
-            // 點擊容器或圖片本身，用來觸發縮放，不關閉 Modal
             if(e && (e.target === imgContainer || e.target === modalImg)) return;
 
             document.getElementById('imageModal').classList.remove('show');
@@ -1388,13 +1357,12 @@ async function submitForm(e) {
         imgContainer.onclick = function(e) {
             e.stopPropagation();
             if(isDragging) {
-                isDragging = false; // 重置拖曳狀態
+                isDragging = false;
                 return;
             }
             
             if(scale === 1) {
                 scale = 2.5;
-                // 中心縮放，重置偏移量
                 pointX = 0;
                 pointY = 0;
             } else {
@@ -1405,20 +1373,12 @@ async function submitForm(e) {
 
         imgContainer.onwheel = function(e) {
             e.preventDefault();
-            
-            // 簡化縮放邏輯，維持從中心點縮放 (配合 CSS transform-origin: center)
             if (e.deltaY < 0) {
-                // 向上滾放大
                 scale *= 1.15;
             } else {
-                // 向下滾縮小
                 scale /= 1.15;
             }
-            
-            // 限制縮放範圍
             scale = Math.min(Math.max(1, scale), 5);
-            
-            // 如果縮回原大小，重置位置
             if (scale === 1) {
                 pointX = 0;
                 pointY = 0;
@@ -1445,13 +1405,12 @@ async function submitForm(e) {
         imgContainer.onmousemove = function(e) {
             if (!panning || scale === 1) return;
             e.preventDefault();
-            isDragging = true; // 標記正在拖曳
+            isDragging = true;
             pointX = e.clientX - startX;
             pointY = e.clientY - startY;
             setTransform();
         };
 
-        // 手機版觸控支援
         let initialDistance = null;
         let initialScale = 1;
 
@@ -1497,84 +1456,12 @@ async function submitForm(e) {
         imgContainer.addEventListener('touchend', function(e) {
             panning = false;
             initialDistance = null;
-            // 延遲重置拖曳狀態，避免觸發 click
             setTimeout(() => { isDragging = false; }, 50); 
         });
 
         // ==========================================
-        // 初始化渲染
+        // 搜尋功能
         // ==========================================
-        function initRender() {
-            const mg = document.getElementById('mech-grid');
-            const md = document.getElementById('mech-detail');
-            if(mg && md) {
-                mechCats.forEach(c => {
-                    mg.innerHTML += `<div class="product-card" onclick="location.href='#mech-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id === 'g' ? 'g7' : c.id + '1'}.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                    let items = '';
-                    for(let i=1; i<=c.count; i++) {
-                        let id = `${c.id}${i}`;
-                        let desc = mechDescriptions[id] || id;
-                        items += buildItemCard(id, desc, `${c.id}/${id}.png`, 'mech');
-                    }
-                    md.innerHTML += `<div id="mech-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-                });
-            }
-
-            const eg = document.getElementById('elec-grid');
-            const ed = document.getElementById('elec-detail');
-            if(eg && ed) {
-                elecCats.forEach(c => {
-                    eg.innerHTML += `<div class="product-card" onclick="location.href='#elec-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id}1.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                    let items = '';
-                    for(let i=1; i<=c.count; i++) {
-                        let id = `${c.id}${i}`;
-                        let desc = elecDescriptions[id] || id;
-                        items += buildItemCard(id, desc, `${c.id}/${id}.png`, 'elec');
-                    }
-                    ed.innerHTML += `<div id="elec-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-                });
-            }
-
-            const og = document.getElementById('oil-grid');
-            const od = document.getElementById('oil-detail');
-            if(og && od) {
-                oilCats.forEach(c => {
-                    og.innerHTML += `
-                        <div class="product-card" onclick="location.href='#oil-sec-${c.id}'">
-                            <div class="card-img">
-                                <img src="oil/${c.id}/${c.id}1.png" onerror="this.src='logo.png'">
-                            </div>
-                            <div class="card-content">
-                                <h3>${c.name}</h3>
-                            </div>
-                        </div>`;
-                    
-                    let items = '';
-                    for(let i=1; i<=c.count; i++) {
-                        let id = `${c.id}${i}`;
-                        let desc = oilDescriptions[id] || id;
-                        items += buildItemCard(id, desc, `oil/${c.id}/${id}.png`, 'oil');
-                    }
-                    od.innerHTML += `<div id="oil-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-                });
-            }
-
-            const ag = document.getElementById('air-grid');
-            const ad = document.getElementById('air-detail');
-            if(ag && ad) {
-                airCats.forEach(c => {
-                    ag.innerHTML += `<div class="product-card" onclick="location.href='#air-sec-${c.id}'"><div class="card-img"><img src="air/${c.id}/${c.id}0.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
-                    let items = '';
-                    for(let i=1; i<=c.count; i++) {
-                        let id = `${c.id}${i}`;
-                        let desc = airDescriptions[id] || id;
-                        items += buildItemCard(id, desc, `air/${c.id}/${id}.png`, 'air');
-                    }
-                    ad.innerHTML += `<div id="air-sec-${c.id}" class="detail-section"><div class="detail-header"><h3>${c.name}</h3></div><div class="items-grid">${items}</div></div>`;
-                });
-            }
-        }
-
         document.getElementById('searchInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 const query = this.value.toLowerCase().trim();
@@ -1626,43 +1513,20 @@ async function submitForm(e) {
             document.body.classList.toggle('show-floating-ui', window.scrollY > 400);
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initRender();
-            
-            const hash = window.location.hash;
-            if (hash) {
-                const targetPage = hash.replace('#page-', '');
-                const validPages = ['mech', 'elec', 'oil', 'air', 'home'];
-                if (validPages.includes(targetPage)) {
-                    switchPage(targetPage);
-                }
-            }
-        });
         // ==========================================
-        // ★ 平板漢堡選單專用邏輯
-        // ==========================================
-        function toggleTabletMenu() {
-            document.getElementById('side-menu').classList.toggle('tablet-open');
-        }
-        
-       // ==========================================
-        // ★ 全裝置共用的選單控制邏輯 (修正版)
+        // 平板與電腦選單切換控制邏輯
         // ==========================================
         const sideMenu = document.getElementById('side-menu');
         const tabletBtn = document.getElementById('tabletMenuBtn');
 
-        // 1. 初始化：電腦版時，將按鈕文字預設設為「▶ 產品欄」
         if(window.innerWidth >= 1025 && tabletBtn) {
             tabletBtn.innerHTML = '▶ 產品欄';
         }
 
-        // 2. 按鈕點擊主邏輯 (控制展開與收合)
         function toggleTabletMenu() {
             if(window.innerWidth <= 1024) {
-                // 手機與平板：恢復你原本的側邊滑出邏輯
                 sideMenu.classList.toggle('tablet-open');
             } else {
-                // 電腦版：展開選單、移動按鈕、切換文字
                 sideMenu.classList.toggle('desktop-open');
                 tabletBtn.classList.toggle('desktop-open-btn');
                 
@@ -1674,7 +1538,6 @@ async function submitForm(e) {
             }
         }
 
-        // 3. 點擊選單內的超連結 <a> 後，自動收合選單 (全裝置適用)
         sideMenu.addEventListener('click', function(e) {
             if (e.target.tagName === 'A') {
                 sideMenu.classList.remove('desktop-open');
@@ -1686,7 +1549,6 @@ async function submitForm(e) {
             }
         });
 
-        // 4. 點擊網頁空白處時，自動收合選單 (優化體驗)
         document.addEventListener('click', function(e) {
             if (!sideMenu.contains(e.target) && !tabletBtn.contains(e.target)) {
                 sideMenu.classList.remove('desktop-open');
@@ -1697,93 +1559,22 @@ async function submitForm(e) {
                 }
             }
         });
-// ==========================================================================
-        // ★ 自動抓取產品陣列，生成跑馬燈內容
-        // ==========================================================================
-        function initMarquee() {
-            const track1 = document.getElementById('marquee-track-1');
-            const track2 = document.getElementById('marquee-track-2');
-            if(!track1 || !track2) return;
 
-            let html1 = '';
-            let html2 = '';
-
-            // 1. 將五金與電控的分類全部合併成一個大陣列
-            const allCats = [];
-            if(typeof mechCats !== 'undefined') {
-                mechCats.forEach(c => allCats.push({ id: c.id, name: c.name, type: 'mech', img: `${c.id}/${c.id}1.png` }));
-            }
-            if(typeof elecCats !== 'undefined') {
-                elecCats.forEach(c => allCats.push({ id: c.id, name: c.name, type: 'elec', img: `${c.id}/${c.id}1.png` }));
-            }
-
-            // 2. 逐一生成卡片，並平均分配到第一行與第二行
-            allCats.forEach((c, index) => {
-                const cardHtml = `
-                    <div class="marquee-item" onclick="goToProduct('${c.type}', '${c.type}-sec-${c.id}')">
-                        <img src="${c.img}" onerror="this.src='logo.png'">
-                        <span>${c.name}</span>
-                    </div>
-                `;
-                
-                if (index % 2 === 0) {
-                    html1 += cardHtml; // 雙數放第一行
-                } else {
-                    html2 += cardHtml; // 單數放第二行
-                }
-            });
-
-            // 3. 寫入畫面，並複製一次自己以達到「無縫無限輪播」
-            track1.innerHTML = html1 + html1;
-            track2.innerHTML = html2 + html2;
-        }
-
-        // ==========================================================================
-        // ★ 核心功能：跨頁面跳轉與定位 (SPA Routing & Smooth Scroll)
-        // ==========================================================================
+        // ==========================================
+        // 跨頁面跳轉與定位 (點擊跑馬燈時觸發)
+        // ==========================================
         function goToProduct(pageId, sectionId) {
-            switchPage(pageId); // 切換頁面
+            switchPage(pageId); 
             
             setTimeout(() => {
                 const targetElement = document.getElementById(sectionId);
                 if (targetElement) {
-                    const headerOffset = 100; // 扣除上方導覽列的高度
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                    });
-                    
-                    // 背景短暫高亮提示
-                    targetElement.style.transition = "background-color 0.5s ease";
-                    targetElement.style.backgroundColor = "rgba(58, 109, 194, 0.15)";
-                    setTimeout(() => {
-                        targetElement.style.backgroundColor = "transparent";
-                    }, 1500);
-                }
-            }, 100); 
-        }
-
-        // 確保網頁載入後，自動執行跑馬燈生成
-        window.addEventListener('DOMContentLoaded', initMarquee);
-// ==========================================================================
-        // ★ 1. 跨頁面跳轉與定位 (點擊跑馬燈時觸發)
-        // ==========================================================================
-        function goToProduct(pageId, sectionId) {
-            switchPage(pageId); // 切換到對應的分頁
-            
-            setTimeout(() => {
-                const targetElement = document.getElementById(sectionId);
-                if (targetElement) {
-                    const headerOffset = 100; // 扣除上方導覽列高度
+                    const headerOffset = 100;
                     const elementPosition = targetElement.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     
                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
                     
-                    // 背景短暫高亮提示
                     targetElement.style.transition = "background-color 0.5s ease";
                     targetElement.style.backgroundColor = "rgba(58, 109, 194, 0.15)";
                     setTimeout(() => {
@@ -1793,9 +1584,9 @@ async function submitForm(e) {
             }, 100); 
         }
 
-        // ==========================================================================
-        // ★ 2. 自動生成跑馬燈 (抓取四大分類的所有產品)
-        // ==========================================================================
+        // ==========================================
+        // 自動生成首頁跑馬燈
+        // ==========================================
         function initMarquee() {
             const track1 = document.getElementById('marquee-track-1');
             const track2 = document.getElementById('marquee-track-2');
@@ -1805,24 +1596,19 @@ async function submitForm(e) {
             let html2 = '';
             const allCats = [];
 
-            // 抓取五金配件
             if(typeof mechCats !== 'undefined') {
-                mechCats.forEach(c => allCats.push({ id: c.id, name: c.name, type: 'mech', img: `${c.id}/${c.id}1.png` }));
+                mechCats.forEach(c => allCats.push({ id: c.id, name: c.name, type: 'mech', img: `${c.id}/${c.id === 'g' ? 'g7' : c.id + '1'}.png` }));
             }
-            // 抓取電控開關
             if(typeof elecCats !== 'undefined') {
                 elecCats.forEach(c => allCats.push({ id: c.id, name: c.name, type: 'elec', img: `${c.id}/${c.id}1.png` }));
             }
-            // 抓取油封產品 (注意圖片路徑)
             if(typeof oilCats !== 'undefined') {
                 oilCats.forEach(c => allCats.push({ id: c.id, name: c.name, type: 'oil', img: `oil/${c.id}/${c.id}1.png` }));
             }
-            // 抓取油封修理包 (注意圖片路徑)
             if(typeof airCats !== 'undefined') {
                 airCats.forEach(c => allCats.push({ id: c.id, name: c.name, type: 'air', img: `air/${c.id}/${c.id}0.png` }));
             }
 
-            // 逐一生成卡片，雙數放第一行，單數放第二行
             allCats.forEach((c, index) => {
                 const cardHtml = `
                     <div class="marquee-item" onclick="goToProduct('${c.type}', '${c.type}-sec-${c.id}')">
@@ -1834,21 +1620,17 @@ async function submitForm(e) {
                 else html2 += cardHtml;
             });
 
-            // 寫入畫面，並複製一次自己以達到「無縫無限輪播」
             track1.innerHTML = html1 + html1;
             track2.innerHTML = html2 + html2;
         }
 
-        // ==========================================================================
-        // ★ 3. 補回消失的產品渲染函式 (解決五金配件空白的問題)
-        // ==========================================================================
+        // ==========================================
+        // 渲染詳細產品列表 (已移除上方的圖片分類)
+        // ==========================================
         function initRender() {
-            // 渲染：五金配件
-            const mg = document.getElementById('mech-grid');
             const md = document.getElementById('mech-detail');
-            if(mg && md && typeof mechCats !== 'undefined') {
+            if(md && typeof mechCats !== 'undefined') {
                 mechCats.forEach(c => {
-                    mg.innerHTML += `<div class="product-card" onclick="location.href='#mech-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id}1.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
                     let items = '';
                     for(let i=1; i<=c.count; i++) {
                         let id = `${c.id}${i}`;
@@ -1859,12 +1641,9 @@ async function submitForm(e) {
                 });
             }
 
-            // 渲染：電控開關
-            const eg = document.getElementById('elec-grid');
             const ed = document.getElementById('elec-detail');
-            if(eg && ed && typeof elecCats !== 'undefined') {
+            if(ed && typeof elecCats !== 'undefined') {
                 elecCats.forEach(c => {
-                    eg.innerHTML += `<div class="product-card" onclick="location.href='#elec-sec-${c.id}'"><div class="card-img"><img src="${c.id}/${c.id}1.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
                     let items = '';
                     for(let i=1; i<=c.count; i++) {
                         let id = `${c.id}${i}`;
@@ -1875,12 +1654,9 @@ async function submitForm(e) {
                 });
             }
 
-            // 渲染：油封
-            const og = document.getElementById('oil-grid');
             const od = document.getElementById('oil-detail');
-            if(og && od && typeof oilCats !== 'undefined') {
+            if(od && typeof oilCats !== 'undefined') {
                 oilCats.forEach(c => {
-                    og.innerHTML += `<div class="product-card" onclick="location.href='#oil-sec-${c.id}'"><div class="card-img"><img src="oil/${c.id}/${c.id}1.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
                     let items = '';
                     for(let i=1; i<=c.count; i++) {
                         let id = `${c.id}${i}`;
@@ -1891,12 +1667,9 @@ async function submitForm(e) {
                 });
             }
 
-            // 渲染：油封修理包
-            const ag = document.getElementById('air-grid');
             const ad = document.getElementById('air-detail');
-            if(ag && ad && typeof airCats !== 'undefined') {
+            if(ad && typeof airCats !== 'undefined') {
                 airCats.forEach(c => {
-                    ag.innerHTML += `<div class="product-card" onclick="location.href='#air-sec-${c.id}'"><div class="card-img"><img src="air/${c.id}/${c.id}0.png" onerror="this.src='logo.png'"></div><div class="card-content"><h3>${c.name}</h3></div></div>`;
                     let items = '';
                     for(let i=1; i<=c.count; i++) {
                         let id = `${c.id}${i}`;
@@ -1908,12 +1681,12 @@ async function submitForm(e) {
             }
         }
 
-        // ==========================================================================
-        // ★ 4. 啟動所有功能
-        // ==========================================================================
+        // ==========================================
+        // 啟動所有功能
+        // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
-            initRender();  // 先把所有產品畫出來 (補回消失的五金區)
-            initMarquee(); // 再依據畫出來的產品，自動生成首頁的動態跑馬燈
+            initRender(); 
+            initMarquee(); 
             
             const hash = window.location.hash;
             if (hash) {
