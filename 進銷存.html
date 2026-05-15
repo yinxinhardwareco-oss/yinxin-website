@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>銀鑫進銷存系統 - 4.0 企業旗艦版</title>
+    <title>銀鑫進銷存系統 - 4.1 企業旗艦版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -147,8 +147,24 @@
             .hide-on-mobile { display: none; }
         }
 
-        /* 🖨️ 列印樣式覆寫 */
+            /* 🖨️ 列印樣式覆寫 */
         @media print {
+            /* === 1. 新增這段列印版面設定 === */
+            @page {
+                size: A4 portrait;
+                margin-top: 15mm;
+                margin-bottom: 15mm;
+
+                /* 下方正中央：顯示頁碼 */
+                @bottom-center {
+                    content: "第 " counter(page) " 頁 / 共 " counter(pages) " 頁";
+                    font-size: 12px;
+                    color: #64748b;
+                }
+                /* 註：右上角的單號，會由 JavaScript 動態寫入 */
+            }
+            /* ============================== */
+
             body { display: block !important; height: auto !important; overflow: visible !important; background: #fff; }
             .sidebar, .topbar { display: none !important; }
             .main-content { display: block !important; height: auto !important; overflow: visible !important; padding: 0 !important; }
@@ -1277,8 +1293,28 @@ function filterDashboard() {
                     }
                 }); 
             } else { 
-                window.print(); 
-            } 
+          /* === 動態將「採購單號」寫入右上角 === */
+          const currentPoNo = document.getElementById('p-po-no').value || '未建立單號';
+          let printStyle = document.getElementById('dynamic-print-style');
+          if (!printStyle) {
+              printStyle = document.createElement('style');
+              printStyle.id = 'dynamic-print-style';
+              document.head.appendChild(printStyle);
+          }
+          printStyle.innerHTML = `
+              @media print {
+                  @page {
+                      @top-right {
+                          content: "單號：${currentPoNo}";
+                          font-size: 12px;
+                          color: #64748b;
+                      }
+                  }
+              }
+          `;
+          /* =================================== */
+          window.print(); 
+      }
         }
 
         function editPurchaseRecord(index) { 
@@ -1606,8 +1642,28 @@ function printQuotation() {
                     }
                 }); 
             } else { 
-                window.print(); 
-            } 
+          /* === 動態將「報價單號」寫入右上角 === */
+          const currentQuoteNo = document.getElementById('q-quote-no').value || '未建立單號';
+          let printStyle = document.getElementById('dynamic-print-style');
+          if (!printStyle) {
+              printStyle = document.createElement('style');
+              printStyle.id = 'dynamic-print-style';
+              document.head.appendChild(printStyle);
+          }
+          printStyle.innerHTML = `
+              @media print {
+                  @page {
+                      @top-right {
+                          content: "單號：${currentQuoteNo}";
+                          font-size: 12px;
+                          color: #64748b;
+                      }
+                  }
+              }
+          `;
+          /* =================================== */
+          window.print(); 
+      }
         }
 
         function resetQuotationFormDate() { 
