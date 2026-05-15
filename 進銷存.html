@@ -154,6 +154,8 @@
                 size: A4 portrait;
                 margin-top: 15mm;
                 margin-bottom: 15mm;
+                margin-left: 10mm;   /* 這是控制「左」邊距 */
+                margin-right: 10mm;  /* 這是控制「右」邊距 */
 
                 /* 下方正中央：顯示頁碼 */
                 @bottom-center {
@@ -219,10 +221,10 @@
             <h2>⚙️ 銀鑫 ERP 4.0 企業版</h2>
             <div class="login-hints">
                 <strong>🔐 權限分級說明：</strong><br>
-                老闆權限：你的專屬密碼 (全功能開放)<br>
-                會計權限：<code>acc2026</code> (全功能開放)<br>
-                業務權限：<code>sales2026</code> (隱藏成本與毛利)<br>
-                倉管權限：<code>wh2026</code> (隱藏所有金額與報價)
+                老闆權限：你的專屬密碼 <br>
+                會計權限：<code>acc2026</code> <br>
+                業務權限：<code>sales2026</code> <br>
+                倉管權限：<code>wh2026</code> 
             </div>
             <input type="password" id="sys-pwd" placeholder="請輸入密碼" onkeypress="if(event.key === 'Enter') checkLogin()">
             <button class="btn btn-primary" style="width: 100%; font-size: 16px; padding: 12px;" onclick="checkLogin()">登入系統</button>
@@ -1632,7 +1634,7 @@ function printQuotation() {
                     const file = new File([pdfBlob], filename, { type: 'application/pdf' });
 
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share({ files: [file], title: filename, text: '請查閱您的報價/銷貨單' }).catch(err => console.log('使用者取消分享或分享失敗', err));
+                        navigator.share({ files: [file], title: filename, text: '請查閱您的報價/銷貨/出貨單' }).catch(err => console.log('使用者取消分享或分享失敗', err));
                     } else {
                         const url = window.URL.createObjectURL(pdfBlob);
                         const a = document.createElement('a');
