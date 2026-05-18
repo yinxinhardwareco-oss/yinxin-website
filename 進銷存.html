@@ -155,7 +155,7 @@
                 margin-top: 15mm;
                 margin-bottom: 15mm;
                 margin-left: 10mm;   /* 這是控制「左」邊距 */
-                margin-right: 10mm;  /* 這是控制「右」邊距 */
+                margin-right: 5mm;  /* 這是控制「右」邊距 */
 
                 /* 下方正中央：顯示頁碼 */
                 @bottom-center {
@@ -213,65 +213,16 @@
     -webkit-text-fill-color: #dc2626 !important; 
 }
 
-/* ======== PDF 輸出專用：動態防護罩 (100% 不影響一般手機瀏覽) ======== */
-/* 以下設定只有在 JS 觸發 PDF 轉換的「那一瞬間」才會生效 */
-
-.pdf-mode {
-    background-color: #ffffff !important;
-    animation: none !important; 
-    transform: none !important; 
-    opacity: 1 !important;
-    
-    /* 確保寬度包含內距(padding)，絕對不超出版面，且隱藏截圖時的捲軸 */
-    width: 100% !important;
-    box-sizing: border-box !important; 
-    overflow: hidden !important; 
-}
-
-/* 瞬間隱藏捲軸軌道，避免產出白色色塊 */
-.pdf-mode::-webkit-scrollbar {
-    display: none !important;
-}
-
-/* 確保所有文字與框線在 PDF 中都是純黑實體 */
-.pdf-mode * {
-    color: #000000 !important;
-    border-color: #000000 !important;
-    -webkit-text-fill-color: #000000 !important; 
-    opacity: 1 !important; 
-    animation: none !important;
-    transform: none !important;
-}
-
-/* 確保紅字警告依然醒目 */
-.pdf-mode .text-danger, .pdf-mode .text-danger * { 
-    color: #dc2626 !important; 
-    -webkit-text-fill-color: #dc2626 !important; 
-}
-
-/* 表格防裁切 */
+/* ======== 請新增以下這段程式碼 ======== */
 .pdf-mode table {
-    border-collapse: collapse !important;
-    width: 100% !important; 
     border: 1px solid #000 !important;
-    margin-bottom: 10px !important;
-    box-sizing: border-box !important;
+    min-width: 100% !important;
 }
 .pdf-mode th, .pdf-mode td {
     border: 1px solid #000 !important;
     padding: 6px !important;
 }
-
-/* 備註欄 (Textarea) 防裁切與去除 iOS 原生陰影 */
-.pdf-mode textarea {
-    width: 100% !important;
-    -webkit-appearance: none !important; 
-    appearance: none !important;
-    border: 1.5px solid #000 !important; 
-    box-sizing: border-box !important;
-    background: transparent !important;
-}
-/* ========================================================== */
+/* ====================================== */
     </style>
 </head>
 <body>
