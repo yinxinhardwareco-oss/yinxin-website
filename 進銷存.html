@@ -213,14 +213,22 @@
     -webkit-text-fill-color: #dc2626 !important; 
 }
 
-/* ======== 請新增以下這段程式碼 ======== */
+/* ======== PDF 表格邊框修正 ======== */
 .pdf-mode table {
+    border-collapse: collapse !important;
     border: 1px solid #000 !important;
-    min-width: 100% !important;
+    /* 將寬度稍微縮小 0.5%，避免右側邊界與截圖畫布邊緣重疊而被切線 */
+    width: 99.5% !important; 
+    min-width: auto !important;
 }
 .pdf-mode th, .pdf-mode td {
     border: 1px solid #000 !important;
     padding: 6px !important;
+}
+/* 針對最右側的欄位 (最後一個 td / th)，強制加粗線條來抵抗像素流失 */
+.pdf-mode th:last-child, 
+.pdf-mode td:last-child {
+    border-right: 1.5px solid #000 !important; 
 }
 /* ====================================== */
     </style>
