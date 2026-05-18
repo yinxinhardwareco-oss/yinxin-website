@@ -213,86 +213,65 @@
     -webkit-text-fill-color: #dc2626 !important; 
 }
 
-/* ======== PDF 表格與底部備註欄 邊框終極修正加強版 (針對裁切 Bug) ======== */
+/* ======== PDF 輸出專用：動態防護罩 (100% 不影響一般手機瀏覽) ======== */
+/* 以下設定只有在 JS 觸發 PDF 轉換的「那一瞬間」才會生效 */
 
-/* 1. 主表格 (Table) 修復 - 用戶說這部分 OK 了，那我們就沿用 table-collapse 方案，但加強內縮 */
-.pdf-mode table {
-    border-collapse: collapse !important; 
-    border: 1px solid #000 !important;
+.pdf-mode {
+    background-color: #ffffff !important;
+    animation: none !important; 
+    transform: none !important; 
+    opacity: 1 !important;
     
-    /* 核心修正：將寬度稍微縮小，避開畫布邊緣而被裁切 */
-    width: 99% !important; /* 從 99.5% 調整為 99% 確保不碰邊 */
-    min-width: auto !important;
-    margin: 0 auto !important; /* 置中對齊 */
+    /* 確保寬度包含內距(padding)，絕對不超出版面，且隱藏截圖時的捲軸 */
+    width: 100% !important;
+    box-sizing: border-box !important; 
+    overflow: hidden !important; 
+}
+
+/* 瞬間隱藏捲軸軌道，避免產出白色色塊 */
+.pdf-mode::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* 確保所有文字與框線在 PDF 中都是純黑實體 */
+.pdf-mode * {
+    color: #000000 !important;
+    border-color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important; 
+    opacity: 1 !important; 
+    animation: none !important;
+    transform: none !important;
+}
+
+/* 確保紅字警告依然醒目 */
+.pdf-mode .text-danger, .pdf-mode .text-danger * { 
+    color: #dc2626 !important; 
+    -webkit-text-fill-color: #dc2626 !important; 
+}
+
+/* 表格防裁切 */
+.pdf-mode table {
+    border-collapse: collapse !important;
+    width: 100% !important; 
+    border: 1px solid #000 !important;
+    margin-bottom: 10px !important;
+    box-sizing: border-box !important;
 }
 .pdf-mode th, .pdf-mode td {
     border: 1px solid #000 !important;
     padding: 6px !important;
 }
-/* 針對主表格最後一欄的右側邊框，我們加粗抵抗裁切 */
-.pdf-mode th:last-child, 
-.pdf-mode td:last-child {
-    border-right: 1.5px solid #000 !important; 
-}
 
-
-/* 2. 底部備註欄/合計欄容器 修復 (針對 image_8b8835.png 的核心修正) */
-
-/* 我們需要找到這個容器的類名，通常它是一個緊跟在 table 之後的 div */
-/* 在您的系統中，它可能是一個用來包覆合計和備註兩個 div 的容器 */
-/* 通用解法：抓取緊接著 table 的 div */
-.pdf-mode table + div {
-    /* 核心修正 1：同樣需要內縮！與主表格一致，絕對不碰邊邊 */
-    width: 99% !important;
-    margin: 0 auto !important;
-    
-    /* 重新定義邊框結構，避開 collapse Bug */
-    border-collapse: separate !important; /* 強制不合併 */
-    border-spacing: 0 !important;
-    border: none !important; /* 清除舊有邊框 */
-}
-
-/* 應用 L型拼圖給合計和備註 div */
-/* 合計欄 (左側 div) */
-.pdf-mode table + div > div:first-child {
-    border-left: 1px solid #000 !important;
-    border-bottom: 1px solid #000 !important;
-    border-top: none !important;
-    border-right: none !important;
+/* 備註欄 (Textarea) 防裁切與去除 iOS 原生陰影 */
+.pdf-mode textarea {
+    width: 100% !important;
+    -webkit-appearance: none !important; 
+    appearance: none !important;
+    border: 1.5px solid #000 !important; 
     box-sizing: border-box !important;
+    background: transparent !important;
 }
-
-/* 備註欄 (右側 div) */
-.pdf-mode table + div > div:last-child {
-    border-left: 1px solid #000 !important; /* 中間垂直線 */
-    border-bottom: 1.5px solid #000 !important; /* 這條最底部的橫線是用戶說不見了。我們加粗 resistance */
-    border-right: 1.5px solid #000 !important; /* 這條最右側垂直線也加粗 resistance */
-    border-top: none !important;
-    box-sizing: border-box !important;
-}
-
-/* 特殊修正：處理「備註」兩個字下方的線 */
-/* 選擇備註欄內部的子 div (例如「備註」兩個字) */
-.pdf-mode table + div > div:last-child div {
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
-    box-sizing: border-box !important;
-}
-.pdf-mode table + div > div:last-child div:first-child {
-    border-bottom: 1px solid #000 !important; /* 「備註」下面的線 */
-}
-/* 核心問題是備註欄的底邊框和右邊框沒出來 */
-/* 用戶提到「上面線粗一樣細」，這意味著 Table 修復成功。*/
-/* 但下面的 footer (div) 被切。*/
-
-/* 既然主表格縮小了寬度，下面的容器也需要同樣的寬度。 */
-/* 我已經做了這一點。但用戶依然說被切。這意味著底邊裁切也很嚴重。*/
-
-/* 最後一個嘗試：將 margin-bottom 加給 footer 容器，避免底部被切。*/
-.pdf-mode table + div {
-    padding-bottom: 1px !important; /* 底部留白 */
-}
+/* ========================================================== */
     </style>
 </head>
 <body>
