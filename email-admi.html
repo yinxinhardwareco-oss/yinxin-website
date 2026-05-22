@@ -3,131 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚀 郵件行銷自動化管理後台</title>
+  <title>🚀 銀鑫業務開發 CRM</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 40px; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    h2 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #eceff1; padding-bottom: 10px; }
-    .section { margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa; }
-    .section-title { font-weight: bold; margin-bottom: 15px; color: #34495e; display: flex; align-items: center; gap: 8px; }
-    label { display: block; margin-bottom: 5px; font-size: 14px; color: #666; }
-    input[type="text"], input[type="email"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-    button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-    .btn-add { background-color: #2ecc71; color: white; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 30px; color: #333; }
+    .container { max-width: 650px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    h2 { color: #2c3e50; border-bottom: 2px solid #eceff1; padding-bottom: 10px; }
+    .section { margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    .row { display: flex; gap: 15px; }
+    .row > div { flex: 1; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .btn-add { background-color: #2ecc71; color: white; margin-bottom: 10px; }
     .btn-add:hover { background-color: #27ae60; }
+    .btn-preview { background-color: #f39c12; color: white; }
+    .btn-preview:hover { background-color: #d68910; }
     .btn-send { background-color: #3498db; color: white; font-size: 18px; padding: 15px; }
     .btn-send:hover { background-color: #2980b9; }
-    .status-box { margin-top: 15px; padding: 12px; border-radius: 6px; font-size: 14px; display: none; font-weight: bold; }
-    .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .loading { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+    .status-box { margin-top: 10px; padding: 12px; border-radius: 6px; font-size: 14px; display: none; font-weight: bold; }
+    .success { background-color: #d4edda; color: #155724; }
+    .error { background-color: #f8d7da; color: #721c24; }
+    .preview-box { background: #fff; border: 2px dashed #bdc3c7; padding: 15px; border-radius: 6px; margin-top: 15px; display: none; font-size: 14px; line-height: 1.6; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>✉️ 郵件群發系統 - 操作後台</h2>
+  <h2>🚀 銀鑫業務開發 CRM中控台</h2>
   
-  <!-- 功能一：新增名單 -->
   <div class="section">
-    <div class="section-title">👤 快速錄入新收件人</div>
-    <form id="recipientForm">
-      <label for="name">收件人姓名 (B2B 客戶/廠房聯絡人)</label>
-      <input type="text" id="name" placeholder="例如：王小明 經理" required>
-      
-      <label for="email">電子郵件 (Email)</label>
-      <input type="email" id="email" placeholder="例如：contact@example.com" required>
-      
-      <button type="button" class="btn-add" onclick="addRecipient()">➕ 新增至發信名單</button>
-    </form>
+    <label>👤 客戶基本資料</label>
+    <div class="row">
+      <div>
+        <input type="text" id="name" placeholder="姓名 (例: 王小明 經理)" required>
+      </div>
+      <div>
+        <input type="email" id="email" placeholder="Email" required>
+      </div>
+    </div>
+
+    <label>🏷️ 精準行銷設定</label>
+    <div class="row">
+      <div>
+        <select id="tag" onchange="generatePreview()">
+          <option value="台灣廠房">🇹🇼 台灣廠房 (中文)</option>
+          <option value="泰國市場">🇹🇭 泰國市場 (英文/泰文)</option>
+          <option value="越南市場">🇻🇳 越南市場 (英文/越文)</option>
+        </select>
+      </div>
+      <div>
+        <select id="source" onchange="generatePreview()">
+          <option value="AMPA台北汽配展">AMPA 台北汽配展</option>
+          <option value="彰化廠區拜訪">實體拜訪 (如: 彰化/桃園廠區)</option>
+          <option value="網路搜尋">網路搜尋 (陌生開發)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="row">
+      <button type="button" class="btn-preview" onclick="generatePreview()">👀 即時預覽信件</button>
+      <button type="button" class="btn-add" onclick="addRecipient()">➕ 寫入資料庫</button>
+    </div>
+    
+    <!-- 預覽區塊 -->
+    <div id="previewBox" class="preview-box"></div>
     <div id="addStatus" class="status-box"></div>
   </div>
 
-  <!-- 功能二：一鍵啟動發信 -->
   <div class="section" style="border-color: #3498db; background: #f0f7fc;">
-    <div class="section-title" style="color: #2980b9;">🚀 自動排版與批量發信中控台</div>
-    <p style="font-size: 13px; color: #555; margin-top: 0;">點擊下方按鈕後，系統將自動讀取試算表內「等待寄出」的名單，並自動替換範本變數進行個別發信。</p>
-    <button type="button" class="btn-send" onclick="triggerBulkSend()">🎯 啟動自動寄信機器人</button>
+    <label style="color: #2980b9;">🎯 自動發信與追蹤引擎</label>
+    <p style="font-size: 13px; color: #555; margin-top: 0;">點擊後將批次寄出所有「等待寄出」的信件，並自動埋入 1x1 追蹤像素。客戶開信時，試算表會自動記錄時間。</p>
+    <button type="button" class="btn-send" onclick="triggerBulkSend()">啟動自動發信機器人</button>
     <div id="sendStatus" class="status-box"></div>
   </div>
 </div>
 
 <script>
-  // 已經為你替換上專屬的 Apps Script 網址
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzH0LYRuKcK9V4oCQpjJje4cz4SrCIqzj3k3Nbp8HZRD6H04AZW0WHJJugoptcyOGh57w/exec"; 
+  // ⚠️ 將這裡替換成你剛剛「重新部署」獲得的 Apps Script 網址
+  const WEB_APP_URL = "你的_WEB_APP_URL"; 
+
+  // 即時預覽邏輯 (模擬後台的破冰句合成)
+  function generatePreview() {
+    const name = document.getElementById('name').value || "{姓名}";
+    const source = document.getElementById('source').value;
+    const tag = document.getElementById('tag').value;
+    const previewBox = document.getElementById('previewBox');
+    
+    let icebreaker = "";
+    if(source === "AMPA台北汽配展") icebreaker = "很高興上週在 AMPA 展與您交流。";
+    else if(source === "彰化廠區拜訪") icebreaker = "日前前往貴廠區拜訪，希望能為您的設備維護提供協助。";
+    else if(source === "網路搜尋") icebreaker = "透過網路得知貴公司在業界的專業，特此聯繫。";
+
+    let previewContent = `<b>[ 系統模擬預覽 - 將依試算表範本發送 ]</b><br><hr>`;
+    previewContent += `<b>收件人：</b> ${name} <br>`;
+    previewContent += `<b>應用標籤：</b> ${tag} <br>`;
+    previewContent += `<b>破冰句注入：</b> <span style="color:blue;">${icebreaker}</span> <br><br>`;
+    previewContent += `<i>提示：按下送出後，系統會自動將破冰句與姓名套入「試算表內對應標籤」的完整範本中。</i>`;
+    
+    previewBox.innerHTML = previewContent;
+    previewBox.style.display = "block";
+  }
 
   function addRecipient() {
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
+    const tag = document.getElementById('tag').value;
+    const source = document.getElementById('source').value;
     const statusBox = document.getElementById('addStatus');
     
-    if(!name || !email) {
-      alert("請填寫完整的姓名與 Email！");
-      return;
-    }
-
-    showStatus(statusBox, "正在寫入試算表資料庫...", "loading");
-
-    const payload = {
-      action: "addRecipient",
-      name: name,
-      email: email
-    };
+    if(!name || !email) return alert("姓名與 Email 必填！");
+    
+    statusBox.style.display = "block";
+    statusBox.innerText = "資料寫入中...";
+    statusBox.className = "status-box";
 
     fetch(WEB_APP_URL, {
-      method: 'POST',
-      redirect: 'follow',
+      method: 'POST', redirect: 'follow',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ action: "addRecipient", name: name, email: email, tag: tag, source: source })
     })
     .then(res => res.json())
     .then(data => {
-      if(data.status === "success") {
-        showStatus(statusBox, "✅ " + data.message, "success");
-        document.getElementById('recipientForm').reset(); 
-      } else {
-        showStatus(statusBox, "❌ 發生錯誤：" + data.message, "error");
-      }
-    })
-    .catch(err => {
-      showStatus(statusBox, "❌ 連線失敗，請檢查 API 網址是否正確或專案是否已發布。", "error");
+      statusBox.innerText = "✅ " + data.message;
+      statusBox.className = "status-box success";
+      document.getElementById('name').value = ""; // 保留 email 以外的欄位清空
+      document.getElementById('email').value = "";
+    }).catch(err => {
+      statusBox.innerText = "❌ 連線失敗";
+      statusBox.className = "status-box error";
     });
   }
 
   function triggerBulkSend() {
     const statusBox = document.getElementById('sendStatus');
+    if(!confirm("確定要開始批次發信嗎？")) return;
     
-    if(!confirm("確定要啟動機器人並開始批量發信嗎？")) return;
-
-    showStatus(statusBox, "🤖 機器人已啟動！正在進行批量自動排版與發信，請勿關閉網頁...", "loading");
-
-    const payload = {
-      action: "triggerSend"
-    };
+    statusBox.style.display = "block";
+    statusBox.innerText = "機器人運作中，請勿關閉網頁...";
+    statusBox.className = "status-box";
 
     fetch(WEB_APP_URL, {
-      method: 'POST',
-      redirect: 'follow',
+      method: 'POST', redirect: 'follow',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ action: "triggerSend" })
     })
     .then(res => res.json())
     .then(data => {
-      if(data.status === "success") {
-        showStatus(statusBox, "🎉 " + data.message, "success");
-      } else {
-        showStatus(statusBox, "❌ 發生錯誤：" + data.message, "error");
-      }
-    })
-    .catch(err => {
-      showStatus(statusBox, "❌ 連線失敗或伺服器回應超時，請至試算表確認寄送狀態。", "error");
+      statusBox.innerText = "🎉 " + data.message;
+      statusBox.className = "status-box success";
+    }).catch(err => {
+      statusBox.innerText = "❌ 發生錯誤，請至試算表確認";
+      statusBox.className = "status-box error";
     });
-  }
-
-  function showStatus(element, message, type) {
-    element.style.display = "block";
-    element.innerText = message;
-    element.className = "status-box " + type;
   }
 </script>
 
