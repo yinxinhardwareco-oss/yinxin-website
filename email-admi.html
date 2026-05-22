@@ -75,10 +75,18 @@
     <button type="button" class="btn-orange" id="btnSendFollowUp" onclick="sendFollowUps()">🚀 批量發送勾選的跟進信</button>
     <div id="followUpStatus" class="status-box"></div>
   </div>
+
+  <div class="section" style="border-color: #e74c3c; background: #fdf2f2;">
+    <div class="section-title" style="color: #c0392b;">🔄 終極再行銷模式 (一二封皆無回覆)</div>
+    <p style="font-size: 13px; color: #555; margin-top:0;">載入一二封皆已發送但仍未回覆的對象。勾選後將<b>重新發送第一封的全新排版內容</b>，發送次數會繼續累加。寄出後，客戶會回到佇列，過幾天可再次進行第二封跟進！</p>
+    <button type="button" class="btn-load" style="background-color: #e74c3c;" onclick="loadReEngageList()">📥 載入再行銷名單</button>
+    <div id="reEngageContainer" style="margin-top: 15px;"></div>
+    <button type="button" class="btn-orange" id="btnSendReEngage" style="background-color: #d35400; display: none;" onclick="sendReEngages()">✉️ 批量重寄第一封開發信</button>
+    <div id="reEngageStatus" class="status-box"></div>
+  </div>
 </div>
 
 <script>
-  // 已經幫你包好正確的半形引號與 API 網址
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzH0LYRuKcK9V4oCQpjJje4cz4SrCIqzj3k3Nbp8HZRD6H04AZW0WHJJugoptcyOGh57w/exec"; 
 
   // 1. 新增客戶
@@ -86,7 +94,6 @@
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     if(!name || !email) return alert("姓名與 Email 必填！");
-    
     showStatus('addStatus', '寫入中...', '');
     fetchData({ action: "addRecipient", name: name, email: email, tag: document.getElementById('tag').value, source: document.getElementById('source').value })
       .then(data => {
@@ -99,27 +106,13 @@
   function loadFirstSendList() {
     const container = document.getElementById('firstSendContainer');
     container.innerHTML = "讀取待發送名單中...";
-    
     fetchData({ action: "getFirstSendList" }).then(data => {
-      if(data.data.length === 0) {
-        container.innerHTML = "<p style='color:green;'>目前沒有等待發送的第一封名單。</p>";
-        document.getElementById('btnTriggerSend').style.display = "none";
-        return;
-      }
+      if(data.data.length === 0) { container.innerHTML = "<p style='color:green;'>目前沒有等待發送的第一封名單。</p>"; document.getElementById('btnTriggerSend').style.display = "none"; return; }
       let html = "";
       data.data.forEach(item => {
-        html += `
-          <label class="list-item">
-            <input type="checkbox" class="chk-firstsend" value="${item.rowIndex}">
-            <div class="list-info">
-              <strong>${item.name}</strong> (${item.email}) - <span style="color:#888;">${item.tag}</span>
-              <span class="badge-count">已發送 ${item.sendCount} 次</span>
-            </div>
-          </label>
-        `;
+        html += `<label class="list-item"><input type="checkbox" class="chk-firstsend" value="${item.rowIndex}"><div class="list-info"><strong>${item.name}</strong> (${item.email}) - <span style="color:#888;">${item.tag}</span><span class="badge-count">已發送 ${item.sendCount} 次</span></div></label>`;
       });
-      container.innerHTML = html;
-      document.getElementById('btnTriggerSend').style.display = "block";
+      container.innerHTML = html; document.getElementById('btnTriggerSend').style.display = "block";
     });
   }
 
@@ -129,42 +122,23 @@
     const selectedRows = Array.from(checkboxes).map(cb => parseInt(cb.value));
     if(selectedRows.length === 0) return alert("請至少勾選一位客戶！");
     if(!confirm(`確定要發送開發信給這 ${selectedRows.length} 位客戶嗎？`)) return;
-    
     showStatus('sendStatus', '開發信發送中，請勿關閉網頁...', '');
-    fetchData({ action: "triggerSend", selectedRows: selectedRows }).then(data => {
-      showStatus('sendStatus', "🎉 " + data.message, 'success');
-      loadFirstSendList(); 
-    });
+    fetchData({ action: "triggerSend", selectedRows: selectedRows }).then(data => { showStatus('sendStatus', "🎉 " + data.message, 'success'); loadFirstSendList(); });
   }
 
   // 4. 載入第二封跟進名單
   function loadFollowUpList() {
     const container = document.getElementById('followUpContainer');
     container.innerHTML = "讀取可跟進名單中...";
-    
     fetchData({ action: "getFollowUpList" }).then(data => {
-      if(data.data.length === 0) {
-        container.innerHTML = "<p style='color:green;'>目前沒有需要跟進的客戶。</p>";
-        document.getElementById('btnSendFollowUp').style.display = "none";
-        return;
-      }
+      if(data.data.length === 0) { container.innerHTML = "<p style='color:green;'>目前沒有符合第二封跟進（已發過第一封）的客戶。</p>"; document.getElementById('btnSendFollowUp').style.display = "none"; return; }
       let html = "";
       data.data.forEach(item => {
         const isRead = item.readStatus.indexOf("已開啟") !== -1;
         const badgeClass = isRead ? "badge-read" : "badge-unread";
-        html += `
-          <label class="list-item">
-            <input type="checkbox" class="chk-followup" value="${item.rowIndex}">
-            <div class="list-info">
-              <strong>${item.name}</strong> (${item.email}) - <span style="color:#888;">${item.tag}</span>
-              <span class="badge-count">已發送 ${item.sendCount} 次</span><br>
-              <span class="${badgeClass}" style="display:inline-block; margin-top:5px;">${item.readStatus}</span>
-            </div>
-          </label>
-        `;
+        html += `<label class="list-item"><input type="checkbox" class="chk-followup" value="${item.rowIndex}"><div class="list-info"><strong>${item.name}</strong> (${item.email}) - <span style="color:#888;">${item.tag}</span><span class="badge-count">已發送 ${item.sendCount} 次</span><br><span class="${badgeClass}" style="display:inline-block; margin-top:5px;">${item.readStatus}</span></div></label>`;
       });
-      container.innerHTML = html;
-      document.getElementById('btnSendFollowUp').style.display = "block";
+      container.innerHTML = html; document.getElementById('btnSendFollowUp').style.display = "block";
     });
   }
 
@@ -174,26 +148,42 @@
     const selectedRows = Array.from(checkboxes).map(cb => parseInt(cb.value));
     if(selectedRows.length === 0) return alert("請至少勾選一位客戶！");
     if(!confirm(`確定要發送跟進信給這 ${selectedRows.length} 位客戶嗎？`)) return;
-    
     showStatus('followUpStatus', '二封信發送中，請稍候...', '');
-    fetchData({ action: "sendFollowUp", selectedRows: selectedRows }).then(data => {
-      showStatus('followUpStatus', "🎉 " + data.message, 'success');
-      loadFollowUpList(); 
+    fetchData({ action: "sendFollowUp", selectedRows: selectedRows }).then(data => { showStatus('followUpStatus', "🎉 " + data.message, 'success'); loadFollowUpList(); });
+  }
+
+  // 🌟 6. 載入循環再行銷名單 (一二封皆發完者)
+  function loadReEngageList() {
+    const container = document.getElementById('reEngageContainer');
+    container.innerHTML = "讀取再行銷名單中...";
+    fetchData({ action: "getReEngageList" }).then(data => {
+      if(data.data.length === 0) { container.innerHTML = "<p style='color:green;'>目前沒有符合循環開發（第一、二封皆已發送完畢）的客戶。</p>"; document.getElementById('btnSendReEngage').style.display = "none"; return; }
+      let html = "";
+      data.data.forEach(item => {
+        const isRead = item.readStatus.indexOf("已開啟") !== -1;
+        const badgeClass = isRead ? "badge-read" : "badge-unread";
+        html += `<label class="list-item"><input type="checkbox" class="chk-reengage" value="${item.rowIndex}"><div class="list-info"><strong>${item.name}</strong> (${item.email}) - <span style="color:#888;">${item.tag}</span><span class="badge-count">已發送 ${item.sendCount} 次</span><br><span class="${badgeClass}" style="display:inline-block; margin-top:5px;">${item.readStatus}</span></div></label>`;
+      });
+      container.innerHTML = html; document.getElementById('btnSendReEngage').style.display = "block";
     });
   }
 
-  // 共用 Fetch 與 狀態顯示
-  function fetchData(payload) {
-    return fetch(WEB_APP_URL, {
-      method: 'POST', redirect: 'follow',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    }).then(res => res.json()).catch(err => alert("連線失敗，請確認 API 狀態。"));
+  // 🌟 7. 執行循環重寄第一封
+  function sendReEngages() {
+    const checkboxes = document.querySelectorAll('.chk-reengage:checked');
+    const selectedRows = Array.from(checkboxes).map(cb => parseInt(cb.value));
+    if(selectedRows.length === 0) return alert("請至少勾選一位客戶！");
+    if(!confirm(`確定要對這 ${selectedRows.length} 位客戶重寄第一封開發信嗎？次數將持續累加。`)) return;
+    showStatus('reEngageStatus', '循環信件發送中，請稍候...', '');
+    fetchData({ action: "sendReEngage", selectedRows: selectedRows }).then(data => { showStatus('reEngageStatus', "🎉 " + data.message, 'success'); loadReEngageList(); });
   }
 
+  // 共用 Fetch 與狀態
+  function fetchData(payload) {
+    return fetch(WEB_APP_URL, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }).then(res => res.json()).catch(err => alert("連線失敗，請檢查網址或 API 狀態。"));
+  }
   function showStatus(elementId, message, typeClass) {
-    const el = document.getElementById(elementId);
-    el.style.display = "block"; el.innerText = message; el.className = "status-box " + typeClass;
+    const el = document.getElementById(elementId); el.style.display = "block"; el.innerText = message; el.className = "status-box " + typeClass;
   }
 </script>
 
