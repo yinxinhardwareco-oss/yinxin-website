@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yin Xin Co., Ltd. | Expert in Electrical Switches & Oil Seals - Ready Stock Available | Various Seals & Switches</title>
-
-    <meta name="description" content="Located in Shengang, Changhua, Yin Xin Co., Ltd. specializes in high-quality industrial hardware and electrical control accessories. In-stock supply: flush handles, industrial hinges, waterproof toggle switches, forklift accessories, and precision castings. We offer a comprehensive range of hydraulic and pneumatic seals, dust seals, Teflon gaskets, and O-rings. We solve customer problems with complete product lines and professional knowledge.">
-
-    <meta name="keywords" content="Yin Xin Co., Ltd., Industrial Hardware, Skeleton Rotary Seals, Stainless Steel Handles, Hardware Accessories, Freezer Handles, Hinges, NOK, VALQUA, Hallite, SAKAGAMI, O-rings, Rubber, Teflon, Bakelite, Wear Rings, Toggle Latches, Headlight Switches, Work Lights, Waterproof Switches, Ignition Switches, Forklift Accessories, Dimmer Switches, Excavator Parts, Heavy Machinery, Oil Seals, Leak Prevention">
+<title>Taiwan Forklift Parts & Industrial Switch Manufacturer | YINXIN Hardware</title>
+<meta name="description" content="YINXIN is a leading industrial hardware supplier in Taiwan. We specialize in high-quality forklift parts, ignition switches, toggle switches, and OEM/ODM sealing solutions for heavy machinery.">
+    <meta name="keywords" content="Taiwan Industrial Hardware, Taiwan Forklift Parts Supplier, Taiwan Switch Manufacturer, Yin Xin Co., Ltd., Skeleton Rotary Seals,Stainless Steel Handles, Hardware Accessories, Freezer Handles, Hinges, NOK, VALQUA, Hallite, SAKAGAMI, O-rings, Rubber, Teflon, Bakelite, Wear Rings, Toggle Latches, Headlight Switches, Work Lights, Waterproof Switches, Ignition Switches, Forklift Accessories, Dimmer Switches, Excavator Parts, Heavy Machinery, Oil Seals, Leak Prevention">
 
     <link rel="icon" type="image/png" href="../logo.png">
     <link rel="shortcut icon" href="../logo.png">
@@ -1192,7 +1190,7 @@
             return `
                 <div class="item-card">
                     <div class="item-img-container" onclick="openModal('../${imgSrc}', '${desc}')">
-                        <img src="../${imgSrc}" onerror="this.src='../logo.png'">
+                        <img src="../${imgSrc}" alt="${desc} - Taiwan Manufacturer" onerror="this.src='../logo.png'">
                     </div>
                     <div class="item-desc">${desc}</div>
                     <button id="btn-${id}" class="${btnClass}" onclick="toggleCartItem('${id}', '${desc}', this); event.stopPropagation();">${btnText}</button>
@@ -1502,7 +1500,7 @@
             allCats.forEach((c, index) => {
                 const cardHtml = `
                     <div class="marquee-item" onclick="goToProduct('${c.type}', '${c.type}-sec-${c.id}')">
-                        <img src="${c.img}" onerror="this.src='../logo.png'">
+                        <img src="${c.img}" alt="${c.name} - Taiwan Manufacturer" onerror="this.src='../logo.png'">
                         <span>${c.name}</span>
                     </div>
                 `;
@@ -1552,7 +1550,7 @@
                         html += `
                             <div class="item-card">
                                 <div class="item-img-container" onclick="openModal('../${p.imgSrc}', '${p.desc}')">
-                                    <img src="../${p.imgSrc}" onerror="this.src='../logo.png'">
+                                    <img src="../${p.imgSrc}" alt="${p.desc} - Taiwan Manufacturer" onerror="this.src='../logo.png'">
                                 </div>
                                 <div class="item-desc">${p.desc} <br><small style="color:var(--primary-color);">(${departmentName})</small></div>
                                 <button id="btn-search-${p.id}" class="${btnClass}" onclick="toggleCartItem('${p.id}', '${p.desc}', this); event.stopPropagation();">${btnText}</button>
