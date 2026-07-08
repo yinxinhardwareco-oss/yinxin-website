@@ -490,6 +490,7 @@
                         <div class="form-group small"><label>採購數量</label><input type="number" id="p-qty" value="1" min="1"></div>
                         <div class="form-group hide-wh"><label>進貨單價 (成本)</label><input type="number" id="p-override-cost" placeholder="自動帶入"></div>
                         <button class="btn btn-primary" style="height: 42px;" onclick="addPurchaseItem()">➕ 加入明細</button>
+<button class="btn btn-warning" style="height: 42px; margin-left: 10px;" onclick="addAllProductsToPurchase()">📦 一鍵全選 (各1件)</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -1390,7 +1391,7 @@ if(tabId === 'stocktake') {
 
 function renderPurchaseItems() {
     const thead = document.getElementById('purchase-item-head');
-    let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">數量</th>`;
+    let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">目前庫存</th><th class="text-center">數量</th>`;
     if(currentRole !== 'wh') thHTML += `<th class="text-right">進價成本</th><th class="text-right">小計</th>`;
     thHTML += `<th class="no-print text-center">操作</th></tr>`;
     if (thead) thead.innerHTML = thHTML;
@@ -1412,13 +1413,20 @@ function renderPurchaseItems() {
         }
         // ------------------------------------
 
+// --- 尋找目前庫存量 ---
+        let currentStock = 0;
+        const invItem = inventory.find(inv => inv.sku.toUpperCase() === item.sku.toUpperCase());
+        if(invItem) currentStock = invItem.stock;
+        // ----------------------
+
         let trHTML = `<tr>
             <td>${displaySku}</td>
             <td>${item.name}</td>
-           <td class="text-center no-print">
-    <input type="number" value="${item.qty}" min="1" style="width: 70px; text-align: center; padding: 4px;" onchange="updatePurchaseQty(${index}, this.value)">
-</td>
-<td class="text-center print-only">${item.qty}</td>`;
+            <td class="text-center" style="color: #0284c7; font-weight: bold;">${currentStock}</td>
+            <td class="text-center no-print">
+                <input type="number" value="${item.qty}" min="1" style="width: 70px; text-align: center; padding: 4px;" onchange="updatePurchaseQty(${index}, this.value)">
+            </td>
+            <td class="text-center print-only">${item.qty}</td>`;
 
         if(currentRole !== 'wh') {
             trHTML += `<td class="text-right">$${item.cost.toLocaleString()}</td>
@@ -2107,6 +2115,33 @@ function updateQuoteQty(index, newQty) {
     if (isNaN(qty) || qty <= 0) qty = 1;
     quoteItems[index].qty = qty;
     renderQuotation(); 
+}
+// 一鍵將所有庫存產品加入採購單，數量預設為 1
+function addAllProductsToPurchase() {
+    if(!confirm('確定要把庫存中所有的產品都各加 1 個到採購單嗎？\n(如果清單中已有產品，數量會被重置為 1)')) return;
+
+    // 跑迴圈把 inventory (總庫存) 裡面的每個產品加進去
+    inventory.forEach(product => {
+        const sku = product.sku;
+        // 檢查是不是已經加過這個產品了
+        const existingIndex = purchaseItems.findIndex(i => i.sku.toUpperCase() === sku.toUpperCase());
+        
+        if (existingIndex > -1) {
+            // 如果已經在清單內，就把數量改成 1
+            purchaseItems[existingIndex].qty = 1;
+        } else {
+            // 如果不在清單內，就新增進去
+            purchaseItems.push({ 
+                sku: sku, 
+                name: product.name, 
+                qty: 1, 
+                cost: parseFloat(product.cost) || 0 
+            });
+        }
+    });
+    
+    // 重新渲染表格
+    renderPurchaseItems();
 }
     </script>
 </body>
