@@ -1391,7 +1391,7 @@ if(tabId === 'stocktake') {
 
 function renderPurchaseItems() {
     const thead = document.getElementById('purchase-item-head');
-    let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">目前庫存</th><th class="text-center">數量</th>`;
+    let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center no-print">目前庫存</th><th class="text-center">數量</th>`;
     if(currentRole !== 'wh') thHTML += `<th class="text-right">進價成本</th><th class="text-right">小計</th>`;
     thHTML += `<th class="no-print text-center">操作</th></tr>`;
     if (thead) thead.innerHTML = thHTML;
@@ -1422,7 +1422,7 @@ function renderPurchaseItems() {
         let trHTML = `<tr>
             <td>${displaySku}</td>
             <td>${item.name}</td>
-            <td class="text-center" style="color: #0284c7; font-weight: bold;">${currentStock}</td>
+            <td class="text-center no-print" style="color: #0284c7; font-weight: bold;">${currentStock}</td>
             <td class="text-center no-print">
                 <input type="number" value="${item.qty}" min="1" style="width: 70px; text-align: center; padding: 4px;" onchange="updatePurchaseQty(${index}, this.value)">
             </td>
