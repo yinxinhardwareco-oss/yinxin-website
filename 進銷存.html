@@ -1415,7 +1415,10 @@ function renderPurchaseItems() {
         let trHTML = `<tr>
             <td>${displaySku}</td>
             <td>${item.name}</td>
-            <td class="text-center">${item.qty}</td>`;
+           <td class="text-center no-print">
+    <input type="number" value="${item.qty}" min="1" style="width: 70px; text-align: center; padding: 4px;" onchange="updatePurchaseQty(${index}, this.value)">
+</td>
+<td class="text-center print-only">${item.qty}</td>`;
 
         if(currentRole !== 'wh') {
             trHTML += `<td class="text-right">$${item.cost.toLocaleString()}</td>
@@ -1806,7 +1809,10 @@ renderQuotation();
                 subtotal += itemTotal; 
                 let trHTML = `<tr>
                     <td class="text-center hide-on-mobile">${index + 1}</td>
-                    <td>${item.sku}</td><td>${item.name}</td><td class="text-center">${item.qty}</td>`;
+                    <td>${item.sku}</td><td>${item.name}</td><td class="text-center no-print">
+    <input type="number" value="${item.qty}" min="1" style="width: 70px; text-align: center; padding: 4px;" onchange="updateQuoteQty(${index}, this.value)">
+</td>
+<td class="text-center print-only">${item.qty}</td>`;
                 
                 if(currentRole !== 'wh') {
                     trHTML += `<td class="text-right">$${item.price.toLocaleString()}</td><td class="text-right">$${itemTotal.toLocaleString()}</td>`;
@@ -2087,6 +2093,21 @@ const discount = parseFloat(document.getElementById('q-discount').value) || 0;
                 saveToCloud('Inquiries', inquiries);
             }
         }
+// 給採購單用的更新函數
+function updatePurchaseQty(index, newQty) {
+    let qty = parseFloat(newQty);
+    if (isNaN(qty) || qty <= 0) qty = 1; 
+    purchaseItems[index].qty = qty; 
+    renderPurchaseItems(); 
+}
+
+// 給報價/出貨單用的更新函數
+function updateQuoteQty(index, newQty) {
+    let qty = parseFloat(newQty);
+    if (isNaN(qty) || qty <= 0) qty = 1;
+    quoteItems[index].qty = qty;
+    renderQuotation(); 
+}
     </script>
 </body>
 </html>
