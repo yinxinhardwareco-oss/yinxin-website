@@ -179,8 +179,24 @@
             .no-print { display: none !important; }
             .print-only { display: block; }
             
-            table { border: 1px solid #000; min-width: 100%; page-break-inside: auto; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
+/* 防止外層容器造成列印截斷 */
+            .table-responsive { overflow: visible !important; }
+            
+            /* 固定表格佈局，強制換行，防止超出右側邊界 */
+            table { 
+                border: 1px solid #000; 
+                width: 100% !important; 
+                table-layout: fixed; 
+                word-wrap: break-word; 
+                page-break-inside: auto; 
+            }
+            
+            /* 強制瀏覽器不可將 <tr> 切成兩半 */
+            tr { 
+                page-break-inside: avoid !important; 
+                break-inside: avoid !important; 
+                page-break-after: auto; 
+            }
             th, td { border: 1px solid #000 !important; padding: 6px !important; color: #000; }
             
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -281,6 +297,7 @@
         <div class="sidebar-logo">⚙️ 銀鑫 ERP <span id="role-display" class="role-badge"></span></div>
         <button class="nav-btn" onclick="switchTab('dashboard', '📈 營收數據儀表板')" id="nav-dashboard">📈 <span>營收儀表板</span></button>
         <button class="nav-btn" onclick="switchTab('inventory', '📦 產品庫存管理')" id="nav-inventory">📦 <span>庫存管理</span></button>
+<button class="nav-btn hide-sales" onclick="switchTab('stocktake', '📋 系統化盤點作業')" id="nav-stocktake">📋 <span>盤點作業</span></button>
         <button class="nav-btn" onclick="switchTab('mapping', '🔍 型號對照字典')" id="nav-mapping">🔍 <span>型號對照字典</span></button>
         <button class="nav-btn" onclick="switchTab('purchase', '🛒 採購與進貨模組')" id="nav-purchase">🛒 <span>採購與進貨</span></button>
         <button class="nav-btn" onclick="switchTab('suppliers', '🏭 廠商資料管理')" id="nav-suppliers">🏭 <span>廠商管理</span></button>
@@ -331,7 +348,11 @@
                         <div class="title">⚠️ 期間尚欠(未收)款項</div>
                         <div class="value text-danger" id="dash-range-unpaid">$0</div>
                     </div>
-                </div>
+<div class="data-card highlight" style="border-color: #0ea5e9; background: #e0f2fe;">
+        <div class="title" style="color: #0284c7;">📦 現有庫存總成本</div>
+        <div class="value" id="dash-inventory-cost" style="color: #0369a1;">$0</div>
+    </div>
+</div>
 
                 <div class="control-panel">
                     <h3>年度營收走勢圖 (依實際收款)</h3>
@@ -390,7 +411,42 @@
                     </table>
                 </div>
             </div>
+<!-- 👇 新增：系統化盤點模組 👇 -->
+            <div id="page-stocktake" class="page">
+                <div class="quote-header print-only">
+                    <h1>銀鑫有限公司</h1>
+                    <div class="quote-title">庫存盤點差異表</div>
+                    <div style="text-align: right; margin-top: 10px; font-size: 14px;">盤點日期：<span id="print-stocktake-date"></span></div>
+                </div>
 
+                <div class="control-panel no-print">
+                    <h3 style="margin-bottom: 5px; border-left: none; padding-left: 0;">📋 系統化盤點作業</h3>
+                    <p style="color:#64748b; font-size:14px; margin-bottom: 15px;">載入當前庫存快照，輸入實際盤點數量。系統將自動計算盤盈/盤虧差異。</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="startStocktake()">🔄 載入/重置當前庫存清單</button>
+                        <button class="btn btn-success" onclick="printStocktakeReport()">🖨️ 列印盤盈虧差異表</button>
+                        <button class="btn btn-danger" onclick="submitStocktake()" style="margin-left: auto;">💾 確認盤點並更新庫存</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                                <tr>
+                                <th width="20%">產品型號</th>
+                                <th width="35%">產品名稱</th>
+                                <th width="15%" class="text-center">系統帳面庫存</th>
+                                <th width="15%" class="text-center" style="color:var(--primary-dark);">實際盤點數量</th>
+                                <th width="15%" class="text-center">差異 (盤盈/虧)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stocktake-list">
+                            <tr><td colspan="5" class="text-center">請點擊上方「載入當前庫存清單」開始盤點</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 👆 系統化盤點模組結束 👆 -->
             <div id="page-purchase" class="page">
                 <div class="quote-header print-only">
                     <h1>銀鑫有限公司</h1>
@@ -489,7 +545,7 @@
 
             <div id="page-quotation" class="page">
                 <div class="quote-header print-only">
-                    <h1>銀鑫有限公司</h1><p>彰化縣伸港鄉定興路124號 | TEL: (04)852-1867 | FAX: (04)852-1945</p><div class="quote-title">銷貨 / 報價 / 出貨單</div>
+                    <h1>銀鑫有限公司</h1><p>彰化縣伸港鄉定興路124號 | TEL: (04)852-1867 | FAX: (04)852-1945</p><div class="quote-title" id="print-quote-title">報價單</div>
                 </div>
                 <div class="quote-meta print-only">
                     <div><p><strong>客戶名稱：</strong> <span id="print-cust-name"></span></p><p><strong>統一編號：</strong> <span id="print-cust-taxid"></span></p><p><strong>聯 絡 人 ：</strong> <span id="print-cust-contact"></span></p><p><strong>送貨地址：</strong> <span id="print-delivery"></span></p></div>
@@ -500,11 +556,22 @@
                     <h3 style="display: flex; justify-content: space-between; align-items: center;">單據基本設定 <select id="q-quick-customer" onchange="autoFillCustomerFromSelect()" style="width: 200px; border: none; background: #eff6ff; font-weight: bold; color: var(--primary-dark);"><option value="">💡 從客戶庫帶入...</option></select></h3>
                     <div class="form-row">
                         <div class="form-group large"><label>客戶名稱</label><input type="text" id="q-cust-name" oninput="updatePrintView('print-cust-name', this.value)"></div>
-                        <div class="form-group"><label>統一編號</label><input type="text" id="q-cust-taxid" oninput="updatePrintView('print-cust-taxid', this.value)"></div>
+                        <div class="form-group"><label>統一編號</label><input type="text" id="q-cust-taxid" oninput="updatePrintView('print-cust-taxid', this.value); renderQuotation();"></div>
                         <div class="form-group"><label>聯絡人</label><input type="text" id="q-cust-contact" oninput="updatePrintView('print-cust-contact', this.value)"></div>
                         <div class="form-group"><label>聯絡電話</label><input type="text" id="q-cust-tel"></div>
                     </div>
                     <div class="form-row">
+<div class="form-group">
+        <label>單據類型</label>
+        <select id="q-doc-type" onchange="document.getElementById('print-quote-title').innerText = this.value;" style="font-weight: bold; color: var(--primary-dark);">
+            <option value="報價單">報價單</option>
+            <option value="銷貨單">銷貨單</option>
+            <option value="出貨單">出貨單</option>
+            <option value="送貨單">送貨單</option>
+            <option value="請款單">請款單</option>
+        </select>
+    </div>
+    <!-- 👆 ---------------------- 👆 -->
                         <div class="form-group"><label>單據號碼</label><input type="text" id="q-quote-no" oninput="updatePrintView('print-quote-no', this.value)"></div>
                         <div class="form-group"><label>單據日期</label><input type="date" id="q-quote-date" onchange="updatePrintDate(this.value)"></div>
                         <div class="form-group"><label>發票號碼</label><input type="text" id="q-invoice" oninput="updatePrintView('print-invoice', this.value)"></div>
@@ -886,10 +953,27 @@
             if(document.getElementById('dash-range-cost')) {
                 document.getElementById('dash-range-cost').innerText = `$${rangeCostTotal.toLocaleString()}`;
             }
-            if(document.getElementById('dash-range-profit')) {
+
+if(document.getElementById('dash-range-profit')) {
                 document.getElementById('dash-range-profit').innerText = `$${rangeGrossProfit.toLocaleString()}`;
                 document.getElementById('dash-range-margin').innerText = `毛利率 ${grossMargin}%`;
             }
+
+// --- 新增：計算所有庫存的當前總成本 ---
+            let totalInventoryCost = 0;
+            inventory.forEach(item => {
+                const cost = Number(item.cost) || 0;
+                const stock = Number(item.stock) || 0;
+                // 只計算庫存大於 0 的產品成本
+                if (stock > 0) {
+                    totalInventoryCost += (cost * stock);
+                }
+            });
+            const invCostEl = document.getElementById('dash-inventory-cost');
+            if(invCostEl) {
+                invCostEl.innerText = `$${totalInventoryCost.toLocaleString()}`;
+            }
+            // ---------------------------------------
 
             const ctx = document.getElementById('revenueChart').getContext('2d');
             if (revenueChartInstance) revenueChartInstance.destroy(); 
@@ -927,6 +1011,130 @@
             if(tabId === 'quote-history') { renderQuoteHistory(); } 
             if(tabId === 'inquiries') { renderInquiries(); } 
             if(tabId === 'dashboard') { filterDashboard(); }
+if(tabId === 'stocktake') { 
+                if(stocktakeData.length > 0) renderStocktake(); 
+            }
+        }
+// ==========================================
+        // 📋 系統盤點作業核心
+        // ==========================================
+        let stocktakeData = [];
+
+        function startStocktake() {
+            if(stocktakeData.length > 0 && !confirm('目前已有進行中的盤點資料，確定要重新載入嗎？(未儲存的輸入將會遺失)')) return;
+            
+            // 複製一份當前庫存快照
+            stocktakeData = inventory.map(item => ({
+                sku: item.sku,
+                name: item.name,
+                systemStock: item.stock,
+                actualStock: item.stock // 預設帶入系統庫存
+            }));
+            
+            renderStocktake();
+        }
+
+        function updateActualStock(index, val) {
+            const newVal = parseFloat(val) || 0;
+            stocktakeData[index].actualStock = newVal;
+            
+            // 即時計算差異並更新畫面該行的數字與顏色
+            const diff = newVal - stocktakeData[index].systemStock;
+            const diffEl = document.getElementById(`diff-${index}`);
+            if(diffEl) {
+                const diffText = diff > 0 ? `+${diff}` : diff;
+                diffEl.innerHTML = `<span class="${diff > 0 ? 'text-success' : (diff < 0 ? 'text-danger' : '')} font-weight-bold">${diffText}</span>`;
+            }
+        }
+
+        function renderStocktake() {
+            const tbody = document.getElementById('stocktake-list');
+            tbody.innerHTML = '';
+            
+            stocktakeData.forEach((item, index) => {
+                const diff = item.actualStock - item.systemStock;
+                let diffColor = '';
+                if (diff > 0) diffColor = 'text-success';
+                else if (diff < 0) diffColor = 'text-danger';
+                const diffText = diff > 0 ? `+${diff}` : diff;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.sku}</strong></td>
+                        <td>${item.name}</td>
+                        <td class="text-center" style="color:#64748b;">${item.systemStock}</td>
+                        <td class="text-center no-print">
+                            <input type="number" value="${item.actualStock}" oninput="updateActualStock(${index}, this.value)" style="width: 100px; text-align: center; font-size:16px; font-weight:bold; border: 2px solid var(--primary-color);">
+                        </td>
+                        <td class="text-center print-only" style="font-weight:bold;">${item.actualStock}</td>
+                        <td class="text-center" id="diff-${index}">
+                            <span class="${diffColor} font-weight-bold">${diffText}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            if (stocktakeData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center">目前沒有盤點資料</td></tr>`;
+            }
+        }
+
+        function submitStocktake() {
+            if(stocktakeData.length === 0) return alert('請先載入盤點清單！');
+            
+            const discrepancies = stocktakeData.filter(item => item.actualStock !== item.systemStock);
+            
+            if (discrepancies.length === 0) {
+                alert('沒有任何盤點差異，無需更新庫存！');
+                return;
+            }
+
+            let msg = `偵測到 ${discrepancies.length} 筆盤點差異，即將覆蓋系統庫存！\n是否確認送出？\n\n(強烈建議送出前先「列印盤盈虧差異表」供會計留底)`;
+            if(confirm(msg)) {
+                // 將盤點數量寫回主庫存
+                stocktakeData.forEach(sItem => {
+                    const invIndex = inventory.findIndex(i => i.sku === sItem.sku);
+                    if(invIndex > -1) {
+                        inventory[invIndex].stock = sItem.actualStock;
+                    }
+                });
+                
+                renderInventory(); 
+                saveToCloud('Inventory', inventory); 
+                stocktakeData = []; // 清空盤點暫存
+                renderStocktake(); 
+                alert('✅ 盤點完成，系統庫存已全面更新！');
+            }
+        }
+
+        function printStocktakeReport() {
+            if(stocktakeData.length === 0) return alert('請先載入清單並進行盤點！');
+            
+            const d = new Date();
+            document.getElementById('print-stocktake-date').innerText = `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getDate().toString().padStart(2,'0')}`;
+            
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const pe = document.getElementById('page-stocktake');
+            
+            if(isMobile) {
+                document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.print-only').forEach(el => el.style.display = 'block');
+                pe.classList.add('pdf-mode');
+                pe.style.boxShadow = 'none'; pe.style.border = 'none';
+                
+                html2pdf().set({
+                    margin: [10, 10, 15, 10], 
+                    filename: `銀鑫庫存盤點表_${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}.pdf`,
+                    html2canvas: { scale: 2 }, jsPDF: { format: 'a4', orientation: 'portrait' }
+                }).from(pe).save().then(() => {
+                    pe.classList.remove('pdf-mode');
+                    document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
+                    document.querySelectorAll('.print-only').forEach(el => el.style.display = 'none');
+                    pe.style.boxShadow = ''; pe.style.border = '';
+                });
+            } else {
+                window.print();
+            }
         }
 
         // ==========================================
@@ -1180,38 +1388,48 @@
             renderPurchaseItems(); 
         }
 
-        function renderPurchaseItems() {
-            const thead = document.getElementById('purchase-item-head');
-            let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">數量</th>`;
-            if(currentRole !== 'wh') thHTML += `<th class="text-right">進價成本</th><th class="text-right">小計</th>`;
-            thHTML += `<th class="no-print text-center">操作</th></tr>`;
-            if (thead) thead.innerHTML = thHTML;
+function renderPurchaseItems() {
+    const thead = document.getElementById('purchase-item-head');
+    let thHTML = `<tr><th>產品型號</th><th>品名規格</th><th class="text-center">數量</th>`;
+    if(currentRole !== 'wh') thHTML += `<th class="text-right">進價成本</th><th class="text-right">小計</th>`;
+    thHTML += `<th class="no-print text-center">操作</th></tr>`;
+    if (thead) thead.innerHTML = thHTML;
 
-            const tbody = document.getElementById('purchase-item-list');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            let total = 0;
+    const tbody = document.getElementById('purchase-item-list');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    let total = 0;
 
-            purchaseItems.forEach((item, index) => {
-                const itemTotal = item.cost * item.qty;
-                total += itemTotal;
-                let trHTML = `<tr>
-                    <td>${item.sku}</td>
-                    <td>${item.name}</td>
-                    <td class="text-center">${item.qty}</td>`;
-
-                if(currentRole !== 'wh') {
-                    trHTML += `<td class="text-right">$${item.cost.toLocaleString()}</td>
-                               <td class="text-right">$${itemTotal.toLocaleString()}</td>`;
-                }
-                trHTML += `<td class="no-print text-center"><button class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="removePurchaseItem(${index})">X</button></td></tr>`;
-                tbody.innerHTML += trHTML;
-            });
-            if(purchaseItems.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">尚未加入任何採購項目</td></tr>`;
-            currentPurchaseTotal = total;
-            const totalEl = document.getElementById('calc-purchase-total');
-            if(totalEl) totalEl.innerText = `$${total.toLocaleString()}`;
+    purchaseItems.forEach((item, index) => {
+        const itemTotal = item.cost * item.qty;
+        total += itemTotal;
+        
+        // --- 新增：比對並替換為供應商型號 ---
+        let displaySku = item.sku; 
+        const mapping = modelMappings.find(m => m.internalSku.toUpperCase() === item.sku.toUpperCase());
+        if (mapping && mapping.supplierSku) {
+            displaySku = mapping.supplierSku;
         }
+        // ------------------------------------
+
+        let trHTML = `<tr>
+            <td>${displaySku}</td>
+            <td>${item.name}</td>
+            <td class="text-center">${item.qty}</td>`;
+
+        if(currentRole !== 'wh') {
+            trHTML += `<td class="text-right">$${item.cost.toLocaleString()}</td>
+                       <td class="text-right">$${itemTotal.toLocaleString()}</td>`;
+        }
+        trHTML += `<td class="no-print text-center"><button class="btn btn-danger btn-sm" style="padding: 4px 8px;" onclick="removePurchaseItem(${index})">X</button></td></tr>`;
+        tbody.innerHTML += trHTML;
+    });
+    
+    if(purchaseItems.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center">尚未加入任何採購項目</td></tr>`;
+    currentPurchaseTotal = total;
+    const totalEl = document.getElementById('calc-purchase-total');
+    if(totalEl) totalEl.innerText = `$${total.toLocaleString()}`;
+}
         
         function clearPurchaseOrder() { 
             if(confirm('確定要清空這張單嗎？')) { 
@@ -1475,6 +1693,7 @@
             updatePrintView('print-cust-taxid', cust.taxid);
             updatePrintView('print-cust-contact', cust.contact);
             updatePrintView('print-delivery', cust.address);
+renderQuotation();
         }
 
         // ==========================================
@@ -1598,9 +1817,14 @@
             
             if(quoteItems.length === 0) tbody.innerHTML = `<tr><td colspan="7" class="text-center">尚未加入任何報價項目</td></tr>`;
 
-            const discount = parseFloat(document.getElementById('q-discount').value) || 0; 
-            const tax = Math.round((subtotal - discount) * 0.05); 
-            currentQuoteTotal = (subtotal - discount) + tax; 
+const discount = parseFloat(document.getElementById('q-discount').value) || 0; 
+            
+            // 👇 判斷是否有輸入統編 👇
+            const taxId = document.getElementById('q-cust-taxid').value.trim();
+            const taxRate = taxId !== '' ? 0.05 : 0; // 有統編算5%，沒統編算0%
+            
+            const tax = Math.round((subtotal - discount) * taxRate); 
+            currentQuoteTotal = (subtotal - discount) + tax;
             
             document.getElementById('calc-subtotal').innerText = `$${subtotal.toLocaleString()}`; 
             document.getElementById('calc-discount-print').innerText = `-$${discount.toLocaleString()}`; 
