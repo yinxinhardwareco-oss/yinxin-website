@@ -19,7 +19,19 @@
 <link rel="alternate" hreflang="x-default" href="https://www.yinxincompany.com/en/index.html" />
 <!-- 告訴 Google 這是中文版的標準網址 -->
 <link rel="canonical" href="https://www.yinxincompany.com/index.html" />
-    
+<!-- 多語言自動導向腳本 -->
+    <script>
+      (function() {
+        var userLang = (navigator.language || navigator.userLanguage).toLowerCase();
+        if (userLang.includes('ja')) {
+            window.location.replace('./ja/index.html');
+        } else if (userLang.includes('zh')) {
+            return;
+        } else {
+            window.location.replace('./en/index.html');
+        }
+      })();
+    </script>    
     <style>
         /* ==========================================================================
            1. 核心變數與基礎設定
