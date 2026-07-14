@@ -1030,7 +1030,7 @@
             return `
                 <div class="item-card">
                     <div class="item-img-container" onclick="openModal('../${imgSrc}', '${desc}')">
-                        <img src="../${imgSrc}" onerror="this.src='../logo.png'">
+                       <img src="../${imgSrc}" alt="${desc} - 台湾の専門メーカー" onerror="this.src='../logo.png'">
                     </div>
                     <div class="item-desc">${desc}</div>
                     <button id="btn-${id}" class="${btnClass}" onclick="toggleCartItem('${id}', '${desc}', this); event.stopPropagation();">${btnText}</button>
