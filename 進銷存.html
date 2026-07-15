@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>銀鑫進銷存系統 - 1.0 企業旗艦版</title>
+    <title>銀鑫進銷存系統 - 4.0 企業旗艦版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -594,7 +594,13 @@
                             <datalist id="q-product-list"></datalist>
                         </div>
                         <div class="form-group small"><label>數量</label><input type="number" id="q-qty" value="1" min="1"></div>
-                        <div class="form-group hide-wh"><label>單價 (可修改)</label><input type="number" id="q-override-price" placeholder="自動帶入銷價"></div>
+                        <div class="form-group hide-wh">
+    <label>單價 (可修改)</label>
+    <div style="display: flex; gap: 5px;">
+        <input type="number" id="q-override-price" placeholder="自動帶入銷價">
+        <button class="btn btn-outline" style="padding: 0 12px; font-size: 16px;" onclick="promptSmartPrice()" title="利潤試算小幫手">💡</button>
+    </div>
+</div>
                         <button class="btn btn-primary" style="height: 42px;" onclick="addQuoteItem()">➕ 加入明細</button>
                     </div>
                 </div>
@@ -1323,19 +1329,21 @@ if(tabId === 'stocktake') {
         // ==========================================
         // 🛒 採購與進貨核心
         // ==========================================
-        function resetPurchaseFormDate() { 
-            const today = new Date(); 
-            const d = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`; 
-            const poNo = `PO${d.replace(/-/g,'')}-${Math.floor(Math.random()*900)+100}`;
-            document.getElementById('p-po-no').value = poNo; 
-            document.getElementById('p-date').value = d; 
-            document.getElementById('p-status').value = '未到貨'; 
-            document.getElementById('p-status').style.color = 'var(--danger)'; 
+function resetPurchaseFormDate() { 
+    const today = new Date(); 
+    const d = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`; 
+    // 同樣改用 timestamp 後 5 碼防撞號
+    const timestamp = Date.now().toString().slice(-5);
+    const poNo = `PO${d.replace(/-/g,'')}-${timestamp}`;
+    
+    document.getElementById('p-po-no').value = poNo; 
+    document.getElementById('p-date').value = d; 
+    document.getElementById('p-status').value = '未到貨'; 
+    document.getElementById('p-status').style.color = 'var(--danger)'; 
 
-            updatePrintView('print-po-no', poNo);
-            updatePrintDatePO(d);
-        }
-
+    updatePrintView('print-po-no', poNo);
+    updatePrintDatePO(d);
+}
         document.getElementById('p-status').addEventListener('change', function() {
             this.style.color = this.value === '已到貨' ? 'var(--success)' : 'var(--danger)';
         });
@@ -1472,19 +1480,37 @@ function renderPurchaseItems() {
                 items: purchaseItems, totalAmount: currentPurchaseTotal, status: status 
             }; 
             
-            let invChanged = false; 
-            if (status === '已到貨' && oldStatus !== '已到貨') { 
+let invChanged = false; 
+            
+            // 1. 若是修改舊單，且原本是「已到貨」，先將原本加進去的數量「扣除」(退回未進貨狀態)
+            if (existingIndex > -1 && oldStatus === '已到貨') {
+                const oldItems = typeof purchaseHistory[existingIndex].items === 'string' ? JSON.parse(purchaseHistory[existingIndex].items) : purchaseHistory[existingIndex].items;
+                oldItems.forEach(old => {
+                    const invIndex = inventory.findIndex(i => i.sku.toUpperCase() === old.sku.toUpperCase());
+                    if(invIndex > -1) inventory[invIndex].stock = Math.max(0, inventory[invIndex].stock - old.qty);
+                });
+                invChanged = true;
+            }
+            
+            // 2. 現在不論新舊單，只要這次存檔狀態是「已到貨」，就把畫面上的「新數量」加進去
+            if (status === '已到貨') {
                 purchaseItems.forEach(pItem => { 
-                    const invIndex = inventory.findIndex(i => i.sku === pItem.sku); 
-                    if (invIndex > -1) { inventory[invIndex].stock += pItem.qty; invChanged = true; } 
-                }); 
-            } else if (status === '未到貨' && oldStatus === '已到貨') { 
-                purchaseItems.forEach(pItem => { 
-                    const invIndex = inventory.findIndex(i => i.sku === pItem.sku); 
-                    if (invIndex > -1) { inventory[invIndex].stock = Math.max(0, inventory[invIndex].stock - pItem.qty); invChanged = true; } 
-                }); 
-            } 
-            if(invChanged) { renderInventory(); saveToCloud('Inventory', inventory); } 
+                    const invIndex = inventory.findIndex(i => i.sku.toUpperCase() === pItem.sku.toUpperCase()); 
+                    if (invIndex > -1) { 
+                        inventory[invIndex].stock += pItem.qty; 
+                    } else {
+                        const newCategory = pItem.sku.toLowerCase().startsWith('sw-k') ? '空調用五金' : '未分類 (採購自動建檔)';
+                        inventory.push({ sku: pItem.sku, name: pItem.name, category: newCategory, cost: pItem.cost, price: Math.round(pItem.cost * 1.85), stock: pItem.qty });
+                    }
+                });
+                invChanged = true;
+            }
+            
+            if(invChanged) { 
+                renderInventory(); 
+                updateProductDropdown(); 
+                saveToCloud('Inventory', inventory); 
+            }
             
             if (existingIndex > -1) { purchaseHistory[existingIndex] = recordData; } 
             else { purchaseHistory.unshift(recordData); clearPurchaseOrder(); } 
@@ -1563,9 +1589,8 @@ function renderPurchaseItems() {
       }
         }
 
-        function editPurchaseRecord(index) { 
-            alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或增加庫存。若有增減，請至「庫存管理」手動調整！');
-            const r = purchaseHistory[index]; 
+function editPurchaseRecord(index) { 
+            const r = purchaseHistory[index];
             document.getElementById('p-sup-name').value = r.supName; 
             document.getElementById('p-po-no').value = r.poNo; 
             document.getElementById('p-date').value = r.date; 
@@ -1582,11 +1607,27 @@ function renderPurchaseItems() {
             switchTab('purchase', '🛒 採購與進貨'); 
         }
 
-        function deletePurchaseRecord(index) { 
-            if(confirm('刪除單據？(不會自動退回庫存)')) { 
+function deletePurchaseRecord(index) { 
+            if(confirm('確定刪除此採購單？(⚠️ 若該單狀態為「已到貨」，系統會自動從庫存中扣除這些數量！)')) { 
+                const p = purchaseHistory[index];
+                
+                // 如果這張採購單已經入庫了，刪除時要扣除庫存
+                if (p.status === '已到貨') {
+                    const items = typeof p.items === 'string' ? JSON.parse(p.items) : p.items;
+                    items.forEach(pItem => {
+                        const invIndex = inventory.findIndex(i => i.sku.toUpperCase() === pItem.sku.toUpperCase());
+                        if (invIndex > -1) {
+                            inventory[invIndex].stock = Math.max(0, inventory[invIndex].stock - pItem.qty);
+                        }
+                    });
+                    renderInventory();
+                    saveToCloud('Inventory', inventory);
+                }
+
                 purchaseHistory.splice(index, 1); 
                 renderPurchaseHistory(); 
                 saveToCloud('PurchaseOrders', purchaseHistory); 
+                alert('✅ 採購單已刪除！');
             } 
         }
 
@@ -1766,6 +1807,44 @@ renderQuotation();
             }
         }
 
+function promptSmartPrice() {
+            const sku = document.getElementById('q-product-input').value.trim();
+            if(!sku) return alert('請先選擇或輸入左側的庫存產品，系統才能抓取成本喔！');
+            
+            const product = inventory.find(i => i.sku === sku);
+            if(!product) return alert('找不到此型號產品！請確認型號輸入正確。');
+            
+            const cost = product.cost || 0;
+            if(cost === 0) return alert('⚠️ 此產品目前的「進貨成本」為 $0，無法進行乘數或 % 數計算，請直接輸入您想要的售價！');
+
+            // 跳出視窗詢問，預設帶入 *1.85 方便快速 Enter
+            const input = prompt(`📦 產品：${product.name}\n💰 目前進貨成本：$${cost}\n\n👉 請輸入預計設定的「直接售價」(如 500)\n👉 或輸入「*倍數」(如 *1.85 或 *2.0) 來依成本乘算\n👉 或輸入「+%數」(如 +85) 代表成本加上 85%\n\n常規目標建議為成本的 1.85 ~ 2.0 倍區間。`, '*1.85');
+            
+            if(!input) return; // 如果使用者按取消，就不做任何動作
+
+            let finalPrice = 0;
+            const str = input.trim();
+            
+            if (str.startsWith('*')) {
+                // 處理倍數 (例如 *1.85)
+                const multiplier = parseFloat(str.substring(1));
+                if(isNaN(multiplier)) return alert('倍數格式錯誤！');
+                finalPrice = cost * multiplier;
+            } else if (str.startsWith('+')) {
+                // 處理百分比 (例如 +85)
+                const percent = parseFloat(str.substring(1));
+                if(isNaN(percent)) return alert('百分比格式錯誤！');
+                finalPrice = cost * (1 + (percent / 100));
+            } else {
+                // 處理直接輸入金額 (例如 500)
+                finalPrice = parseFloat(str);
+                if(isNaN(finalPrice)) return alert('輸入格式錯誤！請輸入數字。');
+            }
+
+            // 計算結果四捨五入到整數，並自動填入輸入框
+            document.getElementById('q-override-price').value = Math.round(finalPrice);
+        }
+
         function addQuoteItem() { 
             const sku = document.getElementById('q-product-input').value.trim(); 
             if(!sku) return alert('請輸入或從清單選擇產品！'); 
@@ -1920,15 +1999,18 @@ const discount = parseFloat(document.getElementById('q-discount').value) || 0;
       }
         }
 
-        function resetQuotationFormDate() { 
-            const today = new Date(); 
-            const d = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`; 
-            const qNo = `YX${d.replace(/-/g,'')}-${Math.floor(Math.random()*900)+100}`; 
-            document.getElementById('q-quote-no').value = qNo; 
-            document.getElementById('q-quote-date').value = d; 
-            updatePrintView('print-quote-no', qNo); 
-            updatePrintDate(d);
-        }
+function resetQuotationFormDate() { 
+    const today = new Date(); 
+    const d = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`; 
+    // 改用 timestamp 後 5 碼，確保每日單號絕對不重複
+    const timestamp = Date.now().toString().slice(-5);
+    const qNo = `YX${d.replace(/-/g,'')}-${timestamp}`; 
+    
+    document.getElementById('q-quote-no').value = qNo; 
+    document.getElementById('q-quote-date').value = d; 
+    updatePrintView('print-quote-no', qNo); 
+    updatePrintDate(d);
+}
 
         function updatePrintView(elementId, value) { document.getElementById(elementId).innerText = value || '_________________'; }
         function updatePrintDate(val) { document.getElementById('print-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; }
@@ -1960,21 +2042,36 @@ function saveQuotationToHistory() {
                 status: (existingIndex > -1 ? quoteHistory[existingIndex].status : 'unpaid') 
             };
 
-            if (existingIndex === -1) {
-                // 如果是新單據，就扣除庫存
+if (existingIndex === -1) {
+                // 【開立新單據】：直接扣除庫存
                 quoteItems.forEach(qItem => { 
                     const invIndex = inventory.findIndex(i => i.sku === qItem.sku); 
                     if (invIndex > -1) inventory[invIndex].stock = Math.max(0, inventory[invIndex].stock - qItem.qty); 
                 });
-                renderInventory(); 
-                saveToCloud('Inventory', inventory);
-            }
-
-            if (existingIndex > -1) { 
-                quoteHistory[existingIndex] = recordData; 
-            } else { 
                 quoteHistory.unshift(recordData); 
+            } else {
+                // 【修改舊單據】：計算新舊庫存差額 (Delta)
+                const oldRecord = quoteHistory[existingIndex];
+                const oldItems = typeof oldRecord.items === 'string' ? JSON.parse(oldRecord.items) : oldRecord.items;
+                
+                // 1. 先把舊單據扣掉的庫存「全部加回來」
+                oldItems.forEach(old => {
+                    const invIndex = inventory.findIndex(i => i.sku === old.sku);
+                    if(invIndex > -1) inventory[invIndex].stock += old.qty;
+                });
+                
+                // 2. 再依照畫面上「新的明細數量」重新扣除
+                quoteItems.forEach(newItem => {
+                    const invIndex = inventory.findIndex(i => i.sku === newItem.sku);
+                    if(invIndex > -1) inventory[invIndex].stock = Math.max(0, inventory[invIndex].stock - newItem.qty);
+                });
+                
+                quoteHistory[existingIndex] = recordData; 
             }
+            
+            // 無論新增或修改，最後統一刷新庫存並存檔
+            renderInventory(); 
+            saveToCloud('Inventory', inventory);
             
             renderQuoteHistory(); 
             if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
@@ -1982,9 +2079,8 @@ function saveQuotationToHistory() {
             alert('單據儲存成功！');
         }
 
-        function editQuoteRecord(index) {
-            alert('【系統提醒】編輯已存檔的單據，修改數量「不會」自動退回或扣除庫存。若有增減，請至「庫存管理」手動調整！');
-            const r = quoteHistory[index]; 
+function editQuoteRecord(index) {
+            const r = quoteHistory[index];
             switchTab('quotation', '📝 報價/出貨單系統');
             document.getElementById('q-cust-name').value = r.custName; 
             document.getElementById('q-cust-taxid').value = r.custTaxId; 
@@ -2011,15 +2107,26 @@ function saveQuotationToHistory() {
             window.scrollTo(0,0);
         }
 
-        function deleteQuoteRecord(index) { 
-            if(confirm(`確定要刪除這筆單據？(不會自動回復庫存)`)) { 
+function deleteQuoteRecord(index) { 
+            if(confirm(`確定要刪除這筆單據？(⚠️ 系統將會自動把單據內的商品數量「加回庫存」！)`)) { 
+                // 1. 先把庫存加回去
+                const q = quoteHistory[index];
+                const items = typeof q.items === 'string' ? JSON.parse(q.items) : q.items;
+                items.forEach(qItem => {
+                    const invIndex = inventory.findIndex(i => i.sku === qItem.sku);
+                    if (invIndex > -1) inventory[invIndex].stock += qItem.qty; 
+                });
+                renderInventory();
+                saveToCloud('Inventory', inventory);
+
+                // 2. 刪除單據
                 quoteHistory.splice(index, 1); 
                 renderQuoteHistory(); 
                 if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
                 saveToCloud('Quotes', quoteHistory); 
+                alert('✅ 單據已刪除，庫存已自動退回！');
             } 
         }
-
         function renderQuoteHistory() {
             const tbody = document.getElementById('history-quote-list');
             if(!tbody) return;
