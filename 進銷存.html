@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>銀鑫進銷存系統 - 4.0 企業旗艦版</title>
+    <title>銀鑫進銷存系統 - 1.0 企業旗艦版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -554,7 +554,15 @@
                 </div>
 
                 <div class="control-panel no-print">
-                    <h3 style="display: flex; justify-content: space-between; align-items: center;">單據基本設定 <select id="q-quick-customer" onchange="autoFillCustomerFromSelect()" style="width: 200px; border: none; background: #eff6ff; font-weight: bold; color: var(--primary-dark);"><option value="">💡 從客戶庫帶入...</option></select></h3>
+<h3 style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <div>單據基本設定</div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <button class="btn btn-warning btn-sm" onclick="clearQuotation()">✨ 開立新單據 (重置表單)</button>
+        <select id="q-quick-customer" onchange="autoFillCustomerFromSelect()" style="width: 200px; border: none; background: #eff6ff; font-weight: bold; color: var(--primary-dark);">
+            <option value="">💡 從客戶庫帶入...</option>
+        </select>
+    </div>
+</h3>
                     <div class="form-row">
                         <div class="form-group large"><label>客戶名稱</label><input type="text" id="q-cust-name" oninput="updatePrintView('print-cust-name', this.value)"></div>
                         <div class="form-group"><label>統一編號</label><input type="text" id="q-cust-taxid" oninput="updatePrintView('print-cust-taxid', this.value); renderQuotation();"></div>
@@ -1786,20 +1794,20 @@ renderQuotation();
             renderQuotation(); 
         }
 
-        function clearQuotation() { 
-            if(confirm('清空明細？')) { 
-                quoteItems = []; 
-                document.getElementById('q-discount').value = 0; 
-                document.getElementById('q-invoice').value = ''; 
-                document.getElementById('q-delivery').value = ''; 
-                document.getElementById('q-notes').value = ''; 
-                document.querySelectorAll('#page-quotation input[type="text"]').forEach(i => i.value = ''); 
-                resetQuotationFormDate(); 
-                updatePrintView('print-invoice', '未開立'); 
-                updatePrintView('print-delivery', '未指定'); 
-                renderQuotation(); 
-            } 
-        }
+function clearQuotation() { 
+    if(confirm('確定要清空目前畫面資料，並開立一張「全新單據」嗎？\n(此動作將會為您產生一個全新的單據號碼)')) { 
+        quoteItems = []; 
+        document.getElementById('q-discount').value = 0; 
+        document.getElementById('q-invoice').value = ''; 
+        document.getElementById('q-delivery').value = ''; 
+        document.getElementById('q-notes').value = ''; 
+        document.querySelectorAll('#page-quotation input[type="text"]').forEach(i => i.value = ''); 
+        resetQuotationFormDate(); 
+        updatePrintView('print-invoice', '未開立'); 
+        updatePrintView('print-delivery', '未指定'); 
+        renderQuotation(); 
+    } 
+}
 
         function renderQuotation() { 
             const thead = document.getElementById('quotation-head');
@@ -1926,12 +1934,21 @@ const discount = parseFloat(document.getElementById('q-discount').value) || 0;
         function updatePrintDate(val) { document.getElementById('print-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; }
         function updatePrintDatePO(val) { document.getElementById('print-po-date').innerText = val ? val.replace(/-/g, '/') : '_________________'; }
 
-        function saveQuotationToHistory() {
+function saveQuotationToHistory() {
             const custName = document.getElementById('q-cust-name').value.trim(); 
             const quoteNo = document.getElementById('q-quote-no').value.trim();
             if(!custName || quoteItems.length === 0) return alert('請填寫客戶名稱與明細！');
             
             const existingIndex = quoteHistory.findIndex(q => q.quoteNo === quoteNo);
+            
+            // ======== 新增：修改歷史單據的防呆警示 ========
+            if (existingIndex > -1) {
+                const confirmUpdate = confirm(`⚠️ 系統警告 ⚠️\n\n單號【 ${quoteNo} 】已經存在於歷史紀錄中！\n\n請問您確定要「覆蓋修改」這張歷史單據嗎？\n\n👉 如果您其實是想要打一張新單據，請按「取消」，並點擊畫面上方的「✨ 開立新單據」按鈕。`);
+                
+                if (!confirmUpdate) return; // 如果使用者按取消，就立刻中斷儲存動作
+            }
+            // ===============================================
+
             const recordData = { 
                 quoteNo: quoteNo, date: document.getElementById('q-quote-date').value, 
                 custName: custName, custTaxId: document.getElementById('q-cust-taxid').value, 
@@ -1944,6 +1961,7 @@ const discount = parseFloat(document.getElementById('q-discount').value) || 0;
             };
 
             if (existingIndex === -1) {
+                // 如果是新單據，就扣除庫存
                 quoteItems.forEach(qItem => { 
                     const invIndex = inventory.findIndex(i => i.sku === qItem.sku); 
                     if (invIndex > -1) inventory[invIndex].stock = Math.max(0, inventory[invIndex].stock - qItem.qty); 
@@ -1952,8 +1970,11 @@ const discount = parseFloat(document.getElementById('q-discount').value) || 0;
                 saveToCloud('Inventory', inventory);
             }
 
-            if (existingIndex > -1) { quoteHistory[existingIndex] = recordData; } 
-            else { quoteHistory.unshift(recordData); }
+            if (existingIndex > -1) { 
+                quoteHistory[existingIndex] = recordData; 
+            } else { 
+                quoteHistory.unshift(recordData); 
+            }
             
             renderQuoteHistory(); 
             if(currentRole === 'boss' || currentRole === 'acc') filterDashboard();
