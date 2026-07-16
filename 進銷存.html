@@ -612,13 +612,24 @@
                     </table>
                 </div>
                 
-                <div class="total-area hide-wh">
-                    <div style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px;"><span>小計：</span> <span id="calc-subtotal">$0</span></div>
-                    <div class="no-print" style="width: 300px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;"><span style="color:var(--danger); font-weight:bold;">折讓金額：</span><input type="number" id="q-discount" value="0" style="width: 100px; text-align: right; padding: 5px;" oninput="renderQuotation()"></div>
-                    <div class="print-only" style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px; color:var(--danger);"><span>折讓：</span> <span id="calc-discount-print">-$0</span></div>
-                    <div style="width: 300px; display: flex; justify-content: space-between;"><span>營業稅 (5%)：</span> <span id="calc-tax">$0</span></div>
-                    <div style="width: 300px; display: flex; justify-content: space-between;" class="final-total"><span>總計金額：</span> <span id="calc-total">$0</span></div>
-                </div>
+ <div class="total-area hide-wh">
+    <div style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px;"><span>小計：</span> <span id="calc-subtotal">$0</span></div>
+    <div class="no-print" style="width: 300px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;"><span style="color:var(--danger); font-weight:bold;">折讓金額：</span><input type="number" id="q-discount" value="0" style="width: 100px; text-align: right; padding: 5px;" oninput="renderQuotation()"></div>
+    <div class="print-only" style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px; color:var(--danger);"><span>折讓：</span> <span id="calc-discount-print">-$0</span></div>
+    <div style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px;"><span>營業稅 (5%)：</span> <span id="calc-tax">$0</span></div>
+    
+    <!-- 👇 新增：運費輸入與列印區 👇 -->
+    <div class="no-print" style="width: 300px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+        <span style="font-weight:bold;">運費：</span>
+        <input type="number" id="q-shipping" value="0" style="width: 100px; text-align: right; padding: 5px;" oninput="renderQuotation()">
+    </div>
+    <div class="print-only" style="width: 300px; display: flex; justify-content: space-between; margin-bottom: 5px;">
+        <span>運費：</span> <span id="calc-shipping-print">$0</span>
+    </div>
+    <!-- 👆 新增結束 👆 -->
+
+    <div style="width: 300px; display: flex; justify-content: space-between;" class="final-total"><span>總計金額：</span> <span id="calc-total">$0</span></div>
+</div>
                 
                 <div class="quote-notes-print" style="padding-bottom: 20px; page-break-inside: avoid;">
                     <strong>備註：</strong><br>
@@ -1875,9 +1886,10 @@ function promptSmartPrice() {
 
 function clearQuotation() { 
     if(confirm('確定要清空目前畫面資料，並開立一張「全新單據」嗎？\n(此動作將會為您產生一個全新的單據號碼)')) { 
-        quoteItems = []; 
-        document.getElementById('q-discount').value = 0; 
-        document.getElementById('q-invoice').value = ''; 
+quoteItems = []; 
+document.getElementById('q-discount').value = 0; 
+document.getElementById('q-shipping').value = 0; // 新增：重置運費
+document.getElementById('q-invoice').value = '';
         document.getElementById('q-delivery').value = ''; 
         document.getElementById('q-notes').value = ''; 
         document.querySelectorAll('#page-quotation input[type="text"]').forEach(i => i.value = ''); 
@@ -1919,18 +1931,25 @@ function clearQuotation() {
             if(quoteItems.length === 0) tbody.innerHTML = `<tr><td colspan="7" class="text-center">尚未加入任何報價項目</td></tr>`;
 
 const discount = parseFloat(document.getElementById('q-discount').value) || 0; 
-            
-            // 👇 判斷是否有輸入統編 👇
-            const taxId = document.getElementById('q-cust-taxid').value.trim();
-            const taxRate = taxId !== '' ? 0.05 : 0; // 有統編算5%，沒統編算0%
-            
-            const tax = Math.round((subtotal - discount) * taxRate); 
-            currentQuoteTotal = (subtotal - discount) + tax;
-            
-            document.getElementById('calc-subtotal').innerText = `$${subtotal.toLocaleString()}`; 
-            document.getElementById('calc-discount-print').innerText = `-$${discount.toLocaleString()}`; 
-            document.getElementById('calc-tax').innerText = `$${tax.toLocaleString()}`; 
-            document.getElementById('calc-total').innerText = `$${currentQuoteTotal.toLocaleString()}`; 
+// 新增：抓取運費數值
+const shipping = parseFloat(document.getElementById('q-shipping').value) || 0; 
+
+// 👇 判斷是否有輸入統編 👇
+const taxId = document.getElementById('q-cust-taxid').value.trim();
+const taxRate = taxId !== '' ? 0.05 : 0; // 有統編算5%，沒統編算0%
+
+const tax = Math.round((subtotal - discount) * taxRate); 
+// 修改：總計金額加上運費
+currentQuoteTotal = (subtotal - discount) + tax + shipping; 
+
+document.getElementById('calc-subtotal').innerText = `$${subtotal.toLocaleString()}`; 
+document.getElementById('calc-discount-print').innerText = `-$${discount.toLocaleString()}`; 
+document.getElementById('calc-tax').innerText = `$${tax.toLocaleString()}`; 
+// 新增：將運費數值渲染到列印專用的 span
+const shippingPrintEl = document.getElementById('calc-shipping-print');
+if(shippingPrintEl) shippingPrintEl.innerText = `$${shipping.toLocaleString()}`;
+
+document.getElementById('calc-total').innerText = `$${currentQuoteTotal.toLocaleString()}`;
         }
 
         function printQuotation() { 
@@ -2031,13 +2050,16 @@ function saveQuotationToHistory() {
             }
             // ===============================================
 
-            const recordData = { 
+const recordData = { 
                 quoteNo: quoteNo, date: document.getElementById('q-quote-date').value, 
                 custName: custName, custTaxId: document.getElementById('q-cust-taxid').value, 
                 custContact: document.getElementById('q-cust-contact').value, custTel: document.getElementById('q-cust-tel').value, 
                 invoiceNo: document.getElementById('q-invoice').value, deliveryMethod: document.getElementById('q-delivery').value,
-                items: quoteItems, discount: parseFloat(document.getElementById('q-discount').value) || 0, 
-                notes: document.getElementById('q-notes').value, totalAmount: currentQuoteTotal, 
+                items: quoteItems, 
+                discount: parseFloat(document.getElementById('q-discount').value) || 0, 
+                shipping: parseFloat(document.getElementById('q-shipping').value) || 0, // 👈 補上這一行：儲存運費
+                notes: document.getElementById('q-notes').value, 
+                totalAmount: currentQuoteTotal, 
                 paidAmount: (existingIndex > -1 ? quoteHistory[existingIndex].paidAmount : 0), 
                 status: (existingIndex > -1 ? quoteHistory[existingIndex].status : 'unpaid') 
             };
@@ -2099,9 +2121,10 @@ function editQuoteRecord(index) {
             updatePrintView('print-delivery', r.deliveryMethod || '未指定'); 
             updatePrintDate(r.date);
             
-            quoteItems = typeof r.items === 'string' ? JSON.parse(r.items) : r.items; 
+quoteItems = typeof r.items === 'string' ? JSON.parse(r.items) : r.items; 
             document.getElementById('q-discount').value = r.discount || 0; 
-            document.getElementById('q-notes').value = r.notes || ''; 
+            document.getElementById('q-shipping').value = r.shipping || 0; // 👈 補上這一行：讀取並帶入歷史運費
+            document.getElementById('q-notes').value = r.notes || '';
             
             renderQuotation(); 
             window.scrollTo(0,0);
