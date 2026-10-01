@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三框累積計時器與成績追蹤 (今日 + 總計 + 倒數)</title>
+    <!-- 引入 Chart.js 來繪製圓餅圖 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            flex-direction: column;
+        }
+        .wrapper {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        /* 激勵語錄區塊樣式 */
+        .motivation-card {
+            flex: 1 1 100%;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 3px solid #a29bfe;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .editor-toolbar {
+            display: flex;
+            gap: 8px;
+            background: #f1f2f6;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+        .editor-toolbar button {
+            background: white;
+            border: 1px solid #dcdde1;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.2s;
+        }
+        .editor-toolbar button:hover {
+            background: #a29bfe;
+            color: white;
+            border-color: #a29bfe;
+        }
+        .editor-content {
+            min-height: 80px;
+            padding: 15px;
+            border: 2px dashed #dcdde1;
+            border-radius: 12px;
+            outline: none;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #2f3640;
+            background: #fafbfc;
+            transition: border-color 0.3s;
+        }
+        .editor-content:focus {
+            border-color: #a29bfe;
+            background: white;
+        }
+        .editor-content[placeholder]:empty:before {
+            content: attr(placeholder);
+            color: #a4b0be;
+            cursor: text;
+        }
+
+        .card {
+            flex: 1;
+            min-width: 320px;
+            background: white;
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+        .total-card {
+            background: #fffdf5;
+            border: 3px solid #ffe680;
+        }
+        .countdown-card {
+            background: #f4fdf8;
+            border: 3px solid #a7f3d0;
+        }
+        
+        h2 {
+            color: #333;
+            margin-top: 0;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        .date-label {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .timer-display {
+            font-weight: bold;
+            color: #d35400;
+            margin-bottom: 20px;
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px dashed #f39c12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            word-break: break-word;
+        }
+        .today-display { font-size: 2.5rem; }
+        .total-display { font-size: 1.6rem; background: #fff9e6; border-color: #f1c40f; color: #b8860b; }
+        .countdown-display { font-size: 1.8rem; background: #ecfdf5; border-color: #34d399; color: #059669; }
+        .countdown-title-display { font-size: 1.2rem; color: #047857; font-weight: bold; margin-bottom: 10px; }
+        
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .input-group input { padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; }
+        .input-group button { background: #10b981; color: white; border: none; padding: 10px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .input-group button:hover { background: #059669; }
+        
+        .history-container {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid #fce27c;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .history-list { list-style: none; padding: 0; margin: 0; }
+        .history-list li { display: flex; justify-content: space-between; padding: 8px 5px; border-bottom: 1px dashed #dcdde1; font-size: 0.95rem; color: #444; font-weight: bold; }
+        .history-list li:last-child { border-bottom: none; }
+
+        .btn-group { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+        .btn-group button { font-size: 1.1rem; padding: 12px 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; flex: 1; min-width: 100px; }
+        .btn-start { background-color: #27ae60; color: white; }
+        .btn-pause { background-color: #2980b9; color: white; }
+        .btn-reset { background-color: #e74c3c; color: white; }
+        .btn-reset-all { background-color: transparent; color: #c0392b; border: 2px solid #c0392b !important; max-width: 180px; margin: 0 auto; }
+        
+        /* === 成績追蹤區塊樣式 === */
+        .score-tracker-card {
+            flex: 1 1 100%;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 3px solid #74b9ff;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .score-tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .score-tracker-header h2 {
+            margin: 0;
+            color: #0984e3;
+        }
+        .score-summary {
+            background: #e3f2fd;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1976d2;
+            border: 2px dashed #90caf9;
+        }
+        .subjects-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .subject-column {
+            flex: 1;
+            min-width: 180px;
+            background: #f8f9fa;
+            border: 1px solid #dfe6e9;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .subject-title-input {
+            width: 100%;
+            padding: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid #b2bec3;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background: #fff;
+        }
+        .subject-title-input:focus {
+            border-color: #74b9ff;
+            outline: none;
+        }
+        .score-row {
+            display: flex;
+            gap: 5px;
+        }
+        .score-row input {
+            flex: 1;
+            width: 50%;
+            padding: 6px;
+            font-size: 0.9rem;
+            border: 1px solid #ced6e0;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .score-row input:focus {
+            border-color: #0984e3;
+            outline: none;
+        }
+        
+        /* 新增：單科平均樣式 */
+        .subject-average {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e3f2fd;
+            border: 1px dashed #74b9ff;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: #0984e3;
+            font-size: 1.05rem;
+        }
+
+        .chart-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #dfe6e9;
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 400px;
+        }
+        .btn-calc {
+            background-color: #0984e3;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        .btn-calc:hover {
+            background-color: #74b9ff;
+        }
+
+        .notice {
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        
+        <!-- 上框：激勵語錄區 -->
+        <div class="motivation-card">
+            <div class="editor-toolbar">
+                <button onclick="formatText('bold')" title="粗體"><b>B</b></button>
+                <button onclick="formatText('italic')" title="斜體"><i>I</i></button>
+                <button onclick="formatText('underline')" title="底線"><u>U</u></button>
+                <button onclick="formatText('removeFormat')" title="清除格式">清除格式</button>
+            </div>
+            <div id="motivation-text" class="editor-content" contenteditable="true" placeholder="在這裡寫下激勵自己、提醒自己的話吧！支援粗體、斜體喔 ✨"></div>
+        </div>
+
+        <!-- 左框：今日時間 -->
+        <div class="card today-card">
+            <h2>📅 今日進度</h2>
+            <div class="date-label" id="today-date-text">讀取日期中...</div>
+            <div class="timer-display today-display" id="today-display">00時00分00秒</div>
+            <div class="btn-group">
+                <button class="btn-start" onclick="startTimer()">▶ 開始</button>
+                <button class="btn-pause" onclick="pauseTimer()">⏸ 暫停</button>
+                <button class="btn-reset" onclick="resetToday()">🔄 歸零今日</button>
+            </div>
+        </div>
+
+        <!-- 中框：總時間與明細 -->
+        <div class="card total-card">
+            <h2>🏆 歷史總計里程碑</h2>
+            <div class="timer-display total-display" id="total-display">00月-00日-00時-00分-00秒</div>
+            <div class="history-container">
+                <ul class="history-list" id="history-list"></ul>
+            </div>
+            <div class="btn-group">
+                <button class="btn-reset-all" onclick="resetAll()">⚠️ 歸零所有紀錄</button>
+            </div>
+        </div>
+
+        <!-- 右框：自訂倒數計時 -->
+        <div class="card countdown-card">
+            <h2>🎯 目標倒數</h2>
+            <div class="input-group">
+                <input type="text" id="cd-title-input" placeholder="輸入目標 (例: 航海人員特考)" />
+                <input type="date" id="cd-date-input" />
+                <button onclick="saveCountdown()">💾 儲存並設定倒數</button>
+            </div>
+            <div class="countdown-title-display" id="cd-info-text">尚未設定目標</div>
+            <div class="timer-display countdown-display" id="countdown-display">等待設定...</div>
+        </div>
+        
+        <!-- === 成績追蹤與圓餅圖 === -->
+        <div class="score-tracker-card">
+            <div class="score-tracker-header">
+                <h2>📈 測驗成績追蹤</h2>
+                <div class="score-summary">
+                    總卷平均分數：<span id="global-average">0.00</span>
+                </div>
+            </div>
+            
+            <div class="subjects-container" id="subjects-container">
+                <!-- JavaScript 將會自動生成 5 個科目與 30 個欄位與下方單科平均 -->
+            </div>
+
+            <div class="chart-section">
+                <div class="chart-container">
+                    <canvas id="scoreChart"></canvas>
+                </div>
+                <button class="btn-calc" onclick="calculateAndSaveScores()">💾 儲存成績並更新圖表</button>
+            </div>
+        </div>
+
+        <div class="notice">💡 系統會自動記錄所有時間。倒數計時為獨立運作，不受暫停按鈕影響。成績輸入後請點擊「儲存成績」更新總平均與圓餅圖。</div>
+    </div>
+
+    <script>
+        // === 【激勵語錄邏輯】 ===
+        function initMotivation() {
+            const motivationEl = document.getElementById('motivation-text');
+            const savedText = localStorage.getItem('timer_motivation_text');
+            if (savedText) {
+                motivationEl.innerHTML = savedText;
+            }
+            motivationEl.addEventListener('input', function() {
+                localStorage.setItem('timer_motivation_text', motivationEl.innerHTML);
+            });
+        }
+
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            const motivationEl = document.getElementById('motivation-text');
+            localStorage.setItem('timer_motivation_text', motivationEl.innerHTML);
+            motivationEl.focus();
+        }
+
+        // === 【計時與歷史紀錄邏輯】 ===
+        let grandTotal = parseInt(localStorage.getItem('timer_grandTotal_v2')) || 0;
+        let dailyLogs = JSON.parse(localStorage.getItem('timer_dailyLogs_v2')) || {};
+        let isRunning = false;
+        let timerInterval = null;
+        let lastTick = 0;
+
+        function getTodayDateString() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = now.getMonth() + 1;
+            const d = now.getDate();
+            return `${y}/${m}/${d}`; 
+        }
+
+        function formatTotalTime(ms) {
+            let totalSec = Math.floor(ms / 1000);
+            let sec = totalSec % 60;
+            let totalMin = Math.floor(totalSec / 60);
+            let min = totalMin % 60;
+            let totalHr = Math.floor(totalMin / 60);
+            
+            let hr = totalHr % 24;
+            let totalDay = Math.floor(totalHr / 24);
+            let day = totalDay % 30;
+            let month = Math.floor(totalDay / 30);
+            
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${pad(month)}月-${pad(day)}日-${pad(hr)}時-${pad(min)}分-${pad(sec)}秒`;
+        }
+
+        function formatDailyTime(ms) {
+            let totalSec = Math.floor(ms / 1000);
+            let sec = totalSec % 60;
+            let totalMin = Math.floor(totalSec / 60);
+            let min = totalMin % 60;
+            let totalHr = Math.floor(totalMin / 60);
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${pad(totalHr)}時${pad(min)}分${pad(sec)}秒`;
+        }
+
+        function updateHistoryUI() {
+            const listContainer = document.getElementById('history-list');
+            const dates = Object.keys(dailyLogs).sort((a, b) => new Date(b) - new Date(a));
+            
+            if (dates.length === 0) {
+                listContainer.innerHTML = '<li style="justify-content:center; color:#999; border:none;">尚無歷史紀錄</li>';
+                return;
+            }
+
+            if (listContainer.children.length !== dates.length || (listContainer.children[0] && listContainer.children[0].id === '')) {
+                listContainer.innerHTML = '';
+                dates.forEach(date => {
+                    const li = document.createElement('li');
+                    li.id = 'log-' + date.replace(/\//g, '-'); 
+                    listContainer.appendChild(li);
+                });
+            }
+
+            dates.forEach(date => {
+                const li = document.getElementById('log-' + date.replace(/\//g, '-'));
+                if(li) {
+                    li.innerHTML = `<span>📅 ${date}</span> <span>累積 ${formatDailyTime(dailyLogs[date])}</span>`;
+                }
+            });
+        }
+
+        function updateUI() {
+            const todayStr = getTodayDateString();
+            document.getElementById('today-date-text').innerText = todayStr;
+            const todayMs = dailyLogs[todayStr] || 0;
+            
+            document.getElementById('today-display').innerText = formatDailyTime(todayMs);
+            document.getElementById('total-display').innerText = formatTotalTime(grandTotal);
+            updateHistoryUI();
+        }
+
+        function saveData() {
+            localStorage.setItem('timer_grandTotal_v2', grandTotal.toString());
+            localStorage.setItem('timer_dailyLogs_v2', JSON.stringify(dailyLogs));
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                lastTick = Date.now();
+                timerInterval = setInterval(() => {
+                    const now = Date.now();
+                    const delta = now - lastTick;
+                    lastTick = now;
+                    
+                    grandTotal += delta;
+                    const todayStr = getTodayDateString();
+                    if (!dailyLogs[todayStr]) dailyLogs[todayStr] = 0;
+                    dailyLogs[todayStr] += delta;
+                    
+                    updateUI();
+                    saveData();
+                }, 1000);
+                isRunning = true;
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                
+                const now = Date.now();
+                const delta = now - lastTick;
+                grandTotal += delta;
+                const todayStr = getTodayDateString();
+                if (!dailyLogs[todayStr]) dailyLogs[todayStr] = 0;
+                dailyLogs[todayStr] += delta;
+                
+                updateUI();
+                saveData();
+            }
+        }
+
+        function resetToday() {
+            if (confirm("確定要把「今日」的時間歸零嗎？\n(注意：總累積時間也會同步扣除今日的份量喔！)")) {
+                const todayStr = getTodayDateString();
+                const todayMs = dailyLogs[todayStr] || 0;
+                grandTotal -= todayMs;
+                if (grandTotal < 0) grandTotal = 0;
+                
+                dailyLogs[todayStr] = 0;
+                delete dailyLogs[todayStr];
+                
+                document.getElementById('history-list').innerHTML = ''; 
+                saveData();
+                updateUI();
+            }
+        }
+
+        function resetAll() {
+            if (confirm("⚠️ 警告：確定要清空「所有」的紀錄嗎？\n這將會清除總累積時間與所有歷史紀錄，且無法復原！")) {
+                pauseTimer();
+                grandTotal = 0;
+                dailyLogs = {};
+                document.getElementById('history-list').innerHTML = '';
+                saveData();
+                updateUI();
+            }
+        }
+
+        // === 【倒數計時目標邏輯】 ===
+        function initCountdown() {
+            document.getElementById('cd-title-input').value = localStorage.getItem('timer_cd_title') || '';
+            document.getElementById('cd-date-input').value = localStorage.getItem('timer_cd_date') || '';
+            setInterval(updateCountdownDisplay, 1000);
+            updateCountdownDisplay();
+        }
+
+        function saveCountdown() {
+            const title = document.getElementById('cd-title-input').value.trim();
+            const date = document.getElementById('cd-date-input').value;
+            
+            if (!title || !date) {
+                alert("請完整輸入「目標名稱」與「日期」喔！");
+                return;
+            }
+
+            localStorage.setItem('timer_cd_title', title);
+            localStorage.setItem('timer_cd_date', date);
+            updateCountdownDisplay();
+            alert("目標倒數已設定完成！");
+        }
+
+        function updateCountdownDisplay() {
+            const title = localStorage.getItem('timer_cd_title');
+            const dateStr = localStorage.getItem('timer_cd_date');
+            const displayEl = document.getElementById('countdown-display');
+            const infoEl = document.getElementById('cd-info-text');
+
+            if (title && dateStr) {
+                const targetDate = new Date(dateStr.replace(/-/g, '/') + " 00:00:00");
+                const now = new Date();
+                const diff = targetDate - now;
+                const formattedDateStr = dateStr.replace(/-/g, '/');
+                infoEl.innerText = `${title} \n ${formattedDateStr}`;
+
+                if (diff > 0) {
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const m = Math.floor((diff / 1000 / 60) % 60);
+                    const s = Math.floor((diff / 1000) % 60);
+                    const pad = (n) => String(n).padStart(2, '0');
+                    displayEl.innerText = `倒數 ${d}天 ${pad(h)}時 ${pad(m)}分 ${pad(s)}秒`;
+                } else {
+                    displayEl.innerText = "🎉 已經到達目標日！";
+                }
+            }
+        }
+
+        // === 【成績追蹤與圖表邏輯】 ===
+        const SUBJECT_COUNT = 5;
+        const ROWS_PER_SUBJECT = 30;
+        let scoreChartInstance = null;
+        
+        // 預設提示名稱
+        const defaultSubjectPlaceholders = ["航海氣象", "天文航海", "航海英文", "船舶操縱", "貨物作業"];
+
+        function initScoreTracker() {
+            const container = document.getElementById('subjects-container');
+            const savedData = JSON.parse(localStorage.getItem('timer_score_data')) || {};
+
+            for (let i = 0; i < SUBJECT_COUNT; i++) {
+                const subjectId = `subject-${i}`;
+                const subjectData = savedData[subjectId] || {};
+                
+                const col = document.createElement('div');
+                col.className = 'subject-column';
+                
+                // 科目標題輸入框
+                const titleInput = document.createElement('input');
+                titleInput.type = 'text';
+                titleInput.className = 'subject-title-input';
+                titleInput.placeholder = defaultSubjectPlaceholders[i] || `科目 ${i+1}`;
+                titleInput.value = subjectData.title || '';
+                titleInput.id = `${subjectId}-title`;
+                col.appendChild(titleInput);
+
+                // 30 個成績輸入列
+                for (let j = 0; j < ROWS_PER_SUBJECT; j++) {
+                    const row = document.createElement('div');
+                    row.className = 'score-row';
+                    
+                    const yearInput = document.createElement('input');
+                    yearInput.type = 'text';
+                    yearInput.placeholder = j === 0 ? "115-3" : "年份/梯次";
+                    yearInput.id = `${subjectId}-year-${j}`;
+                    yearInput.value = (subjectData.rows && subjectData.rows[j]) ? subjectData.rows[j].year : '';
+                    
+                    const scoreInput = document.createElement('input');
+                    scoreInput.type = 'number';
+                    scoreInput.placeholder = j === 0 ? "70" : "成績";
+                    scoreInput.id = `${subjectId}-score-${j}`;
+                    scoreInput.value = (subjectData.rows && subjectData.rows[j]) ? subjectData.rows[j].score : '';
+
+                    row.appendChild(yearInput);
+                    row.appendChild(scoreInput);
+                    col.appendChild(row);
+                }
+                
+                // === 新增：單科平均顯示區塊 ===
+                const avgDiv = document.createElement('div');
+                avgDiv.className = 'subject-average';
+                avgDiv.id = `${subjectId}-avg`;
+                avgDiv.innerText = '單科平均: 0.00';
+                col.appendChild(avgDiv);
+
+                container.appendChild(col);
+            }
+            // 初始化計算一次圖表與平均
+            calculateAndSaveScores(false);
+        }
+
+        function calculateAndSaveScores(showAlert = true) {
+            const scoreData = {};
+            let globalTotalScore = 0;
+            let globalValidEntries = 0;
+            
+            const chartLabels = [];
+            const chartData = [];
+            const chartColors = ['#ff7675', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe'];
+
+            for (let i = 0; i < SUBJECT_COUNT; i++) {
+                const subjectId = `subject-${i}`;
+                const titleEl = document.getElementById(`${subjectId}-title`);
+                const title = titleEl.value.trim() || titleEl.placeholder;
+                
+                scoreData[subjectId] = {
+                    title: titleEl.value,
+                    rows: []
+                };
+
+                let subjectTotal = 0;
+                let subjectCount = 0;
+
+                for (let j = 0; j < ROWS_PER_SUBJECT; j++) {
+                    const yearVal = document.getElementById(`${subjectId}-year-${j}`).value.trim();
+                    const scoreVal = document.getElementById(`${subjectId}-score-${j}`).value.trim();
+                    
+                    scoreData[subjectId].rows.push({ year: yearVal, score: scoreVal });
+
+                    if (scoreVal !== '') {
+                        const numScore = parseFloat(scoreVal);
+                        if (!isNaN(numScore)) {
+                            subjectTotal += numScore;
+                            subjectCount++;
+                            globalTotalScore += numScore;
+                            globalValidEntries++;
+                        }
+                    }
+                }
+
+                // 計算單科平均並更新畫面
+                let subjectAvgStr = "0.00";
+                if (subjectCount > 0) {
+                    subjectAvgStr = (subjectTotal / subjectCount).toFixed(2);
+                    chartLabels.push(title);
+                    chartData.push(subjectAvgStr);
+                }
+                
+                const avgEl = document.getElementById(`${subjectId}-avg`);
+                if (avgEl) {
+                    avgEl.innerText = `單科平均: ${subjectAvgStr}`;
+                }
+            }
+
+            // 儲存至 LocalStorage
+            localStorage.setItem('timer_score_data', JSON.stringify(scoreData));
+
+            // 更新總卷平均顯示
+            const globalAvg = globalValidEntries > 0 ? (globalTotalScore / globalValidEntries).toFixed(2) : "0.00";
+            document.getElementById('global-average').innerText = globalAvg;
+
+            // 更新 Chart.js 圓餅圖
+            updateChart(chartLabels, chartData, chartColors);
+            
+            if (showAlert) {
+                alert("成績已儲存！總平均、單科平均與圖表已更新！");
+            }
+        }
+
+        function updateChart(labels, data, colors) {
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            
+            if (scoreChartInstance) {
+                scoreChartInstance.destroy();
+            }
+
+            if (labels.length === 0) {
+                return;
+            }
+
+            scoreChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 14 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` 平均成績: ${context.raw} 分`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '各科目平均成績佔比',
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = function() {
+            updateUI();
+            initCountdown();
+            initMotivation();
+            initScoreTracker(); 
+        };
+    </script>
+</body>
+</html>
